@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <title>HTLM Assessment Number 2</title>
+    </head>
+    <body>
+        <H1>Course Sign Up Page</H1>
+        <p>Please Note: First Name, Last Name, Password, and Email are required</p>
+        <form method="get">
+            <label for="first_name" id="fn">First Name:</label>
+            <input id="fn" type="text" name="first_name" placeholder="First Name" required>
+            <label for="last_name" id="ln">Last Name:</label>
+            <input id="ln" type="text" name="last_name" placeholder="Last Name" required><br>
+            <label for="email" id="email">Email:</label>
+            <input id="email" type="email" name="email" placeholder="Email" required>
+            <label for="password" id="password">Password:</label>
+            <input id="password" type="password" name="password" required><br>
+        <p>Are you over 18?</p>
+            <label for="yes">Yes</label>
+            <input id="yes" type="radio" name="over_18" value="yes">
+            <label for="no">No</label>
+            <input id="no" type="radio" name="over_18" value="no"><br>
+        <p>Do you have a Credit Card or Paypal?</p>
+        <select name="payment">
+            <option value="credit_card">Credit Card</option>
+            <option value="paypal">Paypal</option>
+        </select><br>
+        <input type="submit" value="Submit">
+        </form>
+        
+    </body>
+</html>
