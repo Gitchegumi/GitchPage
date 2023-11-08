@@ -1,0 +1,42 @@
+/*Choose a cool Font Text Scheme*/
+
+h1{
+  font-family: "gabriella", sans-serif;
+  text-align: center;
+}
+
+/*Choose a color palette from here:
+https://coolors.co/
+or create your own here:
+paletton.com/*/
+
+.art{
+  margin: auto;
+}
+
+
+td{
+  height: 200px;
+  padding: 100px;
+  border: 6px solid white;
+}
+
+#one{
+  background-color: #A20021;
+}
+
+#two{
+  background-color: #F52F57;
+}
+
+#three{
+  background-color: #F79D5C;
+}
+
+#four{
+  background-color: #F3752B;
+}
+
+#five{
+  background-color: #EDEDF4;
+}
