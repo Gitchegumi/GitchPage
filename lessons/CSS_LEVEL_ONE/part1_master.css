@@ -9,3 +9,15 @@
 h1{
     color: blue;
 }
+
+li{
+    color: #fca311;
+}
+
+p{
+    color: rgb(255, 0, 0);
+}
+
+h4{
+    color: rgba(255, 0, 0, 0.3);
+}

@@ -1,0 +1,20 @@
+body{
+    background-image: url("pexels-iva-muškić-691710.jpg");
+    background-size: cover;
+}
+
+div{
+    background-color: blue;
+    border-color: #fca311;
+    border-width: 4px;
+    border-style: groove;
+}
+
+p{
+    color: #fca311;
+}
+
+span{
+    background: red;
+    color: black;
+}
