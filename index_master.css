@@ -1,7 +1,21 @@
 .top_material{
-    background-color: #fff;
-    border-radius: 5px;
+    background-color: #3722af;
+    border: 5px solid #c27319;
     box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
-    padding: 20px;
-    margin-bottom: 20px;
+    padding: 1%;
+    text-align: center;
+    font-family: "oswald", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 2em;
+}
+
+.toplinks{
+    margin: auto;
+    border: 1px solid #c27319;
+    background: #3722af;
+    font-family: "oswald", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1em;
 }
