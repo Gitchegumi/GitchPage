@@ -29,3 +29,8 @@ body{
     background-color: #272727;
     color: #fff;
 }
+
+hr.rounded {
+    border-top: 8px solid #bbb;
+    border-radius: 5px;
+  }
