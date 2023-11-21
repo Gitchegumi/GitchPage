@@ -103,12 +103,13 @@ class Header extends HTMLElement {
       </header>
     `;
     var currentPath = new URL(window.location.href).pathname;
-    this.querySelectorAll('.nav-link').forEach(function(navLink) {
-        var linkPath = new URL(navLink.href).pathname;
+    this.querySelectorAll('li').forEach(function(listItem) {
+        var link = listItem.querySelector('.nav-link');
+        var linkPath = new URL(link.href).pathname;
         if (linkPath === currentPath) {
-            navLink.classList.add('active');
+            listItem.classList.add('active');
         } else {
-            navLink.classList.remove('active');
+            listItem.classList.remove('active');
         }
     });
   }
