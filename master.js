@@ -1,4 +1,4 @@
-$(document).ready(function() {
+window.onload = function() {
     var currentLocation = window.location.href;
     $('#toplinks .nav-link').each(function() {
         var linkHref = $(this).attr('href');
@@ -8,4 +8,4 @@ $(document).ready(function() {
             $(this).removeClass('active');
         }
     });
-});
+};
