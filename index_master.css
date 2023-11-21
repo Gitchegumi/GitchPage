@@ -1,9 +1,12 @@
 body{
-    font-family: "miller-headline", serif;
+    background-color: #272727;
+}
+
+main{
+    font-family: "miller-text", serif;
     font-weight: 400;
     font-style: normal;
     font-size: 1em;
-    background-color: #272727;
     color: #fff;
 }
 
