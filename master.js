@@ -2,10 +2,10 @@ $(document).ready(function() {
     var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.type === 'childList') {
-                var currentLocation = window.location.href;
+                var currentPath = new URL(window.location.href).pathname;
                 $('#toplinks .nav-link').each(function() {
-                    var linkHref = $(this).attr('href');
-                    if (linkHref === currentLocation) {
+                    var linkHref = new URL($(this).attr('href')).pathname;
+                    if (currentPath.endsWith(linkHref)) {
                         $(this).addClass('active');
                     } else {
                         $(this).removeClass('active');
