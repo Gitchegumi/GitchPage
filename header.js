@@ -102,10 +102,10 @@ class Header extends HTMLElement {
         </div>
       </header>
     `;
-    var currentLocation = window.location.href;
+    var currentPath = new URL(window.location.href).pathname;
     this.querySelectorAll('.nav-link').forEach(function(navLink) {
-        var linkHref = navLink.getAttribute('href');
-        if (linkHref === currentLocation) {
+        var linkPath = new URL(navLink.href).pathname;
+        if (linkPath === currentPath) {
             navLink.classList.add('active');
         } else {
             navLink.classList.remove('active');
