@@ -65,7 +65,7 @@ class Header extends HTMLElement {
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="https://www.gitchegumi.com">Home</a>
+                    <a class="nav-link" aria-current="page" href="https://www.gitchegumi.com">Home</a>
                     </li>
                     <li class="nav-item">
                     <a class="nav-link" href="https://store.gitchegumi.com" target="_blank">Merch</a>
