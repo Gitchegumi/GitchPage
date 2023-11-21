@@ -102,16 +102,6 @@ class Header extends HTMLElement {
         </div>
       </header>
     `;
-    var currentPath = new URL(window.location.href).pathname;
-    this.querySelectorAll('li').forEach(function(listItem) {
-        var link = listItem.querySelector('.nav-link');
-        var linkHref = new URL(link.href).pathname;
-        if (currentPath.endsWith(linkHref)) {
-            listItem.classList.add('active');
-        } else {
-            listItem.classList.remove('active');
-        }
-    });
   }
 }
 
