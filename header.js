@@ -102,6 +102,15 @@ class Header extends HTMLElement {
         </div>
       </header>
     `;
+    var currentLocation = window.location.href;
+    this.querySelectorAll('.nav-link').forEach(function(navLink) {
+        var linkHref = navLink.getAttribute('href');
+        if (linkHref === currentLocation) {
+            navLink.classList.add('active');
+        } else {
+            navLink.classList.remove('active');
+        }
+    });
   }
 }
 
