@@ -63,7 +63,7 @@ class Header extends HTMLElement {
                 <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="listedlinks">
+                <ul id="listedlinks" class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="https://www.gitchegumi.com">Home</a>
                     </li>
@@ -101,6 +101,21 @@ class Header extends HTMLElement {
             </nav>
         </div>
       </header>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var currentPath = window.location.pathname;
+            var navbarLinks = document.querySelectorAll("#listedlinks .nav-link");
+
+            navbarLinks.forEach(function(link) {
+                var linkHref = new URL(link.href).pathname;
+                if (currentPath.endsWith(linkHref)) {
+                    link.classList.add("active");
+                } else {
+                    link.classList.remove("active");
+                }
+            });
+        });
+    </script>
     `;
   }
 }
