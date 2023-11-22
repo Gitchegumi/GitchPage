@@ -3,7 +3,7 @@ $(document).ready(function() {
         mutations.forEach(function(mutation) {
             if (mutation.type === 'childList') {
                 var currentPath = new URL(window.location.href).pathname;
-                $('#toplinks .nav-link').each(function() {
+                $('#listedlinks .nav-link').each(function() {
                     var linkHref = new URL($(this).attr('href')).pathname;
                     if (currentPath.endsWith(linkHref)) {
                         $(this).addClass('active');
