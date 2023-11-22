@@ -15,7 +15,7 @@ $(document).ready(function() {
         });
     });
 
-    observer.observe(document.URL, {
+    observer.observe(document.documentElement, {
         childList: true,
         subtree: true
     });
