@@ -104,23 +104,21 @@ class Header extends HTMLElement {
             </nav>
         </div>
       </header>
-      <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var currentPath = window.location.pathname;
-            var navbarLinks = document.querySelectorAll("#listedlinks .nav-link");
-
-            navbarLinks.forEach(function(link) {
-                var linkHref = new URL(link.href).pathname;
-                if (currentPath.endsWith(linkHref)) {
-                    link.classList.add("active");
-                } else {
-                    link.classList.remove("active");
-                }
-            });
-        });
-    </script>
     `;
   }
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    var navbarLinks = document.querySelectorAll("#listedlinks .nav-link, #listedlinks .dropdown-item");
+
+    navbarLinks.forEach(function(link) {
+        link.addEventListener("click", function() {
+            navbarLinks.forEach(function(link) {
+                link.classList.remove("active");
+            });
+            this.classList.add("active");
+        });
+    });
+});
 
 customElements.define('header-component', Header);
