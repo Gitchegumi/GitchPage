@@ -113,12 +113,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
     navbarLinks.forEach(function(link) {
         link.addEventListener("click", function() {
-            navbarLinks.forEach(function(link) {
-                link.classList.remove("active");
-            });
-            this.classList.add("active");
+            localStorage.setItem("activeLink", this.href);
         });
     });
+
+    var activeLink = localStorage.getItem("activeLink");
+    if (activeLink) {
+        var activeElement = document.querySelector(`[href='${activeLink}']`);
+        if (activeElement) {
+            activeElement.classList.add("active");
+        }
+    }
 });
 
 customElements.define('header-component', Header);
