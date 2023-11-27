@@ -5,13 +5,16 @@ $(document).ready(function() {
             if (mutation.type === 'childList') {
                 var currentPath = new URL(window.location.href).pathname;
                 console.log('Current path:', currentPath); // Print the current path
-                $('#listedlinks .nav-link').each(function() {
-                    var linkHref = new URL(window.location.origin + $(this).attr('href')).pathname;
-                    console.log('Link href:', linkHref); // Print the href of each link
-                    if (currentPath === linkHref) {
-                        $(this).addClass('active');
-                    } else {
-                        $(this).removeClass('active');
+                $("#listedlinks .nav-link, #listedlinks .dropdown-item").each(function() {
+                    try {
+                        var linkHref = new URL($(this).attr('href')).pathname;
+                        if (window.location.pathname.endsWith(linkHref)) {
+                            $(this).addClass('active');
+                        } else {
+                            $(this).removeClass('active');
+                        }
+                    } catch (error) {
+                        console.error(`Failed to create URL from href "${$(this).attr('href')}": ${error}`);
                     }
                 });
             }
