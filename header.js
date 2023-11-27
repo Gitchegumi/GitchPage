@@ -70,6 +70,9 @@ class Header extends HTMLElement {
                     <li class="nav-item">
                     <a class="nav-link" href="https://store.gitchegumi.com" target="_blank">Merch</a>
                     </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="https://www.etsy.com/shop/GitchPrints" target="_blank">GitchPrints</a>
+                    </li>
                     <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Projects
