@@ -8,7 +8,7 @@ $(document).ready(function() {
                 $('#listedlinks .nav-link').each(function() {
                     var linkHref = new URL(window.location.origin + $(this).attr('href')).pathname;
                     console.log('Link href:', linkHref); // Print the href of each link
-                    if (currentPath.includes(linkHref) || linkHref.includes(currentPath)) {
+                    if (currentPath === linkHref) {
                         $(this).addClass('active');
                     } else {
                         $(this).removeClass('active');
