@@ -74,7 +74,7 @@ class Header extends HTMLElement {
                     <a class="nav-link" href="https://www.etsy.com/shop/GitchPrints" target="_blank">GitchPrints</a>
                     </li>
                     <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="none" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Projects
                     </a>
                     <ul class="dropdown-menu">
