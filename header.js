@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const currentPagePath = window.location.pathname;
 
     // Update the background image based on the current page
-    if (currentPagePath === '/voice_over.html') {
+    if (currentPagePath === 'voice_over.html') {
         headerElement.classList.add('header-background-1');
     }
 });
