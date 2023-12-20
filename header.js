@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    var activeLink = localStorage.getItem("activeLink");
+    var activeLink = window.location.pathname;
     if (activeLink) {
         var activeElement = document.querySelector(`[href='${activeLink}']`);
         if (activeElement) {
