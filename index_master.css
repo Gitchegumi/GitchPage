@@ -19,3 +19,8 @@ hr.rounded {
     text-align: center;
     font-family: "miller-text", serif;
 }
+
+.btn{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: #fff;
+}
