@@ -80,7 +80,7 @@ class Header extends HTMLElement {
                     <ul class="dropdown-menu">
                         <li><h4 class="dropdown-header">Content Creation</li>
                         <li><a class="dropdown-item" href="coming_soon.html">Blog</a></li>
-                        <li><a class="dropdown-item" href="coming_soon.html">Voice Over</a></li>
+                        <li><a class="dropdown-item" href="voice_over.html">Voice Over</a></li>
                         <li><a class="dropdown-item" href="http://www.youtube.com/@GitcheGumi." target="_blank">YouTube</a></li>
                         <li><a class="dropdown-item" href="https://www.twitch.tv/gitchegumi" target="_blank">Twitch</a></li>
                         <li><hr class="dropdown-divider"></li>
