@@ -4,52 +4,53 @@ class Header extends HTMLElement {
   }
 
   connectedCallback() {
-    this.innerHTML = `
-    <style>
-        #navbarSupportedContent{
-            font-family: "oswald", sans-serif;
-            font-weight: 400;
-            font-style: normal;
-            font-size: 1.0em;
-        }
+    this.innerHTML = 
+      // <style>
+    //     #navbarSupportedContent{
+    //         font-family: "oswald", sans-serif;
+    //         font-weight: 400;
+    //         font-style: normal;
+    //         font-size: 1.0em;
+    //     }
         
-        .dropdown-menu{
-            font-family: "oswald", sans-serif;
-            font-weight: 400;
-            font-style: normal;
-            font-size: 1em;
-        }
+    //     .dropdown-menu{
+    //         font-family: "oswald", sans-serif;
+    //         font-weight: 400;
+    //         font-style: normal;
+    //         font-size: 1em;
+    //     }
         
-        .dropdown-header{
-            text-align: center;
-            font-family: "miller-headline", serif;
-            color: #0a0524;
-            font-size: 1.5em;
-        }
+    //     .dropdown-header{
+    //         text-align: center;
+    //         font-family: "miller-headline", serif;
+    //         color: #0a0524;
+    //         font-size: 1.5em;
+    //     }
         
-        #top_material{
-            background-color: #3722af;
-            border: 5px solid #c27319;
-            box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
-            padding: 1%;
-            text-align: center;
-            font-family: "oswald", sans-serif;
-            font-weight: 400;
-            font-style: normal;
-            font-size: 2em;
-            color: #fff;
-        }
+    //     #top_material{
+    //         background-color: #3722af;
+    //         border: 5px solid #c27319;
+    //         box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
+    //         padding: 1%;
+    //         text-align: center;
+    //         font-family: "oswald", sans-serif;
+    //         font-weight: 400;
+    //         font-style: normal;
+    //         font-size: 2em;
+    //         color: #fff;
+    //     }
         
-        #toplinks{
-            margin: auto;
-            border: 1px solid #c27319;
-            background: #3722af;
-            font-family: "oswald", sans-serif;
-            font-weight: 400;
-            font-style: normal;
-            font-size: 1em;
-        }
-    </style>  
+    //     #toplinks{
+    //         margin: auto;
+    //         border: 1px solid #c27319;
+    //         background: #3722af;
+    //         font-family: "oswald", sans-serif;
+    //         font-weight: 400;
+    //         font-style: normal;
+    //         font-size: 1em;
+    //     }
+    // </style>
+    `  
     <header>
             <div class="container" id="top_material">
             <img src="images/Mascot.png" alt="Gitchegumi Logo" width="147" height="100">
@@ -123,6 +124,17 @@ document.addEventListener("DOMContentLoaded", function() {
         if (activeElement) {
             activeElement.classList.add("active");
         }
+    }
+
+    // Get the header element
+    const headerElement = document.getElementById('header-element');
+
+    // Get the current page path
+    const currentPagePath = window.location.pathname;
+
+    // Update the background image based on the current page
+    if (currentPagePath === '/voice_over.html') {
+        headerElement.classList.add('header-background-1');
     }
 });
 

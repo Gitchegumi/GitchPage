@@ -1,0 +1,47 @@
+#navbarSupportedContent{
+    font-family: "oswald", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.0em;
+}
+
+.dropdown-menu{
+    font-family: "oswald", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1em;
+}
+
+.dropdown-header{
+    text-align: center;
+    font-family: "miller-headline", serif;
+    color: #0a0524;
+    font-size: 1.5em;
+}
+
+#top_material{
+    background-color: #3722af;
+    border: 5px solid #c27319;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
+    padding: 1%;
+    text-align: center;
+    font-family: "oswald", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 2em;
+    color: #fff;
+}
+
+#toplinks{
+    margin: auto;
+    border: 1px solid #c27319;
+    background: #3722af;
+    font-family: "oswald", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1em;
+}
+
+.header-background-1 {
+    background-image: url('images/Background.png');
+  }
