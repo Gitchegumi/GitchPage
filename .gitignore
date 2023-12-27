@@ -1,6 +1,2 @@
-Django\first_project\first_app\migrations\__pycache__\*
-Django\first_project\first_app\__pycache__\*
-Django\first_project\first_project\__pycache__\*
-Django\ProTwo\ProTwo\__pycache__\*
-Django\ProTwo\AppTwo\__pycache__\*
-Django\ProTwo\AppTwo\migrations\__pycache__\*
+__pycache__/
+Django/first_project/first_app/__pycache__/
