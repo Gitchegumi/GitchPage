@@ -1,3 +1,4 @@
+"""Django models file for the first_app app"""
 from django.db import models
 
 # Create your models here.
@@ -10,7 +11,7 @@ class Topic(models.Model):
 
     def __str__(self):
         """String representation of the Topic model"""
-        return self.top_name
+        return str(self.top_name)
 
 
 class Webpage(models.Model):
@@ -22,7 +23,7 @@ class Webpage(models.Model):
 
     def __str__(self):
         """String representation of the Webpage model"""
-        return self.name
+        return str(self.name)
 
 
 class AccessRecord(models.Model):
