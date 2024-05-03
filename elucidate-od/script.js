@@ -72,7 +72,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
   }
 
   // Send the images to the server for inference
-  fetch('http://elucidate-od.gitchegumi.com//upload', {
+  fetch('https://elucidate-od.gitchegumi.com//upload', {
     method: 'POST',
     body: formData
   })
