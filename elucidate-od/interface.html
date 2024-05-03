@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <link rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" 
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" 
+    crossorigin="anonymous">
+    <title>Elucidate Object Detection</title>
+  </head>
+
+  <body>
+    <div class="container mt-5">
+      <div class="top-material">
+        <h2>Elucidate Object Detection</h2>
+    
+        <form id="upload-form" enctype="multipart/form-data" class="mt-4">
+          <div class="input-group">
+            <label for="file-input">Select images to upload:</label>
+            <input type="file" id="file-input" class="form-control-file" multiple>
+          </div>
+          <div class="input-group">
+            <label for="server-select">Select server:</label>
+            <select id="server-select" class="form-control">
+              <option value="Custom Vision">Custom Vision</option>
+              <option value="YOLOv8 Nano">YOLOv8 Nano</option>
+              <option value="YOLOv8 Small">YOLOv8 Small</option>
+              <option value="YOLOv8 Medium">YOLOv8 Medium</option>
+              <option value="YOLOv8 Large">YOLOv8 Large</option>
+              <option value="YOLOv8 XL">YOLOv8 XL</option>
+              <!-- Add more options as needed -->
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Upload Images</button>
+        </form>
+      </div>
+  
+      <div id="image-container" class="mt-4">
+        <div class="image-container row">
+          <img id="original-image">
+          <img id="bounding-boxes">
+        </div>
+      </div>
+    </div>
+  
+    <script src="script.js"></script>
+  </body>
+</html>
