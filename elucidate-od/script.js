@@ -86,7 +86,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
     }, timeout);
   };
 
-  async function fetchWithRetry(url, options, retries = 5, backoff = 1300) {
+  async function fetchWithRetry(url, options, retries = 5, backoff = 5000) {
     try {
       const response = await fetch(url, options);
       const data = await response.json();
@@ -94,6 +94,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
     } catch (error) {
       if (retries <= 0) throw new Error('Server is not responding after several retries');
       console.log(`Request failed. Retrying in ${backoff}ms...`);
+      displayMessage(`Request failed. Retrying in ${backoff}ms...`);
       await new Promise(resolve => setTimeout(resolve, backoff));
       return fetchWithRetry(url, options, retries - 1, backoff * 2);
     }
