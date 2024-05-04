@@ -110,8 +110,8 @@ document.getElementById('upload-form').addEventListener('submit', async function
     var endTime = Date.now();
     var inferenceTime = (endTime - startTime) / 1000; // time in seconds
     console.log(`Inference time: ${inferenceTime.toFixed(3)} seconds`);
-    displayMessage(`Inference time: ${inferenceTime.toFixed(3)} seconds`);
-    
+    displayMessage(`Inference done after ${inferenceTime.toFixed(3)} seconds`);
+
     // Display the bounding boxes
     var imageWrappers = document.getElementsByClassName('image-wrapper');
     for (var i = 0; i < data.length; i++) {
