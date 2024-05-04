@@ -71,13 +71,29 @@ document.getElementById('upload-form').addEventListener('submit', async function
     }
   }
 
+  async function fetchWithRetry(url, options, retries = 5, backoff = 300) {
+    try {
+      const response = await fetch(url, options);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      if (retries <= 0) throw new Error('Server is not responding after several retries');
+      await new Promise(resolve => setTimeout(resolve, backoff));
+      return fetchWithRetry(url, options, retries - 1, backoff * 2);
+    }
+  }
+
   // Send the images to the server for inference
-  fetch('https://elucidate-od.gitchegumi.com/upload', {
+  console.log("Sending images to server...");
+  var startTime = Date.now();
+  fetchWithRetry('https://elucidate-od.gitchegumi.com/upload', {
     method: 'POST',
     body: formData
   })
-  .then(response => response.json())
   .then(data => {
+    var endTime = Date.now();
+    var inferenceTime = (endTime - startTime) / 1000; // time in seconds
+    console.log(`Inference time: ${inferenceTime.toFixed(3)} seconds`);
     // Display the bounding boxes
     var imageWrappers = document.getElementsByClassName('image-wrapper');
     for (var i = 0; i < data.length; i++) {
