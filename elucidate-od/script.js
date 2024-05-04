@@ -71,19 +71,21 @@ document.getElementById('upload-form').addEventListener('submit', async function
     }
   }
 
-  function displayMessage(message, timeout = 5000) {
-    var messageContainer = document.getElementById('message-container');
-  
-    var messageElement = document.createElement('div');
-    messageElement.textContent = message;
-    messageElement.className = 'alert alert-info'; // Bootstrap class for styling
-  
-    messageContainer.appendChild(messageElement);
-  
-    setTimeout(function() {
-      messageContainer.removeChild(messageElement);
-    }, timeout);
-  }
+  document.addEventListener('DOMContentLoaded', (event) => {
+    function displayMessage(message, timeout = 5000) {
+      var messageContainer = document.getElementById('message-container');
+    
+      var messageElement = document.createElement('div');
+      messageElement.textContent = message;
+      messageElement.className = 'alert alert-info'; // Bootstrap class for styling
+    
+      messageContainer.appendChild(messageElement);
+    
+      setTimeout(function() {
+        messageContainer.removeChild(messageElement);
+      }, timeout);
+    }
+  });
 
   async function fetchWithRetry(url, options, retries = 5, backoff = 300) {
     try {
