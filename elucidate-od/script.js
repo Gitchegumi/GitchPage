@@ -71,21 +71,20 @@ document.getElementById('upload-form').addEventListener('submit', async function
     }
   }
 
-  document.addEventListener('DOMContentLoaded', (event) => {
-    function displayMessage(message, timeout = 5000) {
-      var messageContainer = document.getElementById('message-container');
-    
-      var messageElement = document.createElement('div');
-      messageElement.textContent = message;
-      messageElement.className = 'alert alert-info'; // Bootstrap class for styling
-    
-      messageContainer.appendChild(messageElement);
-    
-      setTimeout(function() {
-        messageContainer.removeChild(messageElement);
-      }, timeout);
-    }
-  });
+
+  function displayMessage(message, timeout = 5000) {
+    var messageContainer = document.getElementById('message-container');
+  
+    var messageElement = document.createElement('div');
+    messageElement.textContent = message;
+    messageElement.className = 'alert alert-info'; // Bootstrap class for styling
+  
+    messageContainer.appendChild(messageElement);
+  
+    setTimeout(function() {
+      messageContainer.removeChild(messageElement);
+    }, timeout);
+  };
 
   async function fetchWithRetry(url, options, retries = 5, backoff = 300) {
     try {
@@ -95,7 +94,6 @@ document.getElementById('upload-form').addEventListener('submit', async function
     } catch (error) {
       if (retries <= 0) throw new Error('Server is not responding after several retries');
       console.log(`Request failed. Retrying in ${backoff}ms...`);
-      displayMessage(`Request failed. Retrying in ${backoff}ms...`);
       await new Promise(resolve => setTimeout(resolve, backoff));
       return fetchWithRetry(url, options, retries - 1, backoff * 2);
     }
@@ -103,6 +101,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
 
   // Send the images to the server for inference
   console.log("Sending images to server...");
+
   displayMessage("Sending images to server...");
 
   var startTime = Date.now();
