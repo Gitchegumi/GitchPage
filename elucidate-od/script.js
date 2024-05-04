@@ -83,8 +83,24 @@ document.getElementById('upload-form').addEventListener('submit', async function
     }
   }
 
+  function displayMessage(message, timeout = 5000) {
+    var messageContainer = document.getElementById('message-container');
+  
+    var messageElement = document.createElement('div');
+    messageElement.textContent = message;
+    messageElement.className = 'alert alert-info'; // Bootstrap class for styling
+  
+    messageContainer.appendChild(messageElement);
+  
+    setTimeout(function() {
+      messageContainer.removeChild(messageElement);
+    }, timeout);
+  }
+
   // Send the images to the server for inference
   console.log("Sending images to server...");
+  displayMessage("Sending images to server...");
+
   var startTime = Date.now();
   fetchWithRetry('https://elucidate-od.gitchegumi.com/upload', {
     method: 'POST',
@@ -94,6 +110,8 @@ document.getElementById('upload-form').addEventListener('submit', async function
     var endTime = Date.now();
     var inferenceTime = (endTime - startTime) / 1000; // time in seconds
     console.log(`Inference time: ${inferenceTime.toFixed(3)} seconds`);
+    displayMessage(`Inference time: ${inferenceTime.toFixed(3)} seconds`);
+    
     // Display the bounding boxes
     var imageWrappers = document.getElementsByClassName('image-wrapper');
     for (var i = 0; i < data.length; i++) {
