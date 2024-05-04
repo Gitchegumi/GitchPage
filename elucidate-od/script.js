@@ -71,20 +71,6 @@ document.getElementById('upload-form').addEventListener('submit', async function
     }
   }
 
-  async function fetchWithRetry(url, options, retries = 5, backoff = 300) {
-    try {
-      const response = await fetch(url, options);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      if (retries <= 0) throw new Error('Server is not responding after several retries');
-      console.log(`Request failed. Retrying in ${backoff}ms...`);
-      displayMessage(`Request failed. Retrying in ${backoff}ms...`);
-      await new Promise(resolve => setTimeout(resolve, backoff));
-      return fetchWithRetry(url, options, retries - 1, backoff * 2);
-    }
-  }
-
   function displayMessage(message, timeout = 5000) {
     var messageContainer = document.getElementById('message-container');
   
@@ -97,6 +83,20 @@ document.getElementById('upload-form').addEventListener('submit', async function
     setTimeout(function() {
       messageContainer.removeChild(messageElement);
     }, timeout);
+  }
+
+  async function fetchWithRetry(url, options, retries = 5, backoff = 300) {
+    try {
+      const response = await fetch(url, options);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      if (retries <= 0) throw new Error('Server is not responding after several retries');
+      console.log(`Request failed. Retrying in ${backoff}ms...`);
+      displayMessage(`Request failed. Retrying in ${backoff}ms...`);
+      await new Promise(resolve => setTimeout(resolve, backoff));
+      return fetchWithRetry(url, options, retries - 1, backoff * 2);
+    }
   }
 
   // Send the images to the server for inference
