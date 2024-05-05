@@ -102,63 +102,24 @@ document.getElementById('upload-form').addEventListener('submit', async function
     console.error(error);
   });
 
-function generateImageGrid(files, container) {
-  const gridContainer = document.createElement('div');
-  gridContainer.className = 'row';
-
-  let rowDiv = null;
-
-  for (let i = 0; i < files.length; i++) {
-    if (i % 2 === 0) {
-      rowDiv = document.createElement('div');
-      rowDiv.className = 'row';
-      gridContainer.appendChild(rowDiv);
+  function generateImageGrid(files, container) {
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'row';
+  
+    for (let i = 0; i < files.length; i++) {
+      const imageWrapper = document.createElement('div');
+      imageWrapper.className = 'image-wrapper';
+  
+      const originalImage = document.createElement('img');
+      originalImage.src = URL.createObjectURL(files[i]);
+      imageWrapper.appendChild(originalImage);
+  
+      const boundingBoxImage = document.createElement('img');
+      imageWrapper.appendChild(boundingBoxImage);
+  
+      gridContainer.appendChild(imageWrapper);
     }
-
-    const imageWrapper = document.createElement('div');
-    imageWrapper.className = 'image-wrapper col-md-6';
-
-    const card = document.createElement('div');
-    card.className = 'card';
-
-    const imageBox = document.createElement('div');
-    imageBox.className = 'image-box card-img-top';
-
-    const originalImage = document.createElement('img');
-    readFileAsDataURL(files[i]).then(dataURL => {
-      originalImage.src = dataURL;
-      imageBox.appendChild(originalImage);
-    });
-
-    const boundingBoxes = document.createElement('img');
-    boundingBoxes.style.display = 'none';
-    imageBox.appendChild(boundingBoxes);
-
-    card.appendChild(imageBox);
-
-    const cardBody = document.createElement('div');
-    cardBody.className = 'card-body';
-
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'button-container';
-
-    const toggleButton = document.createElement('button');
-    toggleButton.textContent = 'Toggle Bounding Boxes';
-    toggleButton.className = 'btn btn-secondary';
-    toggleButton.onclick = (function(boundingBoxes) {
-      return function() {
-        boundingBoxes.style.display = boundingBoxes.style.display === 'none' ? '' : 'none';
-      };
-    })(boundingBoxes);
-    buttonContainer.appendChild(toggleButton);
-
-    cardBody.appendChild(buttonContainer);
-
-    card.appendChild(cardBody);
-    imageWrapper.appendChild(card);
-
-    rowDiv.appendChild(imageWrapper);
+  
+    container.appendChild(gridContainer);
   }
-
-  container.appendChild(gridContainer);
-}});
+});
