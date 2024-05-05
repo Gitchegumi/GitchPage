@@ -117,6 +117,8 @@ document.getElementById('upload-form').addEventListener('submit', async function
 });
 
     function generateImageGrid(files, container) {
+      container.innerHTML = '';
+
       var row;
       for (var i = 0; i < files.length; i++) {
         if (i % 2 === 0) { // Start a new row for every 2 images
@@ -134,7 +136,18 @@ document.getElementById('upload-form').addEventListener('submit', async function
           URL.revokeObjectURL(this.src);
         };
 
+        var btn = document.createElement('button');
+        btn.textContent = 'Toggle Bounding Box';
+        btn.addEventListener('click', function() {
+          if (boundingBoxes.style.display === 'none') {
+            boundingBoxes.style.display = 'block';
+          } else {
+            boundingBoxes.style.display = 'none';
+          }
+        });
+    
         col.appendChild(img);
+        col.appendChild(btn);
         row.appendChild(col);
       }
     }
