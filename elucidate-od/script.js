@@ -103,25 +103,30 @@ document.getElementById('upload-form').addEventListener('submit', async function
   });
 
   function generateImageGrid(files, container) {
-    const gridContainer = document.createElement('div');
-    gridContainer.className = 'row';
-  
     for (let i = 0; i < files.length; i++) {
-      const imageWrapper = document.createElement('div');
-      imageWrapper.className = 'image-wrapper';
+      const imageBox = document.createElement('div');
+      imageBox.className = 'image-box col-md-6';
   
       const originalImage = document.createElement('img');
       originalImage.src = URL.createObjectURL(files[i]);
-      originalImage.className = 'original-image';
-      imageWrapper.appendChild(originalImage);
+      originalImage.className = 'img-fluid';
+      imageBox.appendChild(originalImage);
   
       const boundingBoxImage = document.createElement('img');
-      boundingBoxImage.className = 'bounding-box position-absolute';
-      imageWrapper.appendChild(boundingBoxImage);
+      boundingBoxImage.className = 'img-fluid';
+      imageBox.appendChild(boundingBoxImage);
   
-      gridContainer.appendChild(imageWrapper);
+      const buttonContainer = document.createElement('div');
+      buttonContainer.className = 'button-container';
+  
+      const toggleButton = document.createElement('button');
+      toggleButton.className = 'btn btn-secondary';
+      toggleButton.textContent = 'Toggle Bounding Box';
+      buttonContainer.appendChild(toggleButton);
+  
+      imageBox.appendChild(buttonContainer);
+  
+      container.appendChild(imageBox);
     }
-  
-    container.appendChild(gridContainer);
   }
 });
