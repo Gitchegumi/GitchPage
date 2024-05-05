@@ -154,6 +154,8 @@ function generateImageGrid(files, container) {
     })(boundingBoxes);
     buttonContainer.appendChild(toggleButton);
 
+    cardBody.appendChild(buttonContainer);
+
     card.appendChild(cardBody);
     imageWrapper.appendChild(card);
 
