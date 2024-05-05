@@ -117,38 +117,25 @@ document.getElementById('upload-form').addEventListener('submit', async function
 });
 
     function generateImageGrid(files, container) {
-      for (let i = 0; i < files.length; i++) {
-        const imageBox = document.createElement('div');
-        imageBox.className = 'image-box col-md-6';
+      var row;
+      for (var i = 0; i < files.length; i++) {
+        if (i % 2 === 0) { // Start a new row for every 2 images
+          row = document.createElement('div');
+          row.className = 'row';
+          container.appendChild(row);
+        }
 
-        const originalImage = document.createElement('img');
-        originalImage.src = URL.createObjectURL(files[i]);
-        originalImage.className = 'img-fluid';
-        imageBox.appendChild(originalImage);
+        var col = document.createElement('div');
+        col.className = 'col-6'; // Bootstrap class for 50% width
 
-        const boundingBoxImage = document.createElement('img');
-        boundingBoxImage.className = 'img-fluid';
-        boundingBoxImage.src = URL.createObjectURL(boundingBoxFiles[i]);
-        imageBox.appendChild(boundingBoxImage);
+        var img = document.createElement('img');
+        img.src = URL.createObjectURL(files[i]);
+        img.onload = function() {
+          URL.revokeObjectURL(this.src);
+        };
 
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'button-container';
-
-        const toggleButton = document.createElement('button');
-        toggleButton.className = 'btn btn-secondary';
-        toggleButton.textContent = 'Toggle Bounding Box';
-        toggleButton.addEventListener('click', function() {
-          if (boundingBoxImage.style.display === 'none') {
-            boundingBoxImage.style.display = 'block';
-          } else {
-            boundingBoxImage.style.display = 'none';
-          }
-        });
-        buttonContainer.appendChild(toggleButton);
-
-        imageBox.appendChild(buttonContainer);
-
-        container.appendChild(imageBox);
+        col.appendChild(img);
+        row.appendChild(col);
       }
     }
 });
