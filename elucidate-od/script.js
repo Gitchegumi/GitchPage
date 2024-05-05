@@ -114,65 +114,40 @@ document.getElementById('upload-form').addEventListener('submit', async function
         console.error('Server response does not have the expected properties');
       }
     }
-
-    // Attach an event listener to the toggle button
-    var toggleButton = document.getElementById('toggle-button');
-    toggleButton.addEventListener('click', function() {
-      var boundingBoxImages = document.getElementsByClassName('bounding-box-image');
-      for (var i = 0; i < boundingBoxImages.length; i++) {
-        // Toggle the visibility of the bounding box images
-        if (boundingBoxImages[i].style.display === 'none') {
-          boundingBoxImages[i].style.display = 'block';
-        } else {
-          boundingBoxImages[i].style.display = 'none';
-        }
-      }
-  })
-  .catch(error => {
-    // Hide the spinner
-    document.getElementById('spinner').style.display = 'none';
-    console.error(error);
-  });
 });
 
-  function generateImageGrid(files, container) {
-    for (let i = 0; i < files.length; i++) {
-      const imageBox = document.createElement('div');
-      imageBox.className = 'image-box col-md-6';
-  
-      const originalImage = document.createElement('img');
-      originalImage.src = URL.createObjectURL(files[i]);
-      originalImage.className = 'img-fluid';
-      imageBox.appendChild(originalImage);
+    function generateImageGrid(files, container) {
+      for (let i = 0; i < files.length; i++) {
+        const imageBox = document.createElement('div');
+        imageBox.className = 'image-box col-md-6';
 
-      console.log(originalImage.src);
-  
-      const boundingBoxImage = document.createElement('img');
-      boundingBoxImage.className = 'img-fluid';
-      // Set the src attribute for the boundingBoxImage
-      // boundingBoxImage.src = 'path_to_bounding_box_image';
-      imageBox.appendChild(boundingBoxImage);
-  
-      const buttonContainer = document.createElement('div');
-      buttonContainer.className = 'button-container';
-  
-      const toggleButton = document.createElement('button');
-      toggleButton.className = 'btn btn-secondary';
-      toggleButton.textContent = 'Toggle Bounding Box';
-      // Add an event listener to the toggle button
-      toggleButton.addEventListener('click', function() {
-        // Code to toggle the visibility of the boundingBoxImage
-        if (boundingBoxImage.style.display === 'none') {
-          boundingBoxImage.style.display = 'block';
-        } else {
-          boundingBoxImage.style.display = 'none';
-        }
-      });
-      buttonContainer.appendChild(toggleButton);
-  
-      imageBox.appendChild(buttonContainer);
-  
-      container.appendChild(imageBox);
+        const originalImage = document.createElement('img');
+        originalImage.src = URL.createObjectURL(files[i]);
+        originalImage.className = 'img-fluid';
+        imageBox.appendChild(originalImage);
+
+        const boundingBoxImage = document.createElement('img');
+        boundingBoxImage.className = 'img-fluid';
+        imageBox.appendChild(boundingBoxImage);
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'button-container';
+
+        const toggleButton = document.createElement('button');
+        toggleButton.className = 'btn btn-secondary';
+        toggleButton.textContent = 'Toggle Bounding Box';
+        toggleButton.addEventListener('click', function() {
+          if (boundingBoxImage.style.display === 'none') {
+            boundingBoxImage.style.display = 'block';
+          } else {
+            boundingBoxImage.style.display = 'none';
+          }
+        });
+        buttonContainer.appendChild(toggleButton);
+
+        imageBox.appendChild(buttonContainer);
+
+        container.appendChild(imageBox);
+      }
     }
-  }
 });
