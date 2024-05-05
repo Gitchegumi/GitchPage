@@ -1,4 +1,3 @@
-document.addEventListener('DOMContentLoaded', (event) => {
 function readFileAsDataURL(file) {
   return new Promise((resolve, reject) => {
     var reader = new FileReader();
@@ -115,6 +114,8 @@ document.getElementById('upload-form').addEventListener('submit', async function
   
       const boundingBoxImage = document.createElement('img');
       boundingBoxImage.className = 'img-fluid';
+      // Set the src attribute for the boundingBoxImage
+      // boundingBoxImage.src = 'path_to_bounding_box_image';
       imageBox.appendChild(boundingBoxImage);
   
       const buttonContainer = document.createElement('div');
@@ -123,6 +124,15 @@ document.getElementById('upload-form').addEventListener('submit', async function
       const toggleButton = document.createElement('button');
       toggleButton.className = 'btn btn-secondary';
       toggleButton.textContent = 'Toggle Bounding Box';
+      // Add an event listener to the toggle button
+      toggleButton.addEventListener('click', function() {
+        // Code to toggle the visibility of the boundingBoxImage
+        if (boundingBoxImage.style.display === 'none') {
+          boundingBoxImage.style.display = 'block';
+        } else {
+          boundingBoxImage.style.display = 'none';
+        }
+      });
       buttonContainer.appendChild(toggleButton);
   
       imageBox.appendChild(buttonContainer);
@@ -130,4 +140,4 @@ document.getElementById('upload-form').addEventListener('submit', async function
       container.appendChild(imageBox);
     }
   }
-});});
+});
