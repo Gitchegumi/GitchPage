@@ -98,7 +98,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
         document.body.appendChild(newImageWrapper);
       }
 
-var images = imageWrappers[i].getElementsByTagName('img');
+      var images = imageWrappers[i].getElementsByTagName('img');
       
       // Check if there is at least one image
       if (images.length < 1) {
