@@ -115,46 +115,48 @@ document.getElementById('upload-form').addEventListener('submit', async function
     function generateImageGrid(files, container) {
       container.innerHTML = '';
 
-      for (let i = 0; i < files.length; i++) {
+      for (let i = 0; i < files.length; i += 2) {
         const row = document.createElement('div');
         row.className = 'row';
         container.appendChild(row);
 
-        const col = document.createElement('div');
-        col.className = 'col-6 position-relative image-container';
-        row.appendChild(col);
+        for (let j = 0; j < 2 && i + j < files.length; j++) {
+          const col = document.createElement('div');
+          col.className = 'col-md-6';
+          row.appendChild(col);
 
-        const imgWrapper = document.createElement('div');
-        imgWrapper.className = 'image-wrapper';
-        col.appendChild(imgWrapper);
+          const imgWrapper = document.createElement('div');
+          imgWrapper.className = 'image-wrapper';
+          col.appendChild(imgWrapper);
 
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(files[i]);
-        img.className = 'base-image';
-        img.onload = function() {
-          URL.revokeObjectURL(this.src);
-        };
-        imgWrapper.appendChild(img);
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(files[i + j]);
+          img.className = 'base-image';
+          img.onload = function() {
+            URL.revokeObjectURL(this.src);
+          };
+          imgWrapper.appendChild(img);
 
-        const boundingBoxes = document.createElement('img');
-        boundingBoxes.className = 'bounding-box position-absolute';
-        boundingBoxes.style.display = 'none';
-        imgWrapper.appendChild(boundingBoxes);
+          const boundingBoxes = document.createElement('img');
+          boundingBoxes.className = 'bounding-box';
+          boundingBoxes.style.display = 'none';
+          imgWrapper.appendChild(boundingBoxes);
 
-        const btn = document.createElement('button');
-        btn.textContent = 'Toggle Bounding Box';
-        btn.className = 'btn btn-secondary';
+          const btn = document.createElement('button');
+          btn.textContent = 'Toggle Bounding Box';
+          btn.className = 'btn btn-secondary';
 
-        const toggleBoundingBox = () => {
-          if (boundingBoxes.style.display === 'none') {
-            boundingBoxes.style.display = 'block';
-          } else {
-            boundingBoxes.style.display = 'none';
-          }
-        };
+          const toggleBoundingBox = () => {
+            if (boundingBoxes.style.display === 'none') {
+              boundingBoxes.style.display = 'block';
+            } else {
+              boundingBoxes.style.display = 'none';
+            }
+          };
 
-        btn.addEventListener('click', toggleBoundingBox);
-        col.appendChild(btn);
+          btn.addEventListener('click', toggleBoundingBox);
+          imgWrapper.appendChild(btn);
+        }
       }
     }
 });
