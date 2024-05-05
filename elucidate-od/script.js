@@ -86,10 +86,11 @@ document.getElementById('upload-form').addEventListener('submit', async function
     // Display the bounding boxes
     var imageWrappers = document.getElementsByClassName('image-wrapper');
     for (var i = 0; i < data.length; i++) {
-      // Check if there is an 'image-wrapper' for this data item
+      // Create a new 'image-wrapper' if necessary
       if (i >= imageWrappers.length) {
-        console.error('Not enough image-wrapper elements for data items');
-        break;
+        var newImageWrapper = document.createElement('div');
+        newImageWrapper.className = 'image-wrapper';
+        document.body.appendChild(newImageWrapper);
       }
 
       var images = imageWrappers[i].getElementsByTagName('img');
@@ -125,6 +126,8 @@ document.getElementById('upload-form').addEventListener('submit', async function
       originalImage.src = URL.createObjectURL(files[i]);
       originalImage.className = 'img-fluid';
       imageBox.appendChild(originalImage);
+
+      console.log(originalImage.src);
   
       const boundingBoxImage = document.createElement('img');
       boundingBoxImage.className = 'img-fluid';
