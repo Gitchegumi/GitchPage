@@ -60,3 +60,17 @@
   left: 50%;
   transform: translateX(-50%);
 }
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bounding-box {
+  display: none; /* Hide the bounding box image initially */
+}

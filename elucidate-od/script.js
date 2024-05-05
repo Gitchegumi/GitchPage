@@ -112,9 +112,11 @@ document.getElementById('upload-form').addEventListener('submit', async function
   
       const originalImage = document.createElement('img');
       originalImage.src = URL.createObjectURL(files[i]);
+      originalImage.className = 'original-image';
       imageWrapper.appendChild(originalImage);
   
       const boundingBoxImage = document.createElement('img');
+      boundingBoxImage.className = 'bounding-box position-absolute';
       imageWrapper.appendChild(boundingBoxImage);
   
       gridContainer.appendChild(imageWrapper);
