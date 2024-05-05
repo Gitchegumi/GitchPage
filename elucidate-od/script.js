@@ -86,7 +86,9 @@ document.getElementById('upload-form').addEventListener('submit', async function
     // Display the bounding boxes
     var imageWrappers = document.getElementsByClassName('image-wrapper');
     for (var i = 0; i < data.length; i++) {
+      var originalImage = imageWrappers[i].getElementsByTagName('img')[0];
       var boundingBoxes = imageWrappers[i].getElementsByTagName('img')[1];
+      originalImage.src = 'data:image/png;base64,' + data[i].originalImage;
       boundingBoxes.src = 'data:image/png;base64,' + data[i].image;
     }
   })
