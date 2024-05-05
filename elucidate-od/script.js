@@ -128,6 +128,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
 
         const boundingBoxImage = document.createElement('img');
         boundingBoxImage.className = 'img-fluid';
+        boundingBoxImage.src = URL.createObjectURL(boundingBoxFiles[i]);
         imageBox.appendChild(boundingBoxImage);
 
         const buttonContainer = document.createElement('div');
