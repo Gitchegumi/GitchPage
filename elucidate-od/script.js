@@ -110,7 +110,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
   // Set up an interval to send a "still working" message every 2 seconds
   var intervalId = setInterval(() => {
     displayMessage("Still working...");
-  }, 2500);
+  }, 5100);
 
   fetchWithRetry('https://elucidate-od.gitchegumi.com/upload', {
     method: 'POST',
