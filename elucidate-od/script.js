@@ -94,8 +94,6 @@ document.getElementById('upload-form').addEventListener('submit', async function
         originalImage.src = 'data:image/png;base64,' + data[i].originalImage;
         boundingBoxes.src = 'data:image/png;base64,' + data[i].image;
       } else {
-        originalImage.src = originalImage.src; // Keep the original image
-        boundingBoxes.src = ''; // Clear the bounding box image
         console.error('Server response does not have the expected properties');
       }
     }
