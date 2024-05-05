@@ -161,4 +161,4 @@ function generateImageGrid(files, container) {
   }
 
   container.appendChild(gridContainer);
-}
+}});
