@@ -26,31 +26,8 @@ document.getElementById('upload-form').addEventListener('submit', async function
   // Display the uploaded images immediately
   var imageContainer = document.getElementById('image-container');
   imageContainer.innerHTML = '';
-  
-  // Create a new row every two images
-  var rowCounter = 0;
-  var currentRow = null;
 
-  for (var i = 0; i < files.length; i++) {
-    try {
-      // Create a new row every two images
-      if (i % 2 === 0) {
-        currentRow = document.createElement('div');
-        currentRow.className = 'row';
-        imageContainer.appendChild(currentRow);
-        rowCounter++;
-      }
-
-      var imageWrapper = document.createElement('div');
-      imageWrapper.className = 'image-wrapper col-md-6';
-
-      // ... (rest of the code to create image elements remains the same)
-
-      currentRow.appendChild(imageWrapper);
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  generateImageGrid(files, imageContainer);
 
 
   function displayMessage(message, timeout = 5000) {
@@ -120,3 +97,59 @@ document.getElementById('upload-form').addEventListener('submit', async function
   console.error(error);
   });
 });
+
+function generateImageGrid(files, container) {
+  const gridContainer = document.createElement('div');
+  gridContainer.className = 'row';
+
+  let rowDiv = null;
+
+  for (let i = 0; i < files.length; i++) {
+    if (i % 2 === 0) {
+      rowDiv = document.createElement('div');
+      rowDiv.className = 'row';
+      gridContainer.appendChild(rowDiv);
+    }
+
+    const imageWrapper = document.createElement('div');
+    imageWrapper.className = 'image-wrapper col-md-6';
+
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const imageBox = document.createElement('div');
+    imageBox.className = 'image-box card-img-top';
+
+    const originalImage = document.createElement('img');
+    readFileAsDataURL(files[i]).then(dataURL => {
+      originalImage.src = dataURL;
+      imageBox.appendChild(originalImage);
+    });
+
+    const boundingBoxes = document.createElement('img');
+    boundingBoxes.style.display = 'none';
+    imageBox.appendChild(boundingBoxes);
+
+    card.appendChild(imageBox);
+
+    const cardBody = document.createElement('div');
+    cardBody.className = 'card-body';
+
+    const toggleButton = document.createElement('button');
+    toggleButton.textContent = 'Toggle Bounding Boxes';
+    toggleButton.className = 'btn btn-secondary';
+    toggleButton.onclick = (function(boundingBoxes) {
+      return function() {
+        boundingBoxes.style.display = boundingBoxes.style.display === 'none' ? '' : 'none';
+      };
+    })(boundingBoxes);
+    cardBody.appendChild(toggleButton);
+
+    card.appendChild(cardBody);
+    imageWrapper.appendChild(card);
+
+    rowDiv.appendChild(imageWrapper);
+  }
+
+  container.appendChild(gridContainer);
+}
