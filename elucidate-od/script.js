@@ -26,46 +26,27 @@ document.getElementById('upload-form').addEventListener('submit', async function
   // Display the uploaded images immediately
   var imageContainer = document.getElementById('image-container');
   imageContainer.innerHTML = '';
+  
+  // Create a new row every two images
+  var rowCounter = 0;
+  var currentRow = null;
+
   for (var i = 0; i < files.length; i++) {
     try {
-      var dataURL = await readFileAsDataURL(files[i]);
+      // Create a new row every two images
+      if (i % 2 === 0) {
+        currentRow = document.createElement('div');
+        currentRow.className = 'row';
+        imageContainer.appendChild(currentRow);
+        rowCounter++;
+      }
 
       var imageWrapper = document.createElement('div');
       imageWrapper.className = 'image-wrapper col-md-6';
 
-      var card = document.createElement('div');
-      card.className = 'card';
+      // ... (rest of the code to create image elements remains the same)
 
-      var imageBox = document.createElement('div');
-      imageBox.className = 'image-box card-img-top';
-
-      var originalImage = document.createElement('img');
-      originalImage.src = dataURL;
-      imageBox.appendChild(originalImage);
-
-      var boundingBoxes = document.createElement('img');
-      boundingBoxes.style.display = 'none';
-      imageBox.appendChild(boundingBoxes);
-
-      card.appendChild(imageBox);
-
-      var cardBody = document.createElement('div');
-      cardBody.className = 'card-body';
-
-      var toggleButton = document.createElement('button');
-      toggleButton.textContent = 'Toggle Bounding Boxes';
-      toggleButton.className = 'btn btn-secondary';
-      toggleButton.onclick = (function(boundingBoxes) {
-        return function() {
-          boundingBoxes.style.display = boundingBoxes.style.display === 'none' ? '' : 'none';
-        };
-      })(boundingBoxes);
-      cardBody.appendChild(toggleButton);
-
-      card.appendChild(cardBody);
-      imageWrapper.appendChild(card);
-
-      imageContainer.appendChild(imageWrapper);
+      currentRow.appendChild(imageWrapper);
     } catch (e) {
       console.error(e);
     }
