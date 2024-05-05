@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', (event) => {
 function readFileAsDataURL(file) {
   return new Promise((resolve, reject) => {
     var reader = new FileReader();
@@ -129,4 +130,4 @@ document.getElementById('upload-form').addEventListener('submit', async function
       container.appendChild(imageBox);
     }
   }
-});
+});});
