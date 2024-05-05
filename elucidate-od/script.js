@@ -86,6 +86,12 @@ document.getElementById('upload-form').addEventListener('submit', async function
     // Display the bounding boxes
     var imageWrappers = document.getElementsByClassName('image-wrapper');
     for (var i = 0; i < data.length; i++) {
+      // Check if there is an 'image-wrapper' for this data item
+      if (i >= imageWrappers.length) {
+        console.error('Not enough image-wrapper elements for data items');
+        break;
+      }
+
       var images = imageWrappers[i].getElementsByTagName('img');
       
       // Check if there is at least one image
