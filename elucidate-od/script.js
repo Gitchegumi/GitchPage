@@ -135,6 +135,9 @@ function generateImageGrid(files, container) {
     const cardBody = document.createElement('div');
     cardBody.className = 'card-body';
 
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'button-container';
+
     const toggleButton = document.createElement('button');
     toggleButton.textContent = 'Toggle Bounding Boxes';
     toggleButton.className = 'btn btn-secondary';
@@ -143,7 +146,7 @@ function generateImageGrid(files, container) {
         boundingBoxes.style.display = boundingBoxes.style.display === 'none' ? '' : 'none';
       };
     })(boundingBoxes);
-    cardBody.appendChild(toggleButton);
+    buttonContainer.appendChild(toggleButton);
 
     card.appendChild(cardBody);
     imageWrapper.appendChild(card);

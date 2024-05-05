@@ -9,7 +9,13 @@
 
 .image-box {
   position: relative;
+  /* justify-content: center; */
+}
+
+.button-container {
+  display: flex;
   justify-content: center;
+  margin-top: 10px; /* Adjust this value as needed */
 }
 
 .image-box img {
@@ -29,14 +35,14 @@
   height: 15vw;
   object-fit: cover;
   margin: 1vw;
-  justify-content: center;
+  /* justify-content: center; */
 }
 
 .card-body {
-  position: absolute;
+  /* position: absolute;
   right: 0;
   bottom: 0;
-  left: 0;
+  left: 0; */
   display: flex;
   align-items: center;
   justify-content: center;
