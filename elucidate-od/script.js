@@ -90,10 +90,15 @@ document.getElementById('upload-form').addEventListener('submit', async function
       if (i >= imageWrappers.length) {
         var newImageWrapper = document.createElement('div');
         newImageWrapper.className = 'image-wrapper';
+
+        // Create a new 'img' element and add it to the 'image-wrapper'
+        var newImage = document.createElement('img');
+        newImageWrapper.appendChild(newImage);
+
         document.body.appendChild(newImageWrapper);
       }
 
-      var images = imageWrappers[i].getElementsByTagName('img');
+var images = imageWrappers[i].getElementsByTagName('img');
       
       // Check if there is at least one image
       if (images.length < 1) {
