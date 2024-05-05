@@ -128,15 +128,17 @@ document.getElementById('upload-form').addEventListener('submit', async function
         }
 
         var col = document.createElement('div');
-        col.className = 'col-6'; // Bootstrap class for 50% width
+        col.className = 'col-6 image-container';
 
         var img = document.createElement('img');
         img.src = URL.createObjectURL(files[i]);
+        img.className = 'base-image'
         img.onload = function() {
           URL.revokeObjectURL(this.src);
         };
 
-        var boundingBoxes = document.createElement('img'); // Create bounding box image here
+        var boundingBoxes = document.createElement('img');
+        boundingBoxes.className = 'bounding-box';
         boundingBoxes.style.display = 'none'; // Initially hide the bounding box
 
         var btn = document.createElement('button');

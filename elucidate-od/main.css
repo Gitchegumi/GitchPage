@@ -73,5 +73,17 @@
 }
 
 .bounding-box {
-  display: none; /* Hide the bounding box image initially */
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+}
+
+.image-container {
+  position: relative;
+}
+
+.base-image, .bounding-box {
+  max-width: 100%;
+  height: auto;
 }
