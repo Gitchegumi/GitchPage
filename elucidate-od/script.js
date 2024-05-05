@@ -91,23 +91,22 @@ document.getElementById('upload-form').addEventListener('submit', async function
         var newImageWrapper = document.createElement('div');
         newImageWrapper.className = 'image-wrapper';
 
-        // Create a new 'img' element and add it to the 'image-wrapper'
-        var newImage = document.createElement('img');
-        newImageWrapper.appendChild(newImage);
+        // Create two new 'img' elements and add them to the 'image-wrapper'
+        var originalImage = document.createElement('img');
+        originalImage.src = URL.createObjectURL(files[i]); // Set the source of the original image
+        originalImage.className = 'original-image';
+        newImageWrapper.appendChild(originalImage);
+
+        var boundingBoxImage = document.createElement('img');
+        boundingBoxImage.className = 'bounding-box-image';
+        newImageWrapper.appendChild(boundingBoxImage);
 
         document.body.appendChild(newImageWrapper);
       }
 
       var images = imageWrappers[i].getElementsByTagName('img');
-      
-      // Check if there is at least one image
-      if (images.length < 1) {
-        console.error('No images in image-wrapper');
-        continue;
-      }
+      var boundingBoxes = images[1]; // The bounding box image is now the second 'img' element
 
-      var boundingBoxes = images[0];
-      
       // Check if the server response has the expected properties
       if (data[i].image) {
         boundingBoxes.src = 'data:image/png;base64,' + data[i].image;
@@ -115,12 +114,26 @@ document.getElementById('upload-form').addEventListener('submit', async function
         console.error('Server response does not have the expected properties');
       }
     }
+
+    // Attach an event listener to the toggle button
+    var toggleButton = document.getElementById('toggle-button');
+    toggleButton.addEventListener('click', function() {
+      var boundingBoxImages = document.getElementsByClassName('bounding-box-image');
+      for (var i = 0; i < boundingBoxImages.length; i++) {
+        // Toggle the visibility of the bounding box images
+        if (boundingBoxImages[i].style.display === 'none') {
+          boundingBoxImages[i].style.display = 'block';
+        } else {
+          boundingBoxImages[i].style.display = 'none';
+        }
+      }
   })
   .catch(error => {
     // Hide the spinner
     document.getElementById('spinner').style.display = 'none';
     console.error(error);
   });
+});
 
   function generateImageGrid(files, container) {
     for (let i = 0; i < files.length; i++) {
