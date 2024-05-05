@@ -64,10 +64,6 @@ document.getElementById('upload-form').addEventListener('submit', async function
 
   var startTime = Date.now();
 
-  // // Set up an interval to send a "still working" message every 2 seconds
-  // var intervalId = setInterval(() => {
-  //   displayMessage("Still working...");
-  // }, 5100);
   // Show the spinner
   document.getElementById('spinner').style.display = 'block';
 
@@ -119,47 +115,46 @@ document.getElementById('upload-form').addEventListener('submit', async function
     function generateImageGrid(files, container) {
       container.innerHTML = '';
 
-      var row;
-      for (var i = 0; i < files.length; i++) {
-        if (i % 2 === 0) { // Start a new row for every 2 images
-          row = document.createElement('div');
-          row.className = 'row';
-          container.appendChild(row);
-        }
+      for (let i = 0; i < files.length; i++) {
+        const row = document.createElement('div');
+        row.className = 'row';
+        container.appendChild(row);
 
-        var col = document.createElement('div');
+        const col = document.createElement('div');
         col.className = 'col-6 position-relative image-container';
+        row.appendChild(col);
 
-        var img = document.createElement('img');
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'image-wrapper';
+        col.appendChild(imgWrapper);
+
+        const img = document.createElement('img');
         img.src = URL.createObjectURL(files[i]);
-        img.className = 'base-image'
+        img.className = 'base-image';
         img.onload = function() {
           URL.revokeObjectURL(this.src);
         };
+        imgWrapper.appendChild(img);
 
-        var boundingBoxes = document.createElement('img');
+        const boundingBoxes = document.createElement('img');
         boundingBoxes.className = 'bounding-box position-absolute';
-        boundingBoxes.style.display = 'none'; // Initially hide the bounding box
+        boundingBoxes.style.display = 'none';
+        imgWrapper.appendChild(boundingBoxes);
 
-        var btn = document.createElement('button');
+        const btn = document.createElement('button');
         btn.textContent = 'Toggle Bounding Box';
+        btn.className = 'btn btn-secondary';
 
+        const toggleBoundingBox = () => {
+          if (boundingBoxes.style.display === 'none') {
+            boundingBoxes.style.display = 'block';
+          } else {
+            boundingBoxes.style.display = 'none';
+          }
+        };
 
-        // Use an IIFE to create a new scope for each iteration of the loop
-        (function(boundingBoxes) {
-          btn.addEventListener('click', function() {
-            if (boundingBoxes.style.display === 'none') {
-              boundingBoxes.style.display = 'block';
-            } else {
-              boundingBoxes.style.display = 'none';
-            }
-          });
-        })(boundingBoxes);
-
-        col.appendChild(img);
-        col.appendChild(boundingBoxes); // Append bounding box image to the column
+        btn.addEventListener('click', toggleBoundingBox);
         col.appendChild(btn);
-        row.appendChild(col);
       }
     }
 });
