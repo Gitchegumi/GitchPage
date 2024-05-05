@@ -88,17 +88,21 @@ document.getElementById('upload-form').addEventListener('submit', async function
     for (var i = 0; i < data.length; i++) {
       var originalImage = imageWrappers[i].getElementsByTagName('img')[0];
       var boundingBoxes = imageWrappers[i].getElementsByTagName('img')[1];
-      originalImage.src = 'data:image/png;base64,' + data[i].originalImage;
-      boundingBoxes.src = 'data:image/png;base64,' + data[i].image;
+      
+      // Check if the server response has the expected properties
+      if (data[i].originalImage && data[i].image) {
+        originalImage.src = 'data:image/png;base64,' + data[i].originalImage;
+        boundingBoxes.src = 'data:image/png;base64,' + data[i].image;
+      } else {
+        console.error('Server response does not have the expected properties');
+      }
     }
   })
   .catch(error => {
     // Hide the spinner
-  document.getElementById('spinner').style.display = 'none';
-  
-  console.error(error);
+    document.getElementById('spinner').style.display = 'none';
+    console.error(error);
   });
-});
 
 function generateImageGrid(files, container) {
   const gridContainer = document.createElement('div');
