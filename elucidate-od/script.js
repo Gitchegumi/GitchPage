@@ -94,7 +94,6 @@ document.getElementById('upload-form').addEventListener('submit', async function
     } catch (error) {
       if (retries <= 0) throw new Error('Server is not responding after several retries');
       console.log(`Request failed. Retrying in ${backoff}ms...`);
-      displayMessage(`Request failed. Retrying in ${backoff}ms...`);
       await new Promise(resolve => setTimeout(resolve, backoff));
       return fetchWithRetry(url, options, retries - 1, backoff * 2);
     }
