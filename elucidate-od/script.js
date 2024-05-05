@@ -136,6 +136,9 @@ document.getElementById('upload-form').addEventListener('submit', async function
           URL.revokeObjectURL(this.src);
         };
 
+        var boundingBoxes = document.createElement('img'); // Create bounding box image here
+        boundingBoxes.style.display = 'none'; // Initially hide the bounding box
+
         var btn = document.createElement('button');
         btn.textContent = 'Toggle Bounding Box';
         btn.addEventListener('click', function() {
@@ -145,8 +148,9 @@ document.getElementById('upload-form').addEventListener('submit', async function
             boundingBoxes.style.display = 'none';
           }
         });
-    
+
         col.appendChild(img);
+        col.appendChild(boundingBoxes); // Append bounding box image to the column
         col.appendChild(btn);
         row.appendChild(col);
       }
