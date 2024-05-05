@@ -128,7 +128,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
         }
 
         var col = document.createElement('div');
-        col.className = 'col-6 image-container';
+        col.className = 'col-6 position-relative image-container';
 
         var img = document.createElement('img');
         img.src = URL.createObjectURL(files[i]);
@@ -138,18 +138,23 @@ document.getElementById('upload-form').addEventListener('submit', async function
         };
 
         var boundingBoxes = document.createElement('img');
-        boundingBoxes.className = 'bounding-box';
+        boundingBoxes.className = 'bounding-box position-absolute';
         boundingBoxes.style.display = 'none'; // Initially hide the bounding box
 
         var btn = document.createElement('button');
         btn.textContent = 'Toggle Bounding Box';
-        btn.addEventListener('click', function() {
-          if (boundingBoxes.style.display === 'none') {
-            boundingBoxes.style.display = 'block';
-          } else {
-            boundingBoxes.style.display = 'none';
-          }
-        });
+
+
+        // Use an IIFE to create a new scope for each iteration of the loop
+        (function(boundingBoxes) {
+          btn.addEventListener('click', function() {
+            if (boundingBoxes.style.display === 'none') {
+              boundingBoxes.style.display = 'block';
+            } else {
+              boundingBoxes.style.display = 'none';
+            }
+          });
+        })(boundingBoxes);
 
         col.appendChild(img);
         col.appendChild(boundingBoxes); // Append bounding box image to the column
