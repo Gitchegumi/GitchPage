@@ -107,16 +107,20 @@ document.getElementById('upload-form').addEventListener('submit', async function
 
   var startTime = Date.now();
 
-  // Set up an interval to send a "still working" message every 2 seconds
-  var intervalId = setInterval(() => {
-    displayMessage("Still working...");
-  }, 5100);
+  // // Set up an interval to send a "still working" message every 2 seconds
+  // var intervalId = setInterval(() => {
+  //   displayMessage("Still working...");
+  // }, 5100);
+  // Show the spinner
+  document.getElementById('spinner').style.display = 'block';
 
   fetchWithRetry('https://elucidate-od.gitchegumi.com/upload', {
     method: 'POST',
     body: formData
   })
   .then(data => {
+    // Hide the spinner
+    document.getElementById('spinner').style.display = 'none';
     var endTime = Date.now();
     var inferenceTime = (endTime - startTime) / 1000; // time in seconds
     console.log(`Inference time: ${inferenceTime.toFixed(3)} seconds`);
@@ -129,5 +133,10 @@ document.getElementById('upload-form').addEventListener('submit', async function
       boundingBoxes.src = 'data:image/png;base64,' + data[i].image;
     }
   })
-  .catch(error => console.error(error));
+  .catch(error => {
+    // Hide the spinner
+  document.getElementById('spinner').style.display = 'none';
+  
+  console.error(error);
+  });
 });
