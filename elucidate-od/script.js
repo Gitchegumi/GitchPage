@@ -44,7 +44,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
     }, timeout);
   };
 
-  async function fetchWithRetry(url, options, retries = 5, backoff = 180000) {
+  async function fetchWithRetry(url, options, retries = 5, backoff = 1000) {
     try {
       const response = await fetch(url, options);
       const data = await response.json();
