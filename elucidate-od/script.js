@@ -15,7 +15,6 @@ document.getElementById('upload-form').addEventListener('submit', async function
   event.preventDefault();
 
   var files = document.getElementById('file-input').files;
-  var server = document.getElementById('server-select').value;
 
   var formData = new FormData();
   for (var i = 0; i < files.length; i++) {
