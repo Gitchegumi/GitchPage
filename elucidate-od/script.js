@@ -15,11 +15,13 @@ document.getElementById('upload-form').addEventListener('submit', async function
   event.preventDefault();
 
   var files = document.getElementById('file-input').files;
+  var server = document.getElementById('server-select').value;
 
   var formData = new FormData();
   for (var i = 0; i < files.length; i++) {
     formData.append('files', files[i]);
-  };
+  }
+  formData.append('server', server);
 
   // Display the uploaded images immediately
   var imageContainer = document.getElementById('image-container');
@@ -67,7 +69,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
 
   fetchWithRetry('https://elucidate-od.gitchegumi.com/upload', {
     method: 'POST',
-    body: 'Active Server'
+    body: formData
   })
   .then(data => {
     // Hide the spinner
