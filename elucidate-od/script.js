@@ -69,7 +69,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
 
   fetchWithRetry('https://elucidate-od.gitchegumi.com/upload', {
     method: 'POST',
-    body: formData
+    body: 'Active Server'
   })
   .then(data => {
     // Hide the spinner

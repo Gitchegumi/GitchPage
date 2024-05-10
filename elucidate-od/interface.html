@@ -16,19 +16,11 @@
     
         <form id="upload-form" enctype="multipart/form-data" class="mt-4">
           <div class="input-group">
-            <label for="file-input">Select images to upload:</label>
+            <label for="file-input">Select images to upload: </label>
             <input type="file" id="file-input" class="form-control-file" multiple>
           </div>
-          <div class="input-group">
-            <br><label for="server-select">Select server:</label><br><br>
-            <select id="server-select" class="form-control">
-              <option value="YOLOv8 Nano">YOLOv8 Nano</option>
-              <option value="YOLOv8 Small">YOLOv8 Small</option>
-              <option value="YOLOv8 Medium">YOLOv8 Medium</option>
-              <!-- Add more options as needed -->
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Upload Images</button>
+          <br>
+          <button type="submit" class="btn btn-primary" id="upload-button">Upload Images</button>
         </form>
       </div>
       <div id="message-container"></div>
