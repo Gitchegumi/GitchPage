@@ -19,8 +19,7 @@ document.getElementById('upload-form').addEventListener('submit', async function
   var formData = new FormData();
   for (var i = 0; i < files.length; i++) {
     formData.append('files', files[i]);
-  }
-  formData.append('server', server);
+  };
 
   // Display the uploaded images immediately
   var imageContainer = document.getElementById('image-container');
