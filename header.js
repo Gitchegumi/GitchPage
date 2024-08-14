@@ -22,12 +22,6 @@ class Header extends HTMLElement {
                     <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="/">Home</a>
                     </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="https://store.gitchegumi.com" target="_blank">Merch</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="https://www.etsy.com/shop/GitchPrints" target="_blank">GitchPrints</a>
-                    </li>
                     <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Projects
@@ -47,6 +41,19 @@ class Header extends HTMLElement {
                         <li><a class="dropdown-item" href="https://www.facebook.com/GitchegumiGaming" target="_blank">Facebook</a></li>
                         <li><a class="dropdown-item" href="https://www.instagram.com/gitchegumi" target="_blank">Instagram</a></li>
                         <li><a class="dropdown-item" href="https://twitter.com/GitchegumiGames" target="_blank">X / Twitter</a></li>
+                    </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Shops
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="nav-item">
+                        <a class="nav-link" href="https://store.gitchegumi.com" target="_blank">Merch</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link" href="https://www.etsy.com/shop/GitchPrints" target="_blank">GitchPrints</a>
+                        </li>
                     </ul>
                     </li>
                 </ul>
