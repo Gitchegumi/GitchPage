@@ -27,17 +27,17 @@ class Header extends HTMLElement {
                         Projects
                     </a>
                     <ul class="dropdown-menu">
+                        <li><h4 class="dropdown-header">Portfolio</li>
+                        <li><a class="dropdown-item" href="/portfolio.html">Web Development Portfolio</a></li>
+                        <li><a class="dropdown-item" href="https://github.com/Gitchegumi" target="_blank">GitHub Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><h4 class="dropdown-header">Content Creation</li>
                         <li><a class="dropdown-item" href="coming_soon.html">Blog</a></li>
                         <li><a class="dropdown-item" href="voice_over.html">Voice Over</a></li>
                         <li><a class="dropdown-item" href="http://www.youtube.com/@GitcheGumi." target="_blank">YouTube</a></li>
                         <li><a class="dropdown-item" href="https://www.twitch.tv/gitchegumi" target="_blank">Twitch</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><h4 class="dropdown-header">Programing</li>
-                        <li><a class="dropdown-item" href="/portfolio.html">Web Development Portfolio</a></li>
-                        <li><a class="dropdown-item" href="https://github.com/Gitchegumi" target="_blank">GitHub Profile</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><h4 class="dropdown-header">Social Media</li>
+                        <li><h4 class="dropdown-header">Get in Touch</li>
                         <li><a class="dropdown-item" href="https://www.facebook.com/GitchegumiGaming" target="_blank">Facebook</a></li>
                         <li><a class="dropdown-item" href="https://www.instagram.com/gitchegumi" target="_blank">Instagram</a></li>
                         <li><a class="dropdown-item" href="https://twitter.com/GitchegumiGames" target="_blank">X / Twitter</a></li>
