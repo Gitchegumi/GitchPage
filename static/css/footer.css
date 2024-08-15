@@ -4,6 +4,19 @@
     padding: 20px 0;
 }
 
+.footer-line {
+    height: 4px;
+    background-color: #3722af; /* This is the blue color from your header, adjust if needed */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.footer-content {
+    padding: 20px 0;
+}
+
 #footer h5 {
     color: #c27319;
 }
