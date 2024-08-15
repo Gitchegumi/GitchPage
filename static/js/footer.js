@@ -12,8 +12,8 @@ class Footer extends HTMLElement {
                 <h5>Site Map</h5>
                 <ul class="list-unstyled">
                   <li><a href="/">Home</a></li>
-                  <li><a href="/portfolio.html">Portfolio</a></li>
-                  <li><a href="/voice_over.html">Voice Over</a></li>
+                  <li><a href="/pages/portfolio.html">Portfolio</a></li>
+                  <li><a href="/pages/voice_over.html">Voice Over</a></li>
                   <li><a href="https://store.gitchegumi.com">Merch</a></li>
                 </ul>
               </div>
