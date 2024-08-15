@@ -28,12 +28,12 @@ class Header extends HTMLElement {
                     </a>
                     <ul class="dropdown-menu">
                         <li><h4 class="dropdown-header">Portfolio</li>
-                        <li><a class="dropdown-item" href="/portfolio.html">Web Development Portfolio</a></li>
+                        <li><a class="dropdown-item" href="/pages/portfolio.html">Web Development Portfolio</a></li>
                         <li><a class="dropdown-item" href="https://github.com/Gitchegumi" target="_blank">GitHub Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><h4 class="dropdown-header">Content Creation</li>
-                        <li><a class="dropdown-item" href="coming_soon.html">Blog</a></li>
-                        <li><a class="dropdown-item" href="voice_over.html">Voice Over</a></li>
+                        <li><a class="dropdown-item" href="/pages/coming_soon.html">Blog</a></li>
+                        <li><a class="dropdown-item" href="/pages/voice_over.html">Voice Over</a></li>
                         <li><a class="dropdown-item" href="http://www.youtube.com/@GitcheGumi." target="_blank">YouTube</a></li>
                         <li><a class="dropdown-item" href="https://www.twitch.tv/gitchegumi" target="_blank">Twitch</a></li>
                         <li><hr class="dropdown-divider"></li>
