@@ -26,7 +26,7 @@ export default function Header() {
         flex-col
         items-center
         p-4
-        bg-brand-blue
+        bg-brand-blue-dark
         border-[5px]
         border-brand-orange
         font-oswald
@@ -53,7 +53,7 @@ export default function Header() {
         border-brand-orange
         font-oswald
         text-[1em]
-        text-zinc-700
+        text-white
         z-50
         relative
         ">
@@ -78,7 +78,7 @@ export default function Header() {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className='mr-16 bg-brand-blue hover:bg-brand-blue font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
+              <NavigationMenuTrigger className='mr-16 bg-brand-blue hover:bg-brand-blue-light font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
                 Projects
               </NavigationMenuTrigger>
                 <NavigationMenuContent className='justify-end'>
@@ -133,7 +133,9 @@ export default function Header() {
                 </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className='bg-brand-blue'>Shops</NavigationMenuTrigger>
+              <NavigationMenuTrigger className='mr-16 bg-brand-blue hover:bg-brand-blue-light font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
+                Shops
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
                   <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                     <ListItem href="https://store.gitchegumi.com/" target='_blank' title="Gitchegumi Merch">

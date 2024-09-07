@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { lighten, darken } from 'polished';
 
 const config: Config = {
     darkMode: ["class"],
@@ -15,6 +16,8 @@ const config: Config = {
   		},
   		colors: {
   			'brand-blue': '#4166f5',
+			'brand-blue-dark': darken(0.2, '#4166f5'),
+			'brand-blue-light': lighten(0.2, '#4166f5'),
   			'brand-orange': '#fca311',
   			'wwtw-blue': '#5FA4B8',
   			'wwtw-elm': '#1D6D85',
