@@ -83,32 +83,20 @@ export default function Header() {
               </NavigationMenuTrigger>
                 <NavigationMenuContent className='justify-end'>
                   <NavigationMenuLink asChild>
-                    <div className='text-xl font-oswald text-center'>
+                    <div className='text-3xl p-2 font-oswald'>
                       Portfolio
                     </div>
                   </NavigationMenuLink>
                   <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                    <li className="row-span-3">
-                        <NavigationMenuLink asChild>
-                          <a
-                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                            href="/"
-                          >
-                            <div className='mb-2 mt-4 text-lg font-oswald'>
-                              Web Development Portfolio
-                            </div>
-                            <p className='text-sm leading-tight text-muted-foreground'>
-                              A list of the web development journey I have taken.
-                            </p>
-                          </a>
-                        </NavigationMenuLink>
-                    </li>
+                    <ListItem href="/portfolio" title="Web Development Portfolio">
+                      A list of the web development journey I have taken.
+                    </ListItem>
                     <ListItem href="https://github.com/Gitchegumi" title="GitHub Profile">
                       The GitHub Profile for Gitchegumi
                     </ListItem>
                   </ul>
                   <NavigationMenuLink asChild>
-                    <div className='text-xl font-oswald text-center'>
+                    <div className='text-3xl p-2 font-oswald'>
                       Content Creation
                     </div>
                   </NavigationMenuLink>
@@ -127,7 +115,7 @@ export default function Header() {
                     </ListItem>
                   </ul>
                   <NavigationMenuLink asChild>
-                    <div className='text-xl font-oswald text-center'>
+                    <div className='text-xl p-2 font-oswald'>
                       Socials
                     </div>
                   </NavigationMenuLink>
@@ -147,7 +135,14 @@ export default function Header() {
             <NavigationMenuItem>
               <NavigationMenuTrigger className='bg-brand-blue'>Shops</NavigationMenuTrigger>
               <NavigationMenuContent>
-                <NavigationMenuLink>Link</NavigationMenuLink>
+                  <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                    <ListItem href="https://store.gitchegumi.com/" target='_blank' title="Gitchegumi Merch">
+                      Check out the Gitchegumi Merch Store!
+                    </ListItem>
+                    <ListItem href="https://www.etsy.com/shop/GitchPrints" target='_blank' title="Etsy">
+                      Check out the GitchPrints Etsy Store!
+                    </ListItem>
+                  </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>
