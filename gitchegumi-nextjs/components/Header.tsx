@@ -88,8 +88,8 @@ export default function Header() {
                     </div>
                   </NavigationMenuLink>
                   <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                    <ListItem href="/portfolio" title="Web Development Portfolio">
-                      A list of the web development journey I have taken.
+                    <ListItem href="/portfolio" title="Tech Portfolio">
+                      A list of the tech credentials of Gitchegumi.
                     </ListItem>
                     <ListItem href="https://github.com/Gitchegumi" title="GitHub Profile">
                       The GitHub Profile for Gitchegumi
