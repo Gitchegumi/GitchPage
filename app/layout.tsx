@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { ThemeProvider } from "@/components/theme-provider"
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { ThemeProvider } from "../components/theme-provider";
 import "./globals.css";
 import { ReactNode } from "react";
 

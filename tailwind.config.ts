@@ -16,8 +16,8 @@ const config: Config = {
   		},
   		colors: {
   			'brand-blue': '#4166f5',
-			'brand-blue-dark': darken(0.2, '#4166f5'),
-			'brand-blue-light': lighten(0.2, '#4166f5'),
+  			'brand-blue-dark': 'darken(0.2, '#4166f5')',
+  			'brand-blue-light': 'lighten(0.2, '#4166f5')',
   			'brand-orange': '#fca311',
   			'wwtw-blue': '#5FA4B8',
   			'wwtw-elm': '#1D6D85',
@@ -70,9 +70,9 @@ const config: Config = {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
-      fontFamily: {
-        oswald: ['Oswald', 'sans-serif']
-      }
+  		fontFamily: {
+  			oswald: ['Oswald', 'sans-serif']
+  		}
   	}
   },
   plugins: [require("tailwindcss-animate")],

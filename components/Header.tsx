@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { cn } from "@/lib/utils"
+import { cn } from "../lib/utils"
 import { ModeToggle } from './ui/mode-button';
 import {
   NavigationMenu,
@@ -15,7 +15,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
+} from "../components/ui/navigation-menu"
 
 export default function Header() {
   return (
