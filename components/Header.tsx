@@ -46,7 +46,7 @@ export default function Header({ backgroundImage }: HeaderProps) {
     <header>
       {/* Top Material */}
       <div className={headerClassName} style={headerStyle}>
-        <div className={isVoiceOverPage ? 'flex flex-col items-center' : ''}>
+        <div className={isVoiceOverPage ? 'flex flex-col items-center' : 'flex flex-col items-center'}>
           <Image
             src='/assets/images/Mascot.png'
             alt='Gitchegumi Mascot'
