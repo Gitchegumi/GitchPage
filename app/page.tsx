@@ -23,7 +23,9 @@ export default function Home() {
         <ul className="list-disc list-inside p-4 mb-16">
           <li>Web Development</li>
           <li>Ansible and Terraform Automation</li>
-          <li>Voice-Over Services</li>
+          <Link href='/voice-over'>
+            <li>Voice-Over Services</li>
+          </Link>
           <li>Content Creation</li>
           <li>Game Streaming</li>
         </ul>

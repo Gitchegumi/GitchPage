@@ -1,5 +1,7 @@
 import React from 'react';
+import Link from 'next/link';
 import { Metadata } from 'next';
+import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
   title: 'Voice Over - Gitch\'s Page',
@@ -16,13 +18,14 @@ export default function VoiceOver() {
             <source src='/assets/demos/GITCHEGUMI-MEDIA_COMMERICAL-DEMO.mp3' type='audio/mpeg' />
             Your browser does not support the audio element.
           </audio>
-          <a
-            href='/assets/demos/GITCHEGUMI-MEDIA_COMMERICAL-DEMO.mp3'
-            download
-            className="inline-block bg-brand-blue hover:bg-brand-blue-light text-white font-bold py-2 px-4 rounded"
-          >
-            Download Commercial Demo
-          </a>
+          <Button variant='default' className="z-40 mt-2 text-black bg-brand-blue-light hover:bg-white dark:text-white dark:bg-brand-blue-dark dark:hover:bg-brand-blue">
+            <a
+              href='/assets/demos/GITCHEGUMI-MEDIA_COMMERICAL-DEMO.mp3'
+              download
+            >
+              Download Commercial Demo
+            </a>
+          </Button>
         </section>
 
         <section>
@@ -31,13 +34,14 @@ export default function VoiceOver() {
             <source src='/assets/demos/GITCHEGUMI-MEDIA_ELEARNING-DEMO.mp3' type='audio/mpeg' />
             Your browser does not support the audio element.
           </audio>
-          <a
-            href='/assets/demos/GITCHEGUMI-MEDIA_ELEARNING-DEMO.mp3'
-            download
-            className="inline-block bg-brand-blue hover:bg-brand-blue-light text-white font-bold py-2 px-4 rounded"
-          >
-            Download E-learning Demo
-          </a>
+          <Button variant='default' className="z-40 mt-2 text-black bg-brand-blue-light hover:bg-white dark:text-white dark:bg-brand-blue-dark dark:hover:bg-brand-blue">
+            <a
+              href='/assets/demos/GITCHEGUMI-MEDIA_ELEARNING-DEMO.mp3'
+              download={true}
+            >
+                Download E-learning Demo
+            </a>
+          </Button>
         </section>
       </div>
     </main>

@@ -39,21 +39,23 @@ export default function Header({ backgroundImage }: HeaderProps) {
     text-[2em]\
     text-white\
     bg-brand-blue-dark",
-    isVoiceOverPage ? 'items-start pl-16 justify-center' : 'items-center'
+    isVoiceOverPage ? 'items-start pl-16 content-center' : 'items-center'
   );
 
   return (
     <header>
       {/* Top Material */}
       <div className={headerClassName} style={headerStyle}>
-        <Image
-          src='/assets/images/Mascot.png'
-          alt='Gitchegumi Mascot'
-          width={147}
-          height={100}
-          priority
-        />
-        Gitchegumi Media
+        <div className={isVoiceOverPage ? 'flex flex-col items-center' : ''}>
+          <Image
+            src='/assets/images/Mascot.png'
+            alt='Gitchegumi Mascot'
+            width={147}
+            height={100}
+            priority
+          />
+          Gitchegumi Media
+        </div>
       </div>
       {/* Navigation */}
       <nav className="
