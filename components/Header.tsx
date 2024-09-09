@@ -1,43 +1,57 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { cn } from "../lib/utils"
 import { ModeToggle } from './ui/mode-button';
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
   navigationMenuTriggerStyle,
 } from "../components/ui/navigation-menu"
 
-export default function Header() {
+interface HeaderProps {
+  backgroundImage?: string;
+  className?: string;
+}
+
+export default function Header({ backgroundImage }: HeaderProps) {
+  const pathname = usePathname();
+  const isVoiceOverPage = pathname === '/voice-over';
+
+  const headerStyle = backgroundImage
+    ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: '80%', backgroundPosition: 'right', backgroundRepeat: 'no-repeat' }
+    : {};
+
+  const headerClassName = cn(
+    "flex\
+    flex-col\
+    p-4\
+    border-[5px]\
+    border-brand-orange\
+    font-oswald\
+    text-[2em]\
+    text-white\
+    bg-brand-blue-dark",
+    isVoiceOverPage ? 'items-start pl-16 justify-center' : 'items-center'
+  );
+
   return (
     <header>
       {/* Top Material */}
-      <div className="
-        flex
-        flex-col
-        items-center
-        p-4
-        bg-brand-blue-dark
-        border-[5px]
-        border-brand-orange
-        font-oswald
-        text-[2em]
-        text-white
-        ">
+      <div className={headerClassName} style={headerStyle}>
         <Image
           src='/assets/images/Mascot.png'
           alt='Gitchegumi Mascot'
           width={147}
           height={100}
+          priority
         />
         Gitchegumi Media
       </div>
