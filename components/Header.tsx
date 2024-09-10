@@ -128,17 +128,17 @@ export default function Header() {
                         </div>
                       </NavigationMenuLink>
                       <ul className="space-y-4">
-                        <ListItem href="https://www.youtube.com/@GitcheGumi." target='_blank' title="YouTube">
-                          Join Gitchegumi on YouTube!
-                        </ListItem>
-                        <ListItem href="https://www.twitch.tv/gitchegumi" target='_blank' title="Twitch">
-                          Join Gitchegumi on Twitch!
-                        </ListItem>
                         <ListItem href="/voice-over" title="Voice Over">
                           Listen to Gitchegumi's VO Demos and Schedule him for your next project!
                         </ListItem>
                         <ListItem href="/blog" title="Blog">
                           Read the latest from Gitchegumi!
+                        </ListItem>
+                        <ListItem href="https://www.youtube.com/@GitcheGumi." target='_blank' title="YouTube">
+                          Join Gitchegumi on YouTube!
+                        </ListItem>
+                        <ListItem href="https://www.twitch.tv/gitchegumi" target='_blank' title="Twitch">
+                          Join Gitchegumi on Twitch!
                         </ListItem>
                       </ul>
                     </div>
