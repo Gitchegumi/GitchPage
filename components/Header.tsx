@@ -35,7 +35,7 @@ export default function Header() {
   };
 
   return (
-    <header className='bg-gradient-to-t from-slate-900 to-bg-slate-700'>
+    <header className='bg-gradient-to-t from-slate-900 to-bg-slate-700 pt-2'>
       {/* Top Material */}
       <div className={headerClassName} style={headerStyle}></div>
       {/* Navigation */}
