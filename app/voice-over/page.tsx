@@ -77,16 +77,21 @@ export default function VoiceOver() {
           <p className="mb-4">
             Ready to take your project to the next level? Let's work together to create something amazing!
           </p>
+          <Button variant='default' className="items-center w-[15rem] mt-2 text-black bg-brand-blue-light hover:bg-white dark:text-white dark:bg-brand-blue-dark dark:hover:bg-brand-blue">
+            <a
+              href='mailto:admin@gitchegumi.com'
+            >Reach out!</a>
+          </Button>
         </section>
 
         {/* Contact form section */}
-        <section className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md shadow-brand-blue-dark">
+        {/* <section className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md shadow-brand-blue-dark">
           <h2 className="text-3xl font-bold mb-4">Get in Touch</h2>
           <p className="mb-4">
             Fill out the form below to discuss your project, request a custom audition, or get a quote. I'll get back to you as soon as possible!
           </p>
           <ContactForm />
-        </section>
+        </section> */}
       </div>
     </main>
   );
