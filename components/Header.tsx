@@ -45,9 +45,9 @@ export default function Header() {
         justify-around
         items-center
         p-2
-        bg-gradient-to-r
-        from-brand-blue
-        to-brand-blue-dark
+        dark:bg-gradient-to-r
+        dark:from-brand-blue
+        dark:to-brand-blue-dark
         shadow-sm
         shadow-brand-orange
         rounded-lg
