@@ -35,7 +35,7 @@ export default function Header() {
   };
 
   return (
-    <header className='bg-gradient-to-t from-slate-900 to-bg-slate-700 pt-2'>
+    <header className='dark:bg-gradient-to-t dark:from-slate-900 dark:to-bg-slate-700 pt-2'>
       {/* Top Material */}
       <div className={headerClassName} style={headerStyle}></div>
       {/* Navigation */}
@@ -45,9 +45,9 @@ export default function Header() {
         justify-around
         items-center
         p-2
-        dark:bg-gradient-to-r
-        dark:from-brand-blue
-        dark:to-brand-blue-dark
+        bg-gradient-to-r
+        from-brand-blue
+        to-brand-blue-dark
         shadow-sm
         shadow-brand-orange
         rounded-lg
