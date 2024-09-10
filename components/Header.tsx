@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 import { cn } from "../lib/utils"
 import { ModeToggle } from './ui/mode-button';
 import {
@@ -16,46 +15,36 @@ import {
   navigationMenuTriggerStyle,
 } from "../components/ui/navigation-menu"
 
-interface HeaderProps {
-  backgroundImage?: string;
-  className?: string;
-}
-
-export default function Header({ backgroundImage }: HeaderProps) {
-  const pathname = usePathname();
-  const isVoiceOverPage = pathname === '/voice-over';
-
-  const headerStyle = backgroundImage
-    ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: '40%', backgroundPosition: 'right', backgroundRepeat: 'no-repeat' }
-    : {};
+export default function Header() {
 
   const headerClassName = cn(`
     flex
     flex-col
-    p-4
+    p-24
     border-[5px]
     border-brand-orange
-    font-oswald
-    text-[2em]
-    text-white
-    bg-gradient-to-r
-    from-brand-blue-dark
-    to-brand-blue
   `);
+
+  const headerStyle = {
+    backgroundImage: "url('/assets/images/Banner1.png')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center -280px',
+    backgroundRepeat: 'no-repeat',
+  };
 
   return (
     <header>
       {/* Top Material */}
       <div className={headerClassName} style={headerStyle}>
-        <div className={isVoiceOverPage ? 'flex flex-col items-center' : 'flex flex-col items-center'}>
-          <Image
+        <div className='flex flex-col items-center'>
+          {/* <Image
             src='/assets/images/Mascot.png'
             alt='Gitchegumi Mascot'
             width={147}
             height={100}
             priority
           />
-          Gitchegumi Media
+          Gitchegumi Media */}
         </div>
       </div>
       {/* Navigation */}
