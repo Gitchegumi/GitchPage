@@ -29,18 +29,19 @@ export default function Header({ backgroundImage }: HeaderProps) {
     ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: '40%', backgroundPosition: 'right', backgroundRepeat: 'no-repeat' }
     : {};
 
-  const headerClassName = cn(
-    "flex\
-    flex-col\
-    p-4\
-    border-[5px]\
-    border-brand-orange\
-    font-oswald\
-    text-[2em]\
-    text-white\
-    bg-brand-blue-dark",
-    // isVoiceOverPage ? 'items-start pl-60 content-center' : 'items-center'
-  );
+  const headerClassName = cn(`
+    flex
+    flex-col
+    p-4
+    border-[5px]
+    border-brand-orange
+    font-oswald
+    text-[2em]
+    text-white
+    bg-gradient-to-r
+    from-brand-blue-dark
+    to-brand-blue
+  `);
 
   return (
     <header>
@@ -64,7 +65,9 @@ export default function Header({ backgroundImage }: HeaderProps) {
         justify-around
         items-center
         p-2
-        bg-brand-blue
+        bg-gradient-to-r
+        from-brand-blue
+        to-brand-blue-dark
         border-[1px]
         border-brand-orange
         font-oswald

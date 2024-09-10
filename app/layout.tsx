@@ -27,7 +27,7 @@ export default function RootLayout({
           enableSystem={true}
           storageKey="theme"
         >
-          <Header backgroundImage={headerBackgroundImage} className={isVoiceOverPage ? 'w-auto h-10 object-cover' : ''} />
+          <Header />
           {children}
           <Footer />
         </ThemeProvider>
