@@ -28,7 +28,7 @@ export default function RootLayout({
           storageKey="theme"
         >
           <Header />
-          <main className="flex min-h-screen flex-col items-center justify-between font-oswald">
+          <main className="flex min-h-screen bg-gradient-to-b from-slate-900 to-bg-slate-700 flex-col items-center justify-between font-oswald">
             <div className="
               relative
               flex
