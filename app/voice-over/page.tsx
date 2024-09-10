@@ -47,7 +47,7 @@ export default function VoiceOver() {
           </section>
         </div>
 
-        <section className="bg-gray-100 dark:bg-gray-800 p-8 rounded-lg shadow-md shadow-brand-blue-dark">
+        <section className="bg-gray-100 dark:bg-gray-800 p-8 rounded-lg shadow-md shadow-brand-blue-light dark:shadow-brand-blue-dark bg-opacity-40">
           <h2 className="text-3xl font-bold mb-4">Bring Your Project to Life with Professional Voiceover</h2>
           <p className="mb-4">
             Are you looking for a versatile voice to elevate your project? Look no further! With experience in both commercial and e-learning voiceover, I bring characters and concepts to life with clarity and enthusiasm.
