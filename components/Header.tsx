@@ -26,7 +26,7 @@ export default function Header({ backgroundImage }: HeaderProps) {
   const isVoiceOverPage = pathname === '/voice-over';
 
   const headerStyle = backgroundImage
-    ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: '80%', backgroundPosition: 'right', backgroundRepeat: 'no-repeat' }
+    ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: '40%', backgroundPosition: 'right', backgroundRepeat: 'no-repeat' }
     : {};
 
   const headerClassName = cn(
@@ -39,7 +39,7 @@ export default function Header({ backgroundImage }: HeaderProps) {
     text-[2em]\
     text-white\
     bg-brand-blue-dark",
-    isVoiceOverPage ? 'items-start pl-16 content-center' : 'items-center'
+    // isVoiceOverPage ? 'items-start pl-60 content-center' : 'items-center'
   );
 
   return (

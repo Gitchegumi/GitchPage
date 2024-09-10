@@ -47,51 +47,6 @@ export default function ComingSoonPage({ title }: ComingSoonPageProps) {
             Return to the main page.
           </p>
         </Link>
-
-        <Link
-          href="/about"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className="mb-3 text-2xl text-black dark:text-white font-semibold">
-            About{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-black dark:text-white text-sm opacity-50">
-            Learn more about AI2C.
-          </p>
-        </Link>
-
-        <Link
-          href="/what-we-do"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg:neutral-800/30"
-        >
-          <h2 className="mb-3 text-2xl text-black dark:text-white font-semibold">
-            What We Do{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-black dark:text-white text-sm opacity-50">
-            Explore our services and projects.
-          </p>
-        </Link>
-
-        <Link
-          href="/contact"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg:neutral-800/30"
-        >
-          <h2 className="mb-3 text-2xl text-black dark:text-white font-semibold">
-            Contact{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-black dark:text-white text-sm opacity-50">
-            Get in touch with us.
-          </p>
-        </Link>
       </div>
     </main>
   );
