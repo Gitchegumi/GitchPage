@@ -21,13 +21,21 @@ export default function Home() {
         </span>
         <span className="text-lg md:text-3xl">What I Offer</span>
         <ul className="list-disc list-inside p-4 mb-16">
-          <li>Web Development</li>
-          <li>Ansible and Terraform Automation</li>
+          <Link href='/portfolio'>
+            <li><span className="text-brand-blue hover:text-brand-orange">Web Development</span></li>
+          </Link>
+          <Link href='https://github.com/Gitchegumi/ansible-playbooks' target="_blank">
+            <li><span className="text-brand-blue hover:text-brand-orange">Ansible and Terraform Automation</span></li>
+          </Link>
           <Link href='/voice-over'>
             <li><span className="text-brand-blue hover:text-brand-orange">Voice-Over Services</span></li>
           </Link>
-          <li>Content Creation</li>
-          <li>Game Streaming</li>
+          <Link href='https://www.youtube.com/@GitcheGumi.'>
+            <li><span className="text-brand-blue hover:text-brand-orange">Content Creation</span></li>
+          </Link>
+          <Link href='https://www.twitch.tv/gitchegumi' target="_blank">
+            <li><span className="text-brand-blue hover:text-brand-orange">Game Streaming</span></li>
+          </Link>
         </ul>
         <span className="text-lg md:text-3xl mb-4">Ready to Collaborate?</span>
         Let's bring your ideas to life! 
