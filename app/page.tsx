@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <main>
+    <main className="pt-8">
       <div className="relative z-10 w-full max-w-5xl items-center justify-between text-sm flex flex-col">
-        <p className="text-lg md:text-5xl text-center content-center flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 bg-opacity-60">
+        <p className="text-lg md:text-5xl text-center content-center flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-2 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-0 lg:dark:bg-zinc-800/30 bg-opacity-60">
           Welcome to the website of GitcheGumi Media LLC
         </p>
         <p className="mt-4 text-center text-small mb-16 md:text-lg">
