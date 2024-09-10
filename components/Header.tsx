@@ -45,7 +45,9 @@ export default function Header() {
         justify-around
         items-center
         p-2
-        bg-brand-blue
+        bg-gradient-to-r
+        from-brand-blue
+        to-brand-blue-dark
         shadow-sm
         shadow-brand-orange
         rounded-lg
@@ -81,7 +83,7 @@ export default function Header() {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className='mr-16 bg-brand-blue hover:bg-brand-blue-light font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
+              <NavigationMenuTrigger className='mr-16 bg-transparent hover:bg-transparent font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
                 Projects
               </NavigationMenuTrigger>
                 <NavigationMenuContent className='justify-end'>
@@ -136,7 +138,7 @@ export default function Header() {
                 </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className='mr-16 bg-brand-blue hover:bg-brand-blue-light font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
+              <NavigationMenuTrigger className='mr-16 bg-transparent hover:bg-transparent font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
                 Shops
               </NavigationMenuTrigger>
               <NavigationMenuContent>
