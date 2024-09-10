@@ -21,32 +21,23 @@ export default function Header() {
     flex
     flex-col
     p-24
-    border-[5px]
-    border-brand-orange
+    rounded-lg
+    mx-16
+    shadow-md
+    shadow-brand-orange
   `);
 
   const headerStyle = {
     backgroundImage: "url('/assets/images/Banner1.png')",
     backgroundSize: 'cover',
-    backgroundPosition: 'center -280px',
+    backgroundPosition: 'center -250px',
     backgroundRepeat: 'no-repeat',
   };
 
   return (
     <header>
       {/* Top Material */}
-      <div className={headerClassName} style={headerStyle}>
-        <div className='flex flex-col items-center'>
-          {/* <Image
-            src='/assets/images/Mascot.png'
-            alt='Gitchegumi Mascot'
-            width={147}
-            height={100}
-            priority
-          />
-          Gitchegumi Media */}
-        </div>
-      </div>
+      <div className={headerClassName} style={headerStyle}></div>
       {/* Navigation */}
       <nav className="
         flex
@@ -54,24 +45,28 @@ export default function Header() {
         justify-around
         items-center
         p-2
-        bg-gradient-to-r
-        from-brand-blue
-        to-brand-blue-dark
-        border-[1px]
-        border-brand-orange
+        bg-brand-blue
+        shadow-sm
+        shadow-brand-orange
+        rounded-lg
         font-oswald
         text-[1em]
         text-white
         z-50
+        mx-16
+        mt-2
         relative
         ">
-        <Image
-          src='/assets/images/Media Text.png'
-          alt='Gitchegumi Media Text'
-          width={90}
-          height={84}
-          className='mx-16'
-        />
+        <div className='
+          font-oswald
+          px-16
+          text-brand-orange
+          text-xl
+          centered
+          '>
+          <span className='block'>Gitchegumi Media</span>
+          <span className='block text-xs'>LLC.</span>
+        </div>
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem className='mr-16'>
