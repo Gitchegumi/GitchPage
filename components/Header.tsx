@@ -1,8 +1,7 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { cn } from "../lib/utils"
 import { ModeToggle } from './ui/mode-button';
 import {
@@ -16,11 +15,20 @@ import {
 } from "../components/ui/navigation-menu"
 
 export default function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   const headerClassName = cn(`
     flex
     flex-col
-    p-24
+    py-16
+    md:py-20
+    lg:py-24
+    xl:py-28
+    2xl:py-36
     rounded-lg
     mx-16
     shadow-md
@@ -30,7 +38,7 @@ export default function Header() {
   const headerStyle = {
     backgroundImage: "url('/assets/images/Banner1.png')",
     backgroundSize: 'cover',
-    backgroundPosition: 'center -250px',
+    backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
   };
 
@@ -69,93 +77,102 @@ export default function Header() {
           <span className='block'>Gitchegumi Media</span>
           <span className='block text-xs'>LLC.</span>
         </div>
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem className='mr-16'>
-              <Link 
-                href='/'
-                legacyBehavior
-                passHref
-              >
-                <NavigationMenuLink className={`{navigationMenuTriggerStyle()} hover:text-brand-orange hover:underline focus:text-brand-orange`}>
-                Home
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className='mr-16 bg-transparent hover:bg-transparent font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
-                Projects
-              </NavigationMenuTrigger>
-                <NavigationMenuContent className='justify-end'>
-                  <NavigationMenuLink asChild>
-                    <div className='text-3xl p-2 font-oswald'>
-                      Portfolio
-                    </div>
+        <div className="md:hidden">
+          <button onClick={toggleMenu} className="text-white focus:outline-none">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+          </button>
+        </div>
+        <div className={`md:flex ${isMenuOpen ? 'flex' : 'hidden'} flex-col md:flex-row md:items-center`}>
+          <NavigationMenu>
+            <NavigationMenuList className="flex flex-col md:flex-row">
+              <NavigationMenuItem className='mr-16'>
+                <Link 
+                  href='/'
+                  legacyBehavior
+                  passHref
+                >
+                  <NavigationMenuLink className={`${navigationMenuTriggerStyle()} bg-transparent hover:text-brand-orange hover:underline focus:text-brand-orange`}>
+                  Home
                   </NavigationMenuLink>
-                  <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                    <ListItem href="/portfolio" title="Tech Portfolio">
-                      A list of the tech credentials of Gitchegumi.
-                    </ListItem>
-                    <ListItem href="https://github.com/Gitchegumi" title="GitHub Profile">
-                      The GitHub Profile for Gitchegumi
-                    </ListItem>
-                  </ul>
-                  <NavigationMenuLink asChild>
-                    <div className='text-3xl p-2 font-oswald'>
-                      Content Creation
-                    </div>
-                  </NavigationMenuLink>
-                  <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                    <ListItem href="https://www.youtube.com/@GitcheGumi." target='_blank' title="YouTube">
-                      Join Gitchegumi on YouTube!
-                    </ListItem>
-                    <ListItem href="https://www.twitch.tv/gitchegumi" target='_blank' title="Twitch">
-                      Join Gitchegumi on Twitch!
-                    </ListItem>
-                    <ListItem href="/voice-over" title="Voice Over">
-                      Listen to Gitchegumi's VO Demos and Schedule him for your next project!
-                    </ListItem>
-                    <ListItem href="/blog" title="Blog">
-                      Read the latest from Gitchegumi!
-                    </ListItem>
-                  </ul>
-                  <NavigationMenuLink asChild>
-                    <div className='text-xl p-2 font-oswald'>
-                      Socials
-                    </div>
-                  </NavigationMenuLink>
-                  <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                    <ListItem href="https://www.instagram.com/gitchegumi" target='_blank' title="Instagram">
-                      Follow Gitchegumi on Instagram!
-                    </ListItem>
-                    <ListItem href="https://x.com/GitchegumiGames" target='_blank' title="X">
-                      Follow Gitchegumi on X!
-                    </ListItem>
-                    <ListItem href="https://www.facebook.com/GitchegumiGaming" target='_blank' title="Facebook">
-                      Gitchegumi Gaming Facebook Community!
-                    </ListItem>
-                  </ul>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className='mr-16 bg-transparent hover:bg-transparent font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
+                  Projects
+                </NavigationMenuTrigger>
+                  <NavigationMenuContent className='justify-end'>
+                    <NavigationMenuLink asChild>
+                      <div className='text-3xl p-2 font-oswald'>
+                        Portfolio
+                      </div>
+                    </NavigationMenuLink>
+                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                      <ListItem href="/portfolio" title="Tech Portfolio">
+                        A list of the tech credentials of Gitchegumi.
+                      </ListItem>
+                      <ListItem href="https://github.com/Gitchegumi" title="GitHub Profile">
+                        The GitHub Profile for Gitchegumi
+                      </ListItem>
+                    </ul>
+                    <NavigationMenuLink asChild>
+                      <div className='text-3xl p-2 font-oswald'>
+                        Content Creation
+                      </div>
+                    </NavigationMenuLink>
+                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                      <ListItem href="https://www.youtube.com/@GitcheGumi." target='_blank' title="YouTube">
+                        Join Gitchegumi on YouTube!
+                      </ListItem>
+                      <ListItem href="https://www.twitch.tv/gitchegumi" target='_blank' title="Twitch">
+                        Join Gitchegumi on Twitch!
+                      </ListItem>
+                      <ListItem href="/voice-over" title="Voice Over">
+                        Listen to Gitchegumi's VO Demos and Schedule him for your next project!
+                      </ListItem>
+                      <ListItem href="/blog" title="Blog">
+                        Read the latest from Gitchegumi!
+                      </ListItem>
+                    </ul>
+                    <NavigationMenuLink asChild>
+                      <div className='text-xl p-2 font-oswald'>
+                        Socials
+                      </div>
+                    </NavigationMenuLink>
+                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                      <ListItem href="https://www.instagram.com/gitchegumi" target='_blank' title="Instagram">
+                        Follow Gitchegumi on Instagram!
+                      </ListItem>
+                      <ListItem href="https://x.com/GitchegumiGames" target='_blank' title="X">
+                        Follow Gitchegumi on X!
+                      </ListItem>
+                      <ListItem href="https://www.facebook.com/GitchegumiGaming" target='_blank' title="Facebook">
+                        Gitchegumi Gaming Facebook Community!
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className='mr-16 bg-transparent hover:bg-transparent font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
+                  Shops
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                      <ListItem href="https://store.gitchegumi.com/" target='_blank' title="Gitchegumi Merch">
+                        Check out the Gitchegumi Merch Store!
+                      </ListItem>
+                      <ListItem href="https://www.etsy.com/shop/GitchPrints" target='_blank' title="Etsy">
+                        Check out the GitchPrints Etsy Store!
+                      </ListItem>
+                    </ul>
                 </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className='mr-16 bg-transparent hover:bg-transparent font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange'>
-                Shops
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                  <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                    <ListItem href="https://store.gitchegumi.com/" target='_blank' title="Gitchegumi Merch">
-                      Check out the Gitchegumi Merch Store!
-                    </ListItem>
-                    <ListItem href="https://www.etsy.com/shop/GitchPrints" target='_blank' title="Etsy">
-                      Check out the GitchPrints Etsy Store!
-                    </ListItem>
-                  </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-        <div className='ml-auto mr-16'>
-          <ModeToggle />
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+          <div className='ml-auto mr-16'>
+            <ModeToggle />
+          </div>
         </div>
       </nav>
     </header>
