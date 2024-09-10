@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 import { cn } from "../lib/utils"
 import { ModeToggle } from './ui/mode-button';
 import {
@@ -16,48 +15,29 @@ import {
   navigationMenuTriggerStyle,
 } from "../components/ui/navigation-menu"
 
-interface HeaderProps {
-  backgroundImage?: string;
-  className?: string;
-}
-
-export default function Header({ backgroundImage }: HeaderProps) {
-  const pathname = usePathname();
-  const isVoiceOverPage = pathname === '/voice-over';
-
-  const headerStyle = backgroundImage
-    ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: '40%', backgroundPosition: 'right', backgroundRepeat: 'no-repeat' }
-    : {};
+export default function Header() {
 
   const headerClassName = cn(`
     flex
     flex-col
-    p-4
-    border-[5px]
-    border-brand-orange
-    font-oswald
-    text-[2em]
-    text-white
-    bg-gradient-to-r
-    from-brand-blue-dark
-    to-brand-blue
+    p-24
+    rounded-lg
+    mx-16
+    shadow-md
+    shadow-brand-orange
   `);
+
+  const headerStyle = {
+    backgroundImage: "url('/assets/images/Banner1.png')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center -250px',
+    backgroundRepeat: 'no-repeat',
+  };
 
   return (
     <header>
       {/* Top Material */}
-      <div className={headerClassName} style={headerStyle}>
-        <div className={isVoiceOverPage ? 'flex flex-col items-center' : 'flex flex-col items-center'}>
-          <Image
-            src='/assets/images/Mascot.png'
-            alt='Gitchegumi Mascot'
-            width={147}
-            height={100}
-            priority
-          />
-          Gitchegumi Media
-        </div>
-      </div>
+      <div className={headerClassName} style={headerStyle}></div>
       {/* Navigation */}
       <nav className="
         flex
@@ -65,24 +45,28 @@ export default function Header({ backgroundImage }: HeaderProps) {
         justify-around
         items-center
         p-2
-        bg-gradient-to-r
-        from-brand-blue
-        to-brand-blue-dark
-        border-[1px]
-        border-brand-orange
+        bg-brand-blue
+        shadow-sm
+        shadow-brand-orange
+        rounded-lg
         font-oswald
         text-[1em]
         text-white
         z-50
+        mx-16
+        mt-2
         relative
         ">
-        <Image
-          src='/assets/images/Media Text.png'
-          alt='Gitchegumi Media Text'
-          width={90}
-          height={84}
-          className='mx-16'
-        />
+        <div className='
+          font-oswald
+          px-16
+          text-brand-orange
+          text-xl
+          centered
+          '>
+          <span className='block'>Gitchegumi Media</span>
+          <span className='block text-xs'>LLC.</span>
+        </div>
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem className='mr-16'>
