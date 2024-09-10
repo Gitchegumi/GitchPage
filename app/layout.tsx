@@ -20,7 +20,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body className="overflow-x-hidden">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -34,11 +34,12 @@ export default function RootLayout({
               flex
               flex-col
               place-items-center
+              w-full
               before:absolute
               before:h-[300px]
-              before:w-full
-              before:translate-y-full
-              before:-translate-x-1/2
+              before:w-[180%]
+              before:top-[100%]
+              before:left-[-40%]
               before:rounded-full
               before:bg-gradient-radial
               before:from-white
@@ -47,9 +48,9 @@ export default function RootLayout({
               before:content-['']
               after:absolute
               after:h-[180px]
-              after:w-full
-              after:translate-x-1/3
-              after:translate-y-full
+              after:w-[180%]
+              after:top-[100%]
+              after:left-[-40%]
               after:bg-gradient-conic
               after:from-sky-200
               after:via-blue-200
@@ -62,9 +63,8 @@ export default function RootLayout({
               after:dark:from-brand-blue
               after:dark:via-[#0141ff]
               after:dark:opacity-40
-              sm:before:w-[480px]
-              sm:after:w-[240px]
-              before:lg:h-[360px]"
+              before:lg:h-[360px]
+              overflow-hidden"
             >
               {children}
             </div>

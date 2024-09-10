@@ -14,8 +14,8 @@ export default function VoiceOver() {
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="space-y-8">
-        <div className='flex flex-row justify-around'>
-          <Card className='w-[25rem] relative'>
+        <div className='flex flex-col md:flex-row justify-around'>
+          <Card className='w-[20rem] md:w-[25rem] relative'>
             <div className="absolute inset-0 bg-gray-800 opacity-40 rounded-lg pointer-events-none"></div>
             <CardHeader className='relative z-10'>
               <CardTitle className="text-2xl text-center font-bold mb-4">
@@ -23,11 +23,11 @@ export default function VoiceOver() {
               </CardTitle>
             </CardHeader>
             <CardContent className='flex flex-col items-center relative z-10'>
-              <audio controls className="w-[20rem] mb-4">
+              <audio controls className="w-[15rem] md:w-[20rem] mb-4">
                 <source src='/assets/demos/GITCHEGUMI-MEDIA_COMMERICAL-DEMO.mp3' type='audio/mpeg' />
                 Your browser does not support the audio element.
               </audio>
-              <Button variant='default' className="relative z-10 w-[15rem] mt-2 text-black bg-brand-blue-light hover:bg-white dark:text-white dark:bg-brand-blue-dark dark:hover:bg-brand-blue">
+              <Button variant='default' className="w-[10rem] md:w-[15rem] text-xs md:text-base mt-2 text-black bg-brand-blue-light hover:bg-white dark:text-white dark:bg-brand-blue-dark dark:hover:bg-brand-blue">
                 <a
                   href='/assets/demos/GITCHEGUMI-MEDIA_COMMERICAL-DEMO.mp3'
                   download
@@ -38,7 +38,7 @@ export default function VoiceOver() {
             </CardContent>
           </Card>
 
-          <Card className='w-[25rem] relative'>
+          <Card className='w-[20rem] md:w-[25rem] relative'>
             <div className="absolute inset-0 bg-gray-800 opacity-40 rounded-lg pointer-events-none"></div>
             <CardHeader className='relative z-10'>
               <CardTitle>
@@ -49,11 +49,11 @@ export default function VoiceOver() {
             </CardHeader>
             <CardContent>
               <div className='flex flex-col items-center relative z-10'>
-              <audio controls className="w-[20rem] mb-4">
+              <audio controls className="w-[15rem] md:w-[20rem] mb-4">
                 <source src='/assets/demos/GITCHEGUMI-MEDIA_ELEARNING-DEMO.mp3' type='audio/mpeg' />
                 Your browser does not support the audio element.
               </audio>
-              <Button variant='default' className="w-[15rem] mt-2 text-black bg-brand-blue-light hover:bg-white dark:text-white dark:bg-brand-blue-dark dark:hover:bg-brand-blue">
+              <Button variant='default' className="w-[10rem] md:w-[15rem] text-xs md:text-base mt-2 text-black bg-brand-blue-light hover:bg-white dark:text-white dark:bg-brand-blue-dark dark:hover:bg-brand-blue">
                 <a
                   href='/assets/demos/GITCHEGUMI-MEDIA_ELEARNING-DEMO.mp3'
                   download={true}
@@ -74,7 +74,7 @@ export default function VoiceOver() {
           <p className="mb-4">
             Whether you need a friendly voice for your next ad campaign or an engaging narrator for your educational content, I'm here to deliver high-quality audio that meets your specific needs.
           </p>
-          <div className='flex flex-row items-start'>
+          <div className='flex flex-col md:flex-row items-start'>
             <div className='flex-1'>
               <h3 className="text-2xl font-semibold mb-2">Why Choose Me?</h3>
               <ul className="list-disc list-inside mb-4">

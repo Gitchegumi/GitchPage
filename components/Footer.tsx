@@ -4,7 +4,7 @@ import Image from 'next/image';
 export default function Footer() {
   return (
     <footer className="footer mt-auto bg-gray-800 text-white py-8">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-16 md:px-4">
         <div className="footer-line border-t border-gray-700 mb-8"></div>
         <div className="footer-content">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -34,7 +34,7 @@ export default function Footer() {
                   src="/assets/images/Media Text.png"
                   alt="GitcheGumi Media LLC"
                   fill
-                  className='object-cover center'
+                  className='object-cover -translate-x-4'
                 />
               </div>
             </div>
