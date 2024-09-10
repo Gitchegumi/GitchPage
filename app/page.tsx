@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
   return (
     <main>
-      <div className="z-10 w-full max-w-5xl items-center justify-between text-sm flex flex-col">
+      <div className="relative z-10 w-full max-w-5xl items-center justify-between text-sm flex flex-col">
         <p className="text-lg md:text-5xl text-center content-center flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 bg-opacity-60">
           Welcome to the website of GitcheGumi Media LLC
         </p>
@@ -13,7 +13,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="relative z-[-1] flex flex-col place-items-center">
+      <div className="relative z-10 flex flex-col place-items-center">
         <span className="text-lg md:text-3xl mb-8">About Me</span>
         <span className="text-sm md:text-lg mb-16">
           I'm a versatile content creator, voice-over artist, and web developer. Explore 
@@ -24,7 +24,7 @@ export default function Home() {
           <li>Web Development</li>
           <li>Ansible and Terraform Automation</li>
           <Link href='/voice-over'>
-            <li>Voice-Over Services</li>
+            <li><span className="text-brand-blue hover:text-brand-orange">Voice-Over Services</span></li>
           </Link>
           <li>Content Creation</li>
           <li>Game Streaming</li>

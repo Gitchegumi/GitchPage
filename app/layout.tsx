@@ -30,7 +30,7 @@ export default function RootLayout({
           <Header />
           <main className="flex min-h-screen flex-col items-center justify-between p-24 font-oswald">
             <div className="
-              relative z-[-1]
+              relative
               flex
               flex-col
               place-items-center
@@ -46,7 +46,6 @@ export default function RootLayout({
               before:blur-2xl
               before:content-['']
               after:absolute
-              after:-z-20
               after:h-[180px]
               after:w-full
               after:translate-x-1/3
