@@ -140,6 +140,7 @@ export default function Header() {
                           <ListItem
                             href="https://github.com/Gitchegumi"
                             title="GitHub Profile"
+                            target="_blank"
                           >
                             The GitHub Profile for Gitchegumi
                           </ListItem>
@@ -160,7 +161,7 @@ export default function Header() {
                             Read the latest from Gitchegumi!
                           </ListItem>
                           <ListItem
-                            href="https://www.youtube.com/@GitcheGumi."
+                            href="https://www.youtube.com/@Gitche_Gumi"
                             target="_blank"
                             title="YouTube"
                           >
