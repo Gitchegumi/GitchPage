@@ -90,7 +90,7 @@ export default function VoiceOver() {
               alt='Voiceover Microphone'
               width={400}
               height={200}
-              className='rounded-3xl mb-4 ml-4 shadow-sm shadow-brand-orange'
+              className='rounded-3xl mb-4 ml-4 shadow-2xs shadow-brand-orange'
             />
           </div>
           <p className="mb-4">

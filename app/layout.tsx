@@ -1,26 +1,30 @@
-"use client";
-
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { Metadata } from "next";
 import { ThemeProvider } from "../components/theme-provider";
 import "./globals.css";
-import { ReactNode } from "react";
-import { usePathname } from 'next/navigation';
+
+export const metadata: Metadata = {
+  title: "Gitchegumi Media",
+  description: "Gitchegumi Media LLC.",
+};
 
 export default function RootLayout({ 
-  children
+  children 
 }: { 
-  children: ReactNode,
+  children: React.ReactNode 
 }) {
-  const pathname = usePathname();
-  console.log('Current pathname:', pathname);
-
-  const isVoiceOverPage = pathname === '/voice-over';
-  const headerBackgroundImage = isVoiceOverPage ? '/assets/images/Background.png' : undefined;
-
   return (
-    <html lang="en">
-      <body className="overflow-x-hidden">
+    <html lang="en" suppressHydrationWarning>
+      <body className="
+            overflow-x-hidden
+            bg-gradient-to-b
+            from-slate-900
+            to-slate-700
+            dark:from-slate-900
+            dark:to-slate-700
+            "
+          >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -28,8 +32,17 @@ export default function RootLayout({
           storageKey="theme"
         >
           <Header />
-          <main className="flex min-h-screen dark:bg-gradient-to-b dark:from-slate-900 dark:to-bg-slate-700 flex-col items-center justify-between font-oswald">
-            <div className="
+          <main
+            className="
+                flex
+                min-h-screen
+                flex-col
+                items-center
+                justify-between
+                font-oswald"
+          >
+            <div
+              className="
               relative
               flex
               flex-col
@@ -56,14 +69,14 @@ export default function RootLayout({
               after:via-blue-200
               after:blur-2xl
               after:content-['']
-              before:dark:bg-gradient-to-br
-              before:dark:from-transparent
-              before:dark:to-brand-blue-dark
-              before:dark:opacity-10
-              after:dark:from-brand-blue
-              after:dark:via-[#0141ff]
-              after:dark:opacity-40
-              before:lg:h-[360px]
+              dark:before:bg-linear-to-br
+              dark:before:from-transparent
+              dark:before:to-brand-blue-dark
+              dark:before:opacity-10
+              dark:after:from-brand-blue
+              dark:after:via-[#0141ff]
+              dark:after:opacity-40
+              lg:before:h-[360px]
               overflow-hidden"
             >
               {children}
@@ -73,5 +86,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
