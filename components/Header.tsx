@@ -80,8 +80,7 @@ export default function Header() {
             text-xl
             "
             >
-              <span className="block">Gitchegumi Media</span>
-              <span className="block text-xs">LLC.</span>
+              Gitchegumi Media
             </div>
             <div className="md:hidden">
               <button
