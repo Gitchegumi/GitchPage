@@ -47,7 +47,7 @@ export default function Header() {
       {/* Top Material */}
       <div className={headerClassName} style={headerStyle}></div>
       {/* Navigation */}
-      <div className="sticky top-0 left-0 right-0 z-50 w-full">
+      <div className="md:sticky top-0 left-0 right-0 z-50 w-full">
         <nav
           className="
           flex
@@ -78,11 +78,13 @@ export default function Header() {
             px-4
             text-brand-orange
             text-xl
+            hidden
+            md:block
             "
             >
               Gitchegumi Media
             </div>
-            <div className="md:hidden">
+            <div className="md:hidden m-auto">
               <button
                 onClick={toggleMenu}
                 className="text-white focus:outline-hidden"
@@ -105,7 +107,7 @@ export default function Header() {
             </div>
           </div>
           <div
-            className={`md:flex md:flex-row md:items-center ${
+            className={`md:flex md:flex-row md:items-center m-auto ${
               isMenuOpen ? "flex flex-col w-full" : "hidden"
             } md:w-auto`}
           >

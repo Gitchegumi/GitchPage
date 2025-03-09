@@ -3,20 +3,22 @@ import Footer from "../components/Footer";
 import { Metadata } from "next";
 import { ThemeProvider } from "../components/theme-provider";
 import "./globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Gitchegumi Media",
   description: "Gitchegumi Media LLC.",
 };
 
-export default function RootLayout({ 
-  children 
-}: { 
-  children: React.ReactNode 
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="
+      <body
+        className="
             overflow-x-hidden
             bg-gradient-to-b
             from-slate-900
@@ -24,7 +26,7 @@ export default function RootLayout({
             dark:from-slate-900
             dark:to-slate-700
             "
-          >
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -79,7 +81,7 @@ export default function RootLayout({
               lg:before:h-[360px]
               overflow-hidden"
             >
-              {children}
+              <Providers>{children}</Providers>
             </div>
           </main>
           <Footer />
