@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
+import { Card, CardFooter, Image, Button } from "@heroui/react";
 
 export default function Home() {
   return (
@@ -28,57 +29,125 @@ export default function Home() {
             </span>
             Let's bring your ideas to life!
             <Button
-              variant="default"
-              className="z-40 mt-4 text-black bg-brand-blue-light hover:bg-white dark:text-white dark:bg-brand-blue-dark dark:hover:bg-brand-blue"
+              className="
+                z-40 
+                mt-4 
+                text-black 
+                bg-brand-blue-light 
+                hover:bg-white 
+                dark:text-white 
+                dark:bg-brand-blue-dark 
+                dark:hover:bg-brand-blue
+                rounded-full
+                "
+              size="sm"
+              variant="solid"
             >
               <Link href="mailto: admin@gitchegumi.com">Contact Me</Link>
             </Button>
           </div>
         </div>
         {/* Right Column */}
-
         <div className="relative z-10 flex flex-col w-full md:w-1/2 place-items-center">
-          <span className="text-lg md:text-3xl">What I Offer</span>
-          <ul className="list-disc list-inside p-4">
+          {/* "What I Offer" text overlaid in center */}
+          <div className="mb-8">
+            <span className="text-lg md:text-3xl before:bg-white/10 px-4 py-2 rounded-lg text-white">
+              What I Offer
+            </span>
+          </div>
+          {/* First row - 2 cards */}
+          <div className="grid grid-cols-2 gap-8 w-full mb-8 place-items-center">
+            <Link href="/voice-over">
+              <Card isFooterBlurred className="border-none rounded-lg">
+                <Image
+                  alt="VO Image"
+                  className="object-cover"
+                  height={200}
+                  src="/assets/images/Background.png"
+                  width={200}
+                />
+                <CardFooter className="justify-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-lg bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+                  <span className="text-white/80 text-sm">
+                    Voice-Over Services
+                  </span>
+                </CardFooter>
+              </Card>
+            </Link>
+            <Link href="https://www.youtube.com/@Gitche_Gumi" target="_blank">
+              <Card
+                isFooterBlurred
+                className="border-none rounded-lg overflow-hidden relative"
+              >
+                <Image
+                  alt="YouTube Thumbnail"
+                  className="object-cover scale-110 object-[center_left]"
+                  height={200}
+                  src="/assets/images/LiveThumbnail.png"
+                  width={200}
+                />
+                <CardFooter className="justify-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-lg bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+                  <span className="text-white/80 text-sm text-center">
+                    YouTube Content Creation
+                  </span>
+                </CardFooter>
+              </Card>
+            </Link>
+          </div>
+
+          {/* Middle row - 1 card */}
+          <div className="flex justify-center mb-8 place-items-center">
+            <Link href="https://www.twitch.tv/gitchegumi" target="_blank">
+              <Card isFooterBlurred className="border-none rounded-lg">
+                <Image
+                  alt="Twitch Logo"
+                  className="object-cover"
+                  height={200}
+                  src="/assets/images/gitch-twitch-logo.png"
+                  width={200}
+                />
+                <CardFooter className="justify-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-lg bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+                  <span className="text-white/80 text-sm">Live Streaming</span>
+                </CardFooter>
+              </Card>
+            </Link>
+          </div>
+
+          {/* Bottom row - 2 cards */}
+          <div className="grid grid-cols-2 gap-8 w-full place-items-center">
             <Link href="/portfolio">
-              <li>
-                <span className="text-brand-blue hover:text-brand-orange">
-                  Web Development
-                </span>
-              </li>
+              <Card isFooterBlurred className="border-none rounded-lg">
+                <Image
+                  alt="Web Dev Stack"
+                  className="object-cover"
+                  height={200}
+                  src="/assets/images/web development v3.png"
+                  width={200}
+                />
+                <CardFooter className="justify-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-lg bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+                  <span className="text-white/80 text-sm">Web Development</span>
+                </CardFooter>
+              </Card>
             </Link>
             <Link
               href="https://github.com/Gitchegumi/ansible-playbooks"
               target="_blank"
             >
-              <li>
-                <span className="text-brand-blue hover:text-brand-orange">
-                  Ansible and Terraform Automation
-                </span>
-              </li>
+              <Card isFooterBlurred className="border-none rounded-lg">
+                <Image
+                  alt="Terraform and Ansible"
+                  className="object-cover"
+                  height={200}
+                  src="/assets/images/terraform ansible card.png"
+                  width={200}
+                />
+                <CardFooter className="justify-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-lg bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+                  <span className="text-white text-sm text-center">
+                    Ansible and Terraform Automation
+                  </span>
+                </CardFooter>
+              </Card>
             </Link>
-            <Link href="/voice-over">
-              <li>
-                <span className="text-brand-blue hover:text-brand-orange">
-                  Voice-Over Services
-                </span>
-              </li>
-            </Link>
-            <Link href="https://www.youtube.com/@GitcheGumi.">
-              <li>
-                <span className="text-brand-blue hover:text-brand-orange">
-                  Content Creation
-                </span>
-              </li>
-            </Link>
-            <Link href="https://www.twitch.tv/gitchegumi" target="_blank">
-              <li>
-                <span className="text-brand-blue hover:text-brand-orange">
-                  Game Streaming
-                </span>
-              </li>
-            </Link>
-          </ul>
+          </div>
         </div>
       </div>
     </main>
