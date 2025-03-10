@@ -36,8 +36,8 @@ export default function Home() {
                 bg-brand-blue-light 
                 hover:bg-white 
                 dark:text-white 
-                dark:bg-brand-blue-dark 
-                dark:hover:bg-brand-blue
+                dark:bg-brand-blue-dark/80 
+                dark:hover:bg-brand-blue/80
                 rounded-full
                 "
               size="sm"
