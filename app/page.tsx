@@ -56,7 +56,7 @@ export default function Home() {
             </span>
           </div>
           {/* First row - 2 cards */}
-          <div className="grid grid-cols-2 gap-8 w-full mb-8 place-items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full mb-8 place-items-center">
             <Link href="/voice-over">
               <Card isFooterBlurred className="border-none rounded-lg">
                 <Image
@@ -113,7 +113,7 @@ export default function Home() {
           </div>
 
           {/* Bottom row - 2 cards */}
-          <div className="grid grid-cols-2 gap-8 w-full place-items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full place-items-center">
             <Link href="/portfolio">
               <Card isFooterBlurred className="border-none rounded-lg">
                 <Image
