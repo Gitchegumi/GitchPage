@@ -40,7 +40,9 @@ export default function RootLayout({
                 flex-col
                 items-center
                 justify-between
-                font-oswald"
+                font-oswald
+                relative
+                z-10"
           >
             <div
               className="

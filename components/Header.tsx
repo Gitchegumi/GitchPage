@@ -24,15 +24,13 @@ export default function Header() {
   const headerClassName = cn(`
     flex
     flex-col
-    py-16
-    md:py-20
-    lg:py-24
-    xl:py-28
-    2xl:py-36
+    py-10
+    md:py-10
+    lg:py-16
+    xl:py-20
+    2xl:py-24
     rounded-lg
     mx-16
-    shadow-md
-    shadow-brand-orange
   `);
 
   const headerStyle = {
@@ -59,8 +57,6 @@ export default function Header() {
           bg-gradient-to-r
           from-brand-blue
           to-brand-blue-dark
-          shadow-sm
-          shadow-brand-orange
           rounded-lg
           font-oswald
           text-[1em]
@@ -69,9 +65,17 @@ export default function Header() {
           mt-2
           backdrop-blur-md
           bg-opacity-80
+          z-50
           "
         >
-          <div className="flex items-center w-full md:w-auto justify-between md:justify-start">
+          <div className="
+                flex
+                items-center
+                w-full
+                md:w-auto
+                justify-between
+                md:justify-start
+              ">
             <div
               className="
             font-oswald
@@ -126,85 +130,101 @@ export default function Header() {
                   <NavigationMenuTrigger className="mr-4 md:mr-16 bg-transparent hover:bg-transparent font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange">
                     Projects
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="grid grid-cols-2 gap-6 p-6 w-[350px] md:w-[600px] lg:w-[800px]">
+                  <NavigationMenuContent className="z-60 overflow-visible">
+                    <div className="grid md:grid-cols-2 w-60 md:w-[600px] lg:w-[800px] max-h-[calc(100vh-100px)]">
                       <div>
                         <NavigationMenuLink asChild>
-                          <div className="text-2xl font-bold mb-4 font-oswald">
+                          <div className="text-2xl font-bold mb-2 md:mb-4 font-oswald">
                             Portfolio
                           </div>
                         </NavigationMenuLink>
-                        <ul className="space-y-4">
+                        <ul className="space-y-2 z-50">
                           <ListItem href="/portfolio" title="Tech Portfolio">
-                            A list of the tech credentials of Gitchegumi.
+                            <span className="hidden md:block">
+                              A list of the tech credentials of Gitchegumi.
+                            </span>
                           </ListItem>
                           <ListItem
                             href="https://github.com/Gitchegumi"
                             title="GitHub Profile"
                             target="_blank"
                           >
-                            The GitHub Profile for Gitchegumi
+                            <span className="hidden md:block">
+                              The GitHub Profile for Gitchegumi
+                            </span>
                           </ListItem>
                         </ul>
                       </div>
                       <div>
                         <NavigationMenuLink asChild>
-                          <div className="text-2xl font-bold mb-4 font-oswald">
+                          <div className="text-2xl font-bold mb-2 md:mb-4 font-oswald">
                             Content Creation
                           </div>
                         </NavigationMenuLink>
-                        <ul className="space-y-4">
+                        <ul className="space-y-2">
                           <ListItem href="/voice-over" title="Voice Over">
-                            Listen to Gitchegumi's VO Demos and Schedule him for
-                            your next project!
+                            <span className="hidden md:block">
+                              Listen to Gitchegumi's VO Demos and Schedule him
+                              for your next project!
+                            </span>
                           </ListItem>
                           <ListItem href="/blog" title="Blog">
-                            Read the latest from Gitchegumi!
+                            <span className="hidden md:block">
+                              Read the latest from Gitchegumi!
+                            </span>
                           </ListItem>
                           <ListItem
                             href="https://www.youtube.com/@Gitche_Gumi"
                             target="_blank"
                             title="YouTube"
                           >
-                            Join Gitchegumi on YouTube!
+                            <span className="hidden md:block">
+                              Join Gitchegumi on YouTube!
+                            </span>
                           </ListItem>
                           <ListItem
                             href="https://www.twitch.tv/gitchegumi"
                             target="_blank"
                             title="Twitch"
                           >
-                            Join Gitchegumi on Twitch!
+                            <span className="hidden md:block">
+                              Join Gitchegumi on Twitch!
+                            </span>
                           </ListItem>
                         </ul>
                       </div>
                     </div>
                     <div className="p-6 bg-gray-100 dark:bg-gray-800">
                       <NavigationMenuLink asChild>
-                        <div className="text-2xl font-bold mb-4 font-oswald">
+                        <div className="text-2xl font-bold mb-2 md:mb-4 font-oswald">
                           Socials
                         </div>
                       </NavigationMenuLink>
-                      <ul className="grid grid-cols-3 gap-4">
+                      <ul className="grid md:grid-cols-3 gap-2">
                         <ListItem
                           href="https://www.instagram.com/gitchegumi"
                           target="_blank"
                           title="Instagram"
                         >
-                          Follow on Instagram
+                          <span className="hidden md:block">
+                            Follow on Instagram
+                          </span>
                         </ListItem>
                         <ListItem
                           href="https://x.com/GitchegumiGames"
                           target="_blank"
                           title="X"
                         >
-                          Follow on X
+                          <span className="hidden md:block">Follow on X</span>
                         </ListItem>
                         <ListItem
                           href="https://www.facebook.com/GitchegumiGaming"
                           target="_blank"
                           title="Facebook"
                         >
-                          Join FB Community
+                          <span className="hidden md:block">
+                            Join FB Community
+                          </span>
                         </ListItem>
                       </ul>
                     </div>
@@ -215,21 +235,25 @@ export default function Header() {
                     Shops
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <div className="p-6 md:w-[500px]">
-                      <ul className="grid grid-cols-2 gap-6">
+                    <div className="p-6 w-60 md:w-[500px] z-50">
+                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <ListItem
                           href="https://store.gitchegumi.com/"
                           target="_blank"
                           title="Gitchegumi Store"
                         >
-                          Check out the Gitchegumi Merch Store!
+                          <span className="hidden md:block">
+                            Check out the Gitchegumi Merch Store!
+                          </span>
                         </ListItem>
                         <ListItem
                           href="https://www.etsy.com/shop/GitchPrints"
                           target="_blank"
                           title="Etsy Store"
                         >
-                          Check out the GitchPrints Etsy Store!
+                          <span className="hidden md:block">
+                            Check out the GitchPrints Etsy Store!
+                          </span>
                         </ListItem>
                       </ul>
                     </div>

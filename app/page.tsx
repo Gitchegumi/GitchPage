@@ -4,12 +4,35 @@ import { Card, CardFooter, Image, Button } from "@heroui/react";
 
 export default function Home() {
   return (
-    <main className="p-20 mx-4 md:mx-0">
+    <main className="p-20 mx-4 md:mx-0 relative z-0">
       <div className="flex flex-col md:flex-row justify-between w-full max-w-7xl mx-auto gap-8">
         {/* Left Column */}
         <div className="flex flex-col w-full md:w-1/2">
-          <div className="relative z-10 w-full max-w-5xl items-center justify-between text-sm flex flex-col">
-            <p className="text-lg md:text-5xl text-center content-center flex w-full justify-center border-b border-gray-300 bg-linear-to-b from-zinc-200 pb-6 pt-2 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-0 lg:dark:bg-zinc-800/30 bg-opacity-60">
+          <div className="relative w-full max-w-5xl items-center justify-between text-sm flex flex-col">
+            <p className="
+                text-lg
+                md:text-5xl
+                text-center
+                content-center
+                flex
+                w-full
+                justify-center
+                border-b
+                border-gray-300
+                bg-linear-to-b
+                from-zinc-200
+                pb-6
+                pt-2
+                backdrop-blur-2xl
+                dark:border-neutral-800
+                dark:bg-zinc-800/30
+                dark:from-inherit 
+                lg:rounded-xl lg:border
+                lg:bg-gray-200
+                lg:p-0
+                lg:dark:bg-zinc-800/30
+                bg-opacity-60
+              ">
               Welcome to the website of GitcheGumi Media
             </p>
             <p className="mt-4 text-center text-small mb-16 md:text-lg">
@@ -17,7 +40,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="relative z-10 flex flex-col place-items-center">
+          <div className="relative flex flex-col place-items-center">
             <span className="text-lg md:text-3xl mb-8">About Me</span>
             <span className="text-sm md:text-lg mb-16">
               I'm a versatile content creator, voice-over artist, and web
@@ -48,7 +71,7 @@ export default function Home() {
           </div>
         </div>
         {/* Right Column */}
-        <div className="relative z-10 flex flex-col w-full md:w-1/2 place-items-center">
+        <div className="relative flex flex-col w-full md:w-1/2 place-items-center">
           {/* "What I Offer" text overlaid in center */}
           <div className="mb-8">
             <span className="text-lg md:text-3xl before:bg-white/10 px-4 py-2 rounded-lg text-white">
