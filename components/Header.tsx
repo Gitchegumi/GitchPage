@@ -115,26 +115,31 @@ export default function Header() {
               isMenuOpen ? "flex flex-col w-full" : "hidden"
             } md:w-auto`}
           >
-            <NavigationMenu>
+            <NavigationMenu viewport={false}>
               <NavigationMenuList className="flex flex-col md:flex-row">
                 <NavigationMenuItem className="mr-4 md:mr-16">
                   <Link href="/" legacyBehavior passHref>
                     <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} bg-transparent hover:text-brand-orange hover:underline focus:text-brand-orange`}
+                      className={`${navigationMenuTriggerStyle()} bg-transparent \
+                      hover:text-brand-orange hover:underline focus:text-brand-orange`}
                     >
                       Home
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="mr-4 md:mr-16 bg-transparent hover:bg-transparent font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange">
+                  <NavigationMenuTrigger className="mr-4 md:mr-16 bg-transparent 
+                  hover:bg-transparent font-oswald hover:text-brand-orange 
+                  hover:underline focus:text-brand-orange">
                     Projects
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="z-60 overflow-visible">
-                    <div className="grid md:grid-cols-2 w-60 md:w-[600px] lg:w-[800px] max-h-[calc(100vh-100px)]">
+                  <NavigationMenuContent className="z-60 overflow-visible md:absolute 
+                  md:top-full md:left-0 md:-translate-x-1/2 bg-brand-blue-dark/80">
+                    <div className="grid md:grid-cols-2 w-60 md:w-[600px] 
+                    lg:w-[800px] max-h-[calc(100vh-100px)]">
                       <div>
                         <NavigationMenuLink asChild>
-                          <div className="text-2xl font-bold mb-2 md:mb-4 font-oswald">
+                          <div className="underline text-2xl font-bold mb-2 md:mb-4 font-oswald">
                             Portfolio
                           </div>
                         </NavigationMenuLink>
@@ -157,7 +162,7 @@ export default function Header() {
                       </div>
                       <div>
                         <NavigationMenuLink asChild>
-                          <div className="text-2xl font-bold mb-2 md:mb-4 font-oswald">
+                          <div className="underline text-2xl font-bold mb-2 md:mb-4 font-oswald">
                             Content Creation
                           </div>
                         </NavigationMenuLink>
@@ -196,7 +201,7 @@ export default function Header() {
                     </div>
                     <div className="p-6 bg-gray-100 dark:bg-gray-800">
                       <NavigationMenuLink asChild>
-                        <div className="text-2xl font-bold mb-2 md:mb-4 font-oswald">
+                        <div className="underline text-2xl font-bold mb-2 md:mb-4 font-oswald">
                           Socials
                         </div>
                       </NavigationMenuLink>
@@ -231,12 +236,14 @@ export default function Header() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="mr-4 md:mr-16 bg-transparent hover:bg-transparent font-oswald hover:text-brand-orange hover:underline focus:text-brand-orange">
+                  <NavigationMenuTrigger className="mr-4 md:mr-16 bg-transparent 
+                  hover:bg-transparent font-oswald hover:text-brand-orange 
+                  hover:underline focus:text-brand-orange">
                     Shops
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="p-6 w-60 md:w-[500px] z-50">
-                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <ul className="grid md:grid-cols-2 gap-6">
                         <ListItem
                           href="https://store.gitchegumi.com/"
                           target="_blank"
@@ -281,7 +288,9 @@ const ListItem = React.forwardRef<
         <a
           ref={ref}
           className={cn(
-            "block select-none rounded-md p-3 leading-none no-underline outline-hidden transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            "block select-none rounded-md p-3 leading-none no-underline \
+            outline-hidden transition-colors hover:bg-accent \
+            hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
             className
           )}
           target={target}

@@ -80,7 +80,7 @@ export default function RootLayout({
               dark:after:via-[#0141ff]
               dark:after:opacity-40
               lg:before:h-[360px]
-              overflow-hidden"
+              overflow-visible"
             >
               <Providers>{children}</Providers>
             </div>
