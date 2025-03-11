@@ -9,7 +9,8 @@ export default function Home() {
         {/* Left Column */}
         <div className="flex flex-col w-full md:w-1/2">
           <div className="relative w-full max-w-5xl items-center justify-between text-sm flex flex-col">
-            <p className="
+            <p
+              className="
                 text-lg
                 md:text-5xl
                 text-center
@@ -32,7 +33,8 @@ export default function Home() {
                 lg:p-0
                 lg:dark:bg-zinc-800/30
                 bg-opacity-60
-              ">
+              "
+            >
               Welcome to the website of GitcheGumi Media
             </p>
             <p className="mt-4 text-center text-small mb-16 md:text-lg">
