@@ -19,7 +19,7 @@ export default function Home() {
 
           <div className="relative z-10 flex flex-col place-items-center">
             <span className="text-lg md:text-3xl mb-8">About Me</span>
-            <span className="text-sm md:text-lg mb-16">
+            <span className="text-sm text-center md:text-lg mb-16">
               I'm a versatile content creator, voice-over artist, and web
               developer. Explore my diverse portfolio and join me on this
               creative journey!
