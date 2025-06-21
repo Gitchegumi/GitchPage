@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "../lib/utils";
 import { ModeToggle } from "./ui/ModeButton";
 import {
@@ -21,30 +22,8 @@ export default function Header() {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const headerClassName = cn(`
-    flex
-    flex-col
-    py-10
-    md:py-10
-    lg:py-16
-    xl:py-20
-    2xl:py-24
-    rounded-lg
-    mx-16
-  `);
-
-  const headerStyle = {
-    backgroundImage: "url('/images/Banner1.png')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-  };
-
   return (
     <>
-      {/* Top Material */}
-      <div className={headerClassName} style={headerStyle}></div>
-      {/* Navigation */}
       <div className="md:sticky top-0 left-0 right-0 z-50 w-full">
         <nav
           className="
@@ -76,12 +55,20 @@ export default function Header() {
                 justify-between
                 md:justify-start
               ">
+              <Image
+               src={"/images/Mascot.png"}
+               width="70"
+               height="70"
+               alt="Logo Mascot"
+               className="hidden md:block"
+               />
             <div
               className="
             font-oswald
+            font-bold
             px-4
             text-brand-orange
-            text-xl
+            text-4xl
             hidden
             md:block
             "
