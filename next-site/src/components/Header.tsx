@@ -35,8 +35,8 @@ export default function Header() {
           p-2
           bg-brand-blue
           rounded-lg
-          border-soft-white
-          border-[0.5px]
+          shadow-brand-orange/40
+          shadow-md
           font-oswald
           text-[1em]
           text-white

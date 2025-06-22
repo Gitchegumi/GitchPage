@@ -6,14 +6,14 @@ export default function Home() {
       <main className="flex flex-col row-start-2 items-center text-soft-white">
         <div className="flex md:flex-row-reverse md:m-0 mx-16 mt-8 flex-col md:gap-20 gap-8 items-center">
           <Image
-            className="dark:invert rounded-lg"
+            className="dark:invert rounded-lg shadow-md shadow-soft-white/30"
             src="/images/beach-selfie.jpg"
             alt="Beach selfie"
             width={180}
             height={38}
           />
           <div className="flex flex-col">
-            <span className="text-xl font-bold mb-4">
+            <span className="text-xl font-bold mb-4 font-oswald">
               Welcome to Gitchegumi Media
             </span>
             <span className="w-full">
