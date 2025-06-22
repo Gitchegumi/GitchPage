@@ -33,10 +33,10 @@ export default function Header() {
           md:justify-between
           items-center
           p-2
-          bg-gradient-to-r
-          from-brand-blue
-          to-brand-dark
+          bg-brand-blue
           rounded-lg
+          border-soft-white
+          border-[0.5px]
           font-oswald
           text-[1em]
           text-white
