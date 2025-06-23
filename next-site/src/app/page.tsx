@@ -24,6 +24,12 @@ export default function Home() {
             </span>
           </div>
         </div>
+        {/* About Me Section */}
+        <div>
+        </div>
+        {/* Latest Blogs Section */}
+        <div>
+        </div>
       </main>
     </div>
   );
