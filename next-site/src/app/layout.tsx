@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Oswald } from "next/font/google";
+import { Geist, Geist_Mono, Oswald, Playfair } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header"
 import Footer from "@/components/Footer";
@@ -19,6 +19,11 @@ const oswald = Oswald({
   subsets: ["latin"],
 });
 
+const playfair = Playfair({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+})
+
 export const metadata: Metadata = {
   title: "Gitchegumi Media",
   description: "The web presence for Gitchegumi!",
@@ -35,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} antialiased bg-brand-dark`}
+        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${playfair.variable} antialiased bg-brand-dark`}
       >
       <Header />
         <main>{children}</main>

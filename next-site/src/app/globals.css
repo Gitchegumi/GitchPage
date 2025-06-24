@@ -84,6 +84,7 @@
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
   --font-oswald: 'Oswald', sans-sarif;
+  --font-playfair: 'Playfair', sarif;
 }
 
 .dark {
