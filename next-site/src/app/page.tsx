@@ -27,10 +27,10 @@ export default function Home() {
         {/* About Me Section */}
         <div className="bg-brand-dark w-full">
         <div className="max-w-5xl">
-          <h1 className="text-3xl font-playfair my-8 sm:px-20">
+          <h1 className="text-3xl font-roboto-serif my-8 sm:px-20">
             About Me
           </h1>
-          <p className="text-lg font-playfair sm:px-20 pb-8">
+          <p className="text-lg font-roboto-serif sm:px-20 pb-8">
             From the infantry to AI, my journey has been anything but ordinary.
           </p> 
           <p className="text-lg font-bold font-oswald sm:px-20 pb-8">

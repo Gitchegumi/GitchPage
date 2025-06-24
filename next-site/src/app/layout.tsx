@@ -1,26 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Oswald, Playfair } from "next/font/google";
+import { Oswald, Roboto_Serif } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header"
 import Footer from "@/components/Footer";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const oswald = Oswald({
   variable: "--font-oswald",
   subsets: ["latin"],
 });
 
-const playfair = Playfair({
-  variable: "--font-playfair",
+const robotoSerif = Roboto_Serif({
+  variable: "--font-roboto-serif",
   subsets: ["latin"],
 })
 
@@ -40,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${playfair.variable} antialiased bg-brand-dark`}
+        className={`${oswald.variable} ${robotoSerif.variable} antialiased bg-brand-dark`}
       >
       <Header />
         <main>{children}</main>
