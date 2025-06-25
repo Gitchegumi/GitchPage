@@ -1,4 +1,8 @@
 import Image from "next/image";
+import posts from "../content/blog/posts.json";
+import BlogCard from "@/components/BlogCard";
+
+const recentPosts = posts.slice(0, 3);
 
 export default function Home() {
   return (
@@ -59,10 +63,15 @@ export default function Home() {
           </div>
         </div>
         {/* Latest Blogs Section */}
-        <div className="bg-soft-white w-full">
-        <h1 className="text-3xl text-bold text-black text-center py-8">
-          Latest Blog Posts
-        </h1>
+        <div className="bg-soft-white w-full pb-8">
+          <h1 className="text-3xl text-bold text-black text-center py-8">
+            Latest Blog Postsi
+          </h1>
+          <div className="grid gap-6 md:grid-cols-3 px-8 sm:px-20">
+            {recentPosts.map(post => (
+              <BlogCard key={post.slug} {...post} showTags={false} />
+            ))}
+          </div>
         </div>
       </main>
     </div>
