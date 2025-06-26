@@ -65,7 +65,7 @@ export default function Home() {
         {/* Latest Blogs Section */}
         <div className="bg-soft-white w-full pb-8">
           <h1 className="text-3xl text-bold text-black text-center py-8">
-            Latest Blog Postsi
+            Latest Blog Posts
           </h1>
           <div className="grid gap-6 md:grid-cols-3 px-8 sm:px-20">
             {recentPosts.map(post => (

@@ -31,11 +31,11 @@ export default function BlogCard({
   return (
     <Link href={`/blog/${category}/${slug}`} className="group block rounded-lg overflow-hidden border hover:shadow-lg transition-shadow bg-card text-card-foreground">
       {featureImage && (
-        <div className="relative h-48 w-full">
+        <div className="relative h-72 w-full">
           <Image
             src={featureImage}
             alt={title}
-            fill
+            fill 
             className="object-cover group-hover:scale-105 transition-transform"
           />
         </div>
