@@ -78,7 +78,7 @@ export default function Header() {
             <div className="md:hidden m-auto">
               <button
                 onClick={toggleMenu}
-                className="text-white focus:outline-hidden"
+                className="text-white focus:text-brand-orange"
               >
                 <svg
                   className="w-6 h-6"

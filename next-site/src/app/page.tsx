@@ -1,8 +1,8 @@
 import Image from "next/image";
-import posts from "../content/blog/posts.json";
 import BlogCard from "@/components/BlogCard";
+import { getAllPosts } from "@/lib/getAllPosts";
 
-const recentPosts = posts.slice(0, 3);
+const recentPosts = getAllPosts().slice(0, 3);
 
 export default function Home() {
   return (

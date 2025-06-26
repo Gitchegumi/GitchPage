@@ -14,6 +14,7 @@ type BlogCardProps = {
   showDescription?: boolean;
   showCategory?: boolean;
   showTags?: boolean;
+  topPost?: boolean;
 };
 
 export default function BlogCard({
@@ -27,11 +28,12 @@ export default function BlogCard({
   showDescription = true,
   showCategory = true,
   showTags = false,
+  topPost = false,
 }: BlogCardProps) {
   return (
-    <Link href={`/blog/${category}/${slug}`} className="group block rounded-lg overflow-hidden border hover:shadow-lg transition-shadow bg-card text-card-foreground">
+    <Link href={`/blog/${category}/${slug}`} className="group block rounded-lg overflow-hidden border shadow-sm hover:shadow-lg transition-shadow bg-soft-white text-card-foreground">
       {featureImage && (
-        <div className="relative h-72 w-full">
+        <div className={`relative w-full ${topPost ? "h-40 md:h-[500px] sm:h-[300px]" : "md:h-72 h-40"}`}>
           <Image
             src={featureImage}
             alt={title}
@@ -40,7 +42,7 @@ export default function BlogCard({
           />
         </div>
       )}
-      <div className="p-4 flex flex-col gap-2">
+      <div className="p-4 flex flex-col gap-2 bg-soft-white">
         <h2 className="text-lg font-semibold leading-tight">{title}</h2>
         <p className="text-sm text-muted-foreground">{new Date(date).toLocaleDateString()}</p>
         {showCategory && category && (
