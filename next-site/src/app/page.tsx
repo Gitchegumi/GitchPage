@@ -2,7 +2,8 @@ import Image from "next/image";
 import BlogCard from "@/components/BlogCard";
 import { getAllPosts } from "@/lib/getAllPosts";
 
-const recentPosts = getAllPosts().slice(0, 3);
+const allPosts = await getAllPosts();
+const recentPosts = allPosts.slice(0, 3);
 
 export default function Home() {
   return (

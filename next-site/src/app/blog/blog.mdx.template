@@ -1,0 +1,14 @@
+export const metadata = {
+  title: "<Your title here>",
+  slug: "<Your slug here>",
+  date: "2025-MM-DD",
+  author: "Mathew 'Gitchegumi' Lindholm",
+  description: "<Your description here>",
+  category: "faith, life, opinion, tech",
+  tags: ["Tag One", "Tag Two", "Tag Three"],
+  featureImage: "images/blog/<image>.png",
+};
+
+# This is a blog post template
+
+This is a template for creating new blog posts in the Next.js site. Replace the placeholders with your content.

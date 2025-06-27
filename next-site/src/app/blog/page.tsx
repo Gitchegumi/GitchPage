@@ -1,8 +1,8 @@
 import { getAllPosts } from "@/lib/getAllPosts";
 import BlogCard from "@/components/BlogCard";
 
-export default function BlogPage() {
-  const allPosts = getAllPosts();
+export default async function BlogPage() {
+  const allPosts = await getAllPosts();
   const newestPost = allPosts.slice(0, 1);
   const secondPost = allPosts.slice(1, 2);
   const oldPosts = allPosts.slice(2);
