@@ -29,14 +29,13 @@ export default function Footer() {
             <div className="flex flex-col">
               <p>&copy; 2024 GitcheGumi Media LLC. All rights reserved.</p>
               <p>Designed and developed by Mathew Lindholm</p>
-              <div className="relative w-[350px] h-[150px] overflow-hidden">
-                <Image
-                  src="/images/Media Text.png"
-                  alt="GitcheGumi Media LLC"
-                  fill
-                  className='object-cover -translate-x-4'
-                />
-              </div>
+              <Image
+                src="/images/Media Text.png"
+                alt="GitcheGumi Media LLC"
+                width={450}
+                height={250}
+                className="object-cover -translate-x-4 w-[80%] md:w-full"
+              />
             </div>
           </div>
         </div>
