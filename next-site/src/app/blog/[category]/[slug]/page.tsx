@@ -3,7 +3,14 @@ import { getAllPosts } from "@/lib/getAllPosts";
 import ProseLayout from "@/components/ProseLayout";
 import type { PostMeta } from "@/lib/types";
 
-export default async function BlogPostPage({ params }: { params: { category: string; slug: string } }) {
+type Props = {
+  params: Promise<{
+    category: string;
+    slug: string;
+  }>;
+};
+
+export default async function BlogPostPage({ params }: Props) {
   const { category, slug } = await params;
   let Post: React.ComponentType;
   let metadata: PostMeta;
