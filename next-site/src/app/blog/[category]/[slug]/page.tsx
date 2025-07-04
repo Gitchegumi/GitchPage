@@ -4,15 +4,16 @@ import ProseLayout from "@/components/ProseLayout";
 import type { PostMeta } from "@/lib/types";
 
 export default async function BlogPostPage({ params }: { params: { category: string; slug: string } }) {
+  const { category, slug } = await params;
   let Post: React.ComponentType;
   let metadata: PostMeta;
 
   try {
-    const mod = await import(`@/app/blog/${params.category}/${params.slug}.mdx`);
+    const mod = await import(`@/app/blog/${category}/${slug}.mdx`);
     Post = mod.default;
     metadata = mod.metadata;
   } catch (error) {
-    console.error(`MDX import failed for ${params.category}/${params.slug}`, error);
+    console.error(`MDX import failed for ${category}/${slug}`, error);
     notFound();
   }
 
