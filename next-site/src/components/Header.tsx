@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "../lib/utils";
-import { ModeToggle } from "./ui/ModeButton";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -253,9 +252,6 @@ export default function Header() {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-          </div>
-          <div className="mt-4 md:mt-0 md:ml-auto">
-            <ModeToggle />
           </div>
         </nav>
       </div>

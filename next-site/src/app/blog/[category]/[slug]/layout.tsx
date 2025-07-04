@@ -1,5 +1,4 @@
-import "@/app/globals.css"; // if not already included higher up
-import ProseLayout from "@/components/ProseLayout"; // optional: your own styled container
+import ProseLayout from "@/components/ProseLayout";
 
 export default function BlogPostLayout({
   children,
