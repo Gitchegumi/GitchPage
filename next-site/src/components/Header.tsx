@@ -143,12 +143,8 @@ export default function Header() {
                     Projects
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="
-                  z-60 
-                  md:absolute 
-                  md:top-full 
-                  md:left-0 
-                  md:-translate-x-1/2
-                  "
+                    md:-translate-x-1/2
+                    "
                   >
                   <div className="
                     rounded-lg 
