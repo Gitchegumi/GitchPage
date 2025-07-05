@@ -87,7 +87,7 @@ export default function Header() {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent hover:underline hover:bg-transparent focus:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">
-                    Projects
+                    Work & Content
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="md:-translate-x-1/2">
                     <div className="rounded-lg text-soft-white bg-brand-dark">
@@ -95,7 +95,7 @@ export default function Header() {
                         <div>
                           <NavigationMenuLink asChild>
                             <div className="mb-2 text-2xl font-bold md:mb-4 hover:bg-transparent text-brand-orange font-oswald hover:text-brand-orange">
-                              Portfolio
+                              Work
                             </div>
                           </NavigationMenuLink>
                           <ul className="z-50 space-y-2">
@@ -123,7 +123,7 @@ export default function Header() {
                         <div>
                           <NavigationMenuLink asChild>
                             <div className="mb-2 text-2xl font-bold md:mb-4 hover:bg-transparent text-brand-orange font-oswald hover:text-brand-orange">
-                              Content Creation
+                              Content
                             </div>
                           </NavigationMenuLink>
                           <ul className="space-y-2">
