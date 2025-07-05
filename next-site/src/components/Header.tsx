@@ -230,7 +230,7 @@ export default function Header() {
                 <NavigationMenuItem className="mr-4 md:mr-16">
                   <NavigationMenuTrigger className="mr-4 md:mr-16 bg-transparent 
                   hover:bg-transparent font-oswald hover:text-brand-orange 
-                  hover:underline focus:text-brand-orange">
+                  hover:underline focus:text-brand-orange md:left-0">
                     Shops
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -240,8 +240,9 @@ export default function Header() {
                           href="https://store.gitchegumi.com/"
                           target="_blank"
                           title="Gitchegumi Store"
+                          className="hover:text-brand-orange"
                         >
-                          <span className="hidden md:block text-soft-white hover:text-brand-dark">
+                          <span className="hidden md:block">
                             Check out the Gitchegumi Merch Store!
                           </span>
                         </ListItem>
@@ -249,8 +250,9 @@ export default function Header() {
                           href="https://www.etsy.com/shop/GitchPrints"
                           target="_blank"
                           title="Etsy Store"
+                          className="hover:text-brand-orange"
                         >
-                          <span className="hidden md:block text-soft-white hover:text-brand-dark">
+                          <span className="hidden md:block">
                             Check out the GitchPrints Etsy Store!
                           </span>
                         </ListItem>
