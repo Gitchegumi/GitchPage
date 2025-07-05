@@ -77,7 +77,10 @@ export default function Header() {
             <div className="md:hidden m-auto">
               <button
                 onClick={toggleMenu}
-                className="text-white focus:text-brand-orange"
+                className="
+                text-white 
+                focus:text-brand-orange
+                "
               >
                 <svg
                   className="w-6 h-6"
@@ -97,7 +100,11 @@ export default function Header() {
             </div>
           </div>
           <div
-            className={`md:flex md:flex-row md:items-center m-auto ${
+            className={`
+              md:flex 
+              md:flex-row
+              md:items-center 
+              m-auto ${
               isMenuOpen ? "flex flex-col w-full" : "hidden"
             } md:w-auto`}
           >
@@ -106,30 +113,80 @@ export default function Header() {
                 <NavigationMenuItem className="mr-4 md:mr-16">
                     <NavigationMenuLink 
                     asChild 
-                    className={`${navigationMenuTriggerStyle()} bg-transparent mr-4 hover:text-brand-orange hover:underline focus:text-brand-orange hover:bg-transparent focus:bg-transparent`}
+                    className={`
+                      ${navigationMenuTriggerStyle()} 
+                      bg-transparent 
+                      mr-4 
+                      hover:text-brand-orange 
+                      hover:underline 
+                      focus:text-brand-orange 
+                      hover:bg-transparent 
+                      focus:bg-transparent
+                      `}
                     >
                       <Link href="/">Home</Link>
                     </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="mr-4 md:mr-16 bg-transparent 
-                  hover:bg-transparent font-oswald hover:text-brand-orange 
-                  hover:underline focus:bg-transparent focus:text-brand-orange">
+                  <NavigationMenuTrigger className="
+                  mr-4 
+                  md:mr-16 
+                  bg-transparent 
+                  hover:bg-transparent 
+                  font-oswald 
+                  hover:text-brand-orange 
+                  hover:underline 
+                  focus:bg-transparent 
+                  focus:text-brand-orange
+                  "
+                >
                     Projects
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="z-60 overflow-visible md:absolute 
-                  md:top-full md:left-0 md:-translate-x-1/2">
-                  <div className="bg-brand-dark rounded-lg text-soft-white">
-                    <div className="grid md:grid-cols-2 w-60 md:w-[600px] 
-                    lg:w-[800px] max-h-[calc(100vh-100px)]">
+                  <NavigationMenuContent className="
+                  z-60 
+                  md:absolute 
+                  md:top-full 
+                  md:left-0 
+                  md:-translate-x-1/2
+                  "
+                  >
+                  <div className="
+                    rounded-lg 
+                    text-soft-white
+                    bg-brand-dark
+                    "
+                  >
+                    <div className="
+                      grid 
+                      md:grid-cols-2 
+                      w-60 
+                      md:w-[600px] 
+                      lg:w-[800px] 
+                      max-h-[calc(100vh-100px)]
+                      "
+                    >
                       <div>
                         <NavigationMenuLink asChild>
-                          <div className="hover:bg-transparent hover:text-brand-orange text-brand-orange text-2xl font-bold mb-2 md:mb-4 font-oswald">
+                          <div className="
+                            hover:bg-transparent 
+                            hover:text-brand-orange 
+                            text-brand-orange 
+                            text-2xl 
+                            font-bold 
+                            mb-2 
+                            md:mb-4 
+                            font-oswald
+                            "
+                          >
                             Portfolio
                           </div>
                         </NavigationMenuLink>
                         <ul className="space-y-2 z-50">
-                          <ListItem href="/portfolio" title="Tech Portfolio">
+                          <ListItem 
+                            href="/portfolio" 
+                            title="Tech Portfolio"
+                            className="hover:bg-brand-blue/30 hover:text-brand-orange mx-2"
+                          >
                             <span className="hidden md:block">
                               A list of the tech credentials of Gitchegumi.
                             </span>
@@ -138,6 +195,7 @@ export default function Header() {
                             href="https://github.com/Gitchegumi"
                             title="GitHub Profile"
                             target="_blank"
+                            className="hover:bg-brand-blue/30 hover:text-brand-orange mx-2"
                           >
                             <span className="hidden md:block">
                               The GitHub Profile for Gitchegumi
@@ -147,18 +205,36 @@ export default function Header() {
                       </div>
                       <div>
                         <NavigationMenuLink asChild>
-                          <div className="text-brand-orange hover:text-brand-orange hover:bg-transparent text-2xl font-bold mb-2 md:mb-4 font-oswald">
+                          <div className="
+                            text-brand-orange 
+                            hover:text-brand-orange 
+                            hover:bg-transparent 
+                            text-2xl 
+                            font-bold 
+                            mb-2 
+                            md:mb-4 
+                            font-oswald
+                            "
+                          >
                             Content Creation
                           </div>
                         </NavigationMenuLink>
                         <ul className="space-y-2">
-                          <ListItem href="/voice-over" title="Voice Over">
+                          <ListItem 
+                            href="/voice-over" 
+                            title="Voice Over"
+                            className="hover:bg-brand-blue/30 hover:text-brand-orange mx-2"
+                          >
                             <span className="hidden md:block">
                               Listen to Gitchegumi's VO Demos and Schedule him
                               for your next project!
                             </span>
                           </ListItem>
-                          <ListItem href="/blog" title="Blog">
+                          <ListItem 
+                            href="/blog" 
+                            title="Blog"
+                            className="hover:bg-brand-blue/30 hover:text-brand-orange mx-2"
+                          >
                             <span className="hidden md:block">
                               Read the latest from Gitchegumi!
                             </span>
@@ -167,6 +243,7 @@ export default function Header() {
                             href="https://www.youtube.com/@Gitche_Gumi"
                             target="_blank"
                             title="YouTube"
+                            className="hover:bg-brand-blue/30 hover:text-brand-orange mx-2"
                           >
                             <span className="hidden md:block">
                               Join Gitchegumi on YouTube!
@@ -176,6 +253,7 @@ export default function Header() {
                             href="https://www.twitch.tv/gitchegumi"
                             target="_blank"
                             title="Twitch"
+                            className="hover:bg-brand-blue/30 hover:text-brand-orange mx-2"
                           >
                             <span className="hidden md:block">
                               Join Gitchegumi on Twitch!
@@ -233,14 +311,27 @@ export default function Header() {
                   hover:underline focus:text-brand-orange md:left-0">
                     Shops
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="p-4 w-60 md:w-[500px] z-50 bg-brand-dark font-oswald text-brand-orange rounded-lg">
+                  <NavigationMenuContent className="
+                    md:-translate-x-4/5
+                    "
+                  >
+                    <div className="
+                      p-4 
+                      w-60 
+                      md:w-[500px] 
+                      z-50 
+                      bg-brand-dark 
+                      font-oswald 
+                      text-brand-orange 
+                      rounded-lg
+                      "
+                    >
                       <ul className="grid md:grid-cols-2 gap-6">
                         <ListItem
                           href="https://store.gitchegumi.com/"
                           target="_blank"
                           title="Gitchegumi Store"
-                          className="hover:text-brand-orange"
+                          className="hover:bg-brand-blue/30 hover:text-brand-orange mx-2"
                         >
                           <span className="hidden md:block">
                             Check out the Gitchegumi Merch Store!
@@ -250,7 +341,7 @@ export default function Header() {
                           href="https://www.etsy.com/shop/GitchPrints"
                           target="_blank"
                           title="Etsy Store"
-                          className="hover:text-brand-orange"
+                          className="hover:bg-brand-blue/30 hover:text-brand-orange mx-2"
                         >
                           <span className="hidden md:block">
                             Check out the GitchPrints Etsy Store!
