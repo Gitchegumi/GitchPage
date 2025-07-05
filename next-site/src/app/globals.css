@@ -122,6 +122,12 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+.radix-navigation-menu-viewport,
+[data-slot="navigation-menu-viewport"],
+[data-slot="navigation-menu-content"] {
+  background-color: #2c2c2c !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
