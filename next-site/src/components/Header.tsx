@@ -68,14 +68,13 @@ export default function Header() {
               } md:w-auto`}
           >
             <NavigationMenu viewport={false}>
-              <NavigationMenuList>
+              <NavigationMenuList className="flex flex-col gap-4 md:flex-row md:gap-16">
                 <NavigationMenuItem>
                   <NavigationMenuLink
                     asChild
                     className={`
                       ${navigationMenuTriggerStyle()} 
                       bg-transparent 
-                      mr-4 
                       hover:text-brand-orange 
                       hover:underline 
                       focus:text-brand-orange 
@@ -87,7 +86,7 @@ export default function Header() {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="mr-4 bg-transparent md:mr-16 hover:underline hover:bg-transparent focus:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">
+                  <NavigationMenuTrigger className="bg-transparent hover:underline hover:bg-transparent focus:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">
                     Projects
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="md:-translate-x-1/2">
@@ -213,7 +212,7 @@ export default function Header() {
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-                <NavigationMenuItem className="mr-4 md:mr-16">
+                <NavigationMenuItem>
                   <NavigationMenuTrigger className="mr-4 bg-transparent md:left-0 md:mr-16 hover:underline hover:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">
                     Shops
                   </NavigationMenuTrigger>
