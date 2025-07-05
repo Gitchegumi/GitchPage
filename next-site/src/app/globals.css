@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-brand-blue:#4166f5;
+  --color-brand-blue: #4166f5;
   --color-brand-orange: #fca311;
   --color-brand-dark: #2c2c2c;
   --color-soft-white: #f0f0f0;
@@ -84,8 +84,8 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
-  --font-oswald: 'Oswald', sans-serif;
-  --font-roboto-serif: 'Roboto Serif', serif;
+  --font-oswald: "Oswald", sans-serif;
+  --font-roboto-serif: "Roboto Serif", serif;
 }
 
 .dark {
