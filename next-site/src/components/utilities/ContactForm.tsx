@@ -14,7 +14,7 @@ export function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/send-inquiry", {
+      const response = await fetch('/api/send-inquiry', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
