@@ -1,10 +1,10 @@
 import { getAllPosts } from "@/lib/getAllPosts";
 import BlogCard from "@/components/BlogCard";
 
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Gitchegumi Media | Blog',
+  title: "Gitchegumi Media | Blog",
 };
 
 export default async function BlogPage() {
@@ -15,20 +15,20 @@ export default async function BlogPage() {
 
   return (
     <>
-      <div className="grid md:grid-cols-3 grid-cols-1 gap-6 py-8 px-20">
+      <div className="grid grid-cols-1 gap-6 py-8 px-20 md:grid-cols-3">
         <div className="md:col-span-2 md:row-span-4">
-          {newestPost.map(post => (
+          {newestPost.map((post) => (
             <BlogCard key={post.slug} {...post} topPost />
           ))}
         </div>
         <div className="md:col-span-1">
-          {secondPost.map(post => (
+          {secondPost.map((post) => (
             <BlogCard key={post.slug} {...post} />
           ))}
         </div>
       </div>
-      <div className="grid md:grid-cols-3 grid-cols-1 gap-6 py-8 px-20">
-        {oldPosts.map(post => (
+      <div className="grid grid-cols-1 gap-6 py-8 px-20 md:grid-cols-3">
+        {oldPosts.map((post) => (
           <BlogCard key={post.slug} {...post} />
         ))}
       </div>
