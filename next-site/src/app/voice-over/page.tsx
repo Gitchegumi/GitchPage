@@ -2,6 +2,12 @@ import Image from "next/image";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { ContactForm } from "@/components/utilities/ContactForm";
 
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Gitchegumi Media | Voice Over Demos',
+};
+
 export default async function VoiceOverPage() {
   return (
     <div className="container p-4 mx-auto">

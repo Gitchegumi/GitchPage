@@ -1,6 +1,12 @@
 import { getAllPosts } from "@/lib/getAllPosts";
 import BlogCard from "@/components/BlogCard";
 
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Gitchegumi Media | Blog',
+};
+
 export default async function BlogPage() {
   const allPosts = await getAllPosts();
   const newestPost = allPosts.slice(0, 1);

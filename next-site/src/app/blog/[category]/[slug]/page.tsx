@@ -10,6 +10,20 @@ type Props = {
   }>;
 };
 
+export async function generateMetadata({ params }: Props) {
+  const { slug } = await params;
+  const allPosts = await getAllPosts();
+  const post = allPosts.find((p) => p.slug === slug);
+
+  if (!post) {
+    return { title: "Gitchegumi Media | Not Found" };
+  }
+
+  return {
+    title: `Gitchegumi Media | Blog | ${post.title}`,
+  };
+}
+
 export default async function BlogPostPage({ params }: Props) {
   const { category, slug } = await params;
   let Post: React.ComponentType;
@@ -34,7 +48,7 @@ export default async function BlogPostPage({ params }: Props) {
 export async function generateStaticParams() {
   const posts = await getAllPosts();
 
-  return posts.map(post => ({
+  return posts.map((post) => ({
     category: post.category,
     slug: post.slug,
   }));
