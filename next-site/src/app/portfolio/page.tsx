@@ -1,5 +1,4 @@
 import Certifications from "@/components/utilities/Certifications";
-import Image from "next/image";
 
 export const metadata = {
   title: "Technical Portfolio | Gitchegumi Media",
