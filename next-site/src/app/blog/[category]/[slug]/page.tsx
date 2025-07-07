@@ -39,9 +39,28 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   return (
-    <ProseLayout title={metadata.title}>
-      <Post />
-    </ProseLayout>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            headline: metadata.title,
+            datePublished: metadata.date,
+            author: {
+              '@type': 'Person',
+              name: metadata.author,
+            },
+            image: metadata.featureImage,
+            description: metadata.description,
+          }),
+        }}
+      />
+      <ProseLayout title={metadata.title}>
+        <Post />
+      </ProseLayout>
+    </>
   );
 }
 
