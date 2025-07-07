@@ -101,7 +101,7 @@ export default function Header() {
                           <ul className="z-50 space-y-2">
                             <ListItem
                               href="/portfolio"
-                              title="Tech Portfolio"
+                              title="Technical CV"
                               className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
                             >
                               <span className="hidden md:block">
