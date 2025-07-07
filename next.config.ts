@@ -6,6 +6,7 @@ const withMDX = createMDX({
 });
 
 const nextConfig: NextConfig = {
+  basePath: process.env.NODE_ENV === 'production' ? '/GitchPage' : '',
   output: 'export',
   images: {
     unoptimized: true,
