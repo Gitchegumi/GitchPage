@@ -1,4 +1,4 @@
 module.exports = {
-  siteUrl: "https://dev.gitchegumi.com",
+  siteUrl: "https://www.gitchegumi.com",
   generateRobotsTxt: true,
 };
