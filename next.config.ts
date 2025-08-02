@@ -6,7 +6,7 @@ const withMDX = createMDX({
 });
 
 const nextConfig: NextConfig = {
-  basePath: process.env.NODE_ENV === 'production' ? '/' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '' : '',
   output: 'export',
   images: {
     unoptimized: true,
