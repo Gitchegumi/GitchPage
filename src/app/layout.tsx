@@ -21,6 +21,24 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+  openGraph: {
+    title: "Gitchegumi Media",
+    description: "The web presence for Gitchegumi!",
+    url: "https://dev.gitchegumi.com",
+    siteName: "Gitchegumi Media",
+    images: [
+      {
+        url: "https://dev.gitchegumi.com/images/Mascot.png", // Must be an absolute URL
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gitchegumi Media",
+    description: "The web presence for Gitchegumi!",
+    images: ["https://dev.gitchegumi.com/images/Mascot.png"], // Must be an absolute URL
+  },
 };
 
 export default function RootLayout({
