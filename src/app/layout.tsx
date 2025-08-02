@@ -24,11 +24,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Gitchegumi Media",
     description: "The web presence for Gitchegumi!",
-    url: "https://dev.gitchegumi.com",
+    url: "https://www.gitchegumi.com",
     siteName: "Gitchegumi Media",
     images: [
       {
-        url: "https://dev.gitchegumi.com/images/Mascot.png", // Must be an absolute URL
+        url: "https://www.gitchegumi.com/images/Mascot.png", // Must be an absolute URL
       },
     ],
     type: "website",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Gitchegumi Media",
     description: "The web presence for Gitchegumi!",
-    images: ["https://dev.gitchegumi.com/images/Mascot.png"], // Must be an absolute URL
+    images: ["https://www.gitchegumi.com/images/Mascot.png"], // Must be an absolute URL
   },
 };
 
