@@ -29,19 +29,19 @@ Before any units hit the field, before there's even a fight to pick, there has t
 
 That’s why the very first thing I built was the map generator.
 
-By generating a fresh hex-based map every time you play, the game stays dynamic. You're not just learning how to play, you’re learning how to read each new battlefield. That randomness doesn’t just add replayability; it defines the game’s tactical identity. Every deployment, every movement, every clash will feel different depending on where the forests, water, and mountains land.
+By generating a fresh hex-based map every time you play, the game stays dynamic. More than learning how to play, you’re learning how to read each new battlefield. That randomness doesn’t just add replayability; it defines the game’s tactical identity. Every deployment, every movement, every clash will feel different depending on where the forests, water, and mountains land.
 
-That said, simply shuffling terrain tiles and laying them out randomly turned out a bit too chaotic. The results were technically random—but visually and strategically messy. I needed something more organic. Something that felt like a real landscape while still giving a fresh layout each time.
+That said, simply shuffling terrain tiles and laying them out randomly turned out a bit too chaotic. The results were technically random, but visually and strategically messy. I needed something more organic. Something that felt like a real landscape while still giving a fresh layout each time.
 
 That’s where random noise comes in.
 
-The generator uses noise functions to create natural-looking terrain clusters, keeping the layout grounded (yeah, I said it) while still feeling wild and emergent. And the terrain isn’t just cosmetic, it affects movement, strategy, and unit utility.
+The generator uses noise functions to create natural-looking terrain clusters, keeping the layout grounded (yeah, I said it) while still feeling wild and emergent. And the terrain is more than cosmetic. It affects movement, strategy, and unit utility.
 
 But I wasn't done yet. 
 
-I needed to ensure that every player could reasonably reach the central objective without getting boxed in. Some early tests looked great—but left players spawning behind mountains or stuck with an entire lake swallowing their deployment zone. That’s when I introduced basic pathfinding logic, ensuring that every deployment zone has a viable route to the objective.
+I needed to ensure that every player could reasonably reach the central objective without getting boxed in. Some early tests looked great, but left players spawning behind mountains or stuck with an entire lake swallowing their deployment zone. That’s when I introduced basic pathfinding logic, ensuring that every deployment zone has a viable route to the objective.
 
-This wasn’t just the most logical place to start, it reflects the heart of the game’s design philosophy: adaptability. The map generator had to be smart enough to create a fair and functional battlefield, but flexible enough to keep things interesting every single time you play.
+This was the logical place to start, and it reflects the heart of the game’s design philosophy: adaptability. The map generator had to be smart enough to create a fair and functional battlefield, but flexible enough to keep things interesting every single time you play.
 
 ### The Visuals: Groundwork in Motion
 
@@ -57,7 +57,7 @@ Here’s a quick look at the map generator in action, transforming a blank canva
 
 - Next, it calculates valid paths from each deployment zone, adapting based on whether it’s a 2- or 3-player match.
 
-- Finally, it swaps out any tiles that block access to the objective—ensuring that no one gets stuck behind a wall of mountains or lost at sea in their own deployment zone.
+- Finally, it swaps out any tiles that block access to the objective, ensuring that no one gets stuck behind a wall of mountains or lost at sea in their own deployment zone.
 
 <video autoPlay loop muted playsInline style={{ width: '75%', display: 'block', margin: '0 auto' }}>
   <source src="/webm-files/map-generation.webm" type="video/webm" />
@@ -72,7 +72,7 @@ This is just the beginning.
 
 **Violence of Action** is a slow burn. I’m balancing a full-time Army job, a master’s program, and family life, so development won’t always move fast, but it will move forward. If you’re into tactical design, Godot development, or just want to see what it looks like to build a game from scratch in your 40s, I’d love to have you along for the ride.
 
-You can follow progress—or even peek under the hood—right here:
+You can follow progress, or even peek under the hood, on GitHub:
 
 - [GitHub: Violence of Action](https://github.com/Gitchegumi/Violence-of-Action)
 
