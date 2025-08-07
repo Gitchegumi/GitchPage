@@ -132,14 +132,29 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
+  .prose {
+
+    strong,
+    b {
+      color: var(--color-soft-white) !important;
+    }
+
+    a {
+      color: var(--color-brand-blue) !important;
+    }
+  }
+
   [data-slot="dropdown-menu-content"] {
     border-width: 0 !important;
     outline: none !important;
     box-shadow: none !important;
   }
+
   #cusdis_thread iframe {
     height: auto !important;
     max-height: none !important;
