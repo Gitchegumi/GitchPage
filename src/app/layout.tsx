@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Gitchegumi Media",
     description: "The web presence for Gitchegumi!",
-    url: "https://www.gitchegumi.com",
+    url: "https://gitchegumi.com",
     siteName: "Gitchegumi Media",
     images: [
       {
