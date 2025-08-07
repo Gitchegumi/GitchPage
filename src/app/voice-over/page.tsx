@@ -45,7 +45,7 @@ export default async function VoiceOverPage() {
           />
         </div>
       </div>
-      <div className="flex flex-row gap-8 justify-center items-center my-8">
+      <div className="flex flex-row gap-8 justify-center items-start my-8">
         <Image
           src="/images/Background.png"
           alt="Voice Over"
