@@ -1,0 +1,93 @@
+export const metadata = {
+  title: "Devlog #1: Laying the Groundwork for Violence of Action",
+  slug: "devlog-1-violence-of-action",
+  date: "2025-08-06",
+  author: "Mathew 'Gitchegumi' Lindholm",
+  description: "A first look at building my turn-based tactics game 'Violence of Action' in Godot—while balancing Army work, grad school, and family life.",
+  category: "tech",
+  tags: ["godot", "indie dev", "devlog", "turn-based", "game dev", "tactical games"],
+  featureImage: "/images/blog/devlog-1-violence-of-action.png",
+};
+
+The first time I powered on my brother’s Sega Master System in the late '80s, I was hooked. Games weren’t just entertainment, they were another way to tell a story. A whole new creative medium, right up there with books and movies, but with something more that set them apart: interaction.
+
+That curiosity has followed me through my [life](/life/still-figureing-it-out.mdx). I’ve always been a player of games, but for decades, I struggled with the part that comes before the code: the idea. I didn’t want to make just any game. I didn’t want to pour time into something I didn’t care about. I wanted to make something that mattered to me. A game I could stay invested in, even when the work got hard.
+
+So, I kept putting it off.
+
+I even tried starting a team with a few friends once, but like a lot of creative projects, we never got off the ground. Life kept moving, and I kept waiting for the “right” idea and the “right” time.
+
+Now, in my early 40s—after a full career flying helicopters in the Army, juggling a family, and working through a master’s program, it's finally time to stop waiting. 
+
+**Violence of Action** is my first real attempt to turn that childhood curiosity into something real. It's a turn-based tactical game, inspired by the kind of table-top systems I've always loved. It's not going to be perfect, and I'm going to be figuring out a lot of it as I go, but I'm excited for the journey.
+
+This devlog is where I’ll document the wins, the mistakes, the rewrites, and the moments where I wonder what the hell I’ve gotten myself into. If you're into game development, tactics games, or just watching someone build from the ground up, pull up a chair, grab a beverage, and hold on to your butts!
+
+### Laying the Ground(work)
+
+Before any units hit the field, before there's even a fight to pick, there has to be a battlefield. And in **Violence of Action**, that battlefield shouldn’t be static. I didn’t want players memorizing layouts or running the same tactics every time. I wanted something that feels alive, unpredictable, and forces you to adapt. I wanted to simulate the idea that "the best laid plans last until you get boots on the ground."
+
+That’s why the very first thing I built was the map generator.
+
+By generating a fresh hex-based map every time you play, the game stays dynamic. You're not just learning how to play, you’re learning how to read each new battlefield. That randomness doesn’t just add replayability; it defines the game’s tactical identity. Every deployment, every movement, every clash will feel different depending on where the forests, water, and mountains land.
+
+That said, simply shuffling terrain tiles and laying them out randomly turned out a bit too chaotic. The results were technically random—but visually and strategically messy. I needed something more organic. Something that felt like a real landscape while still giving a fresh layout each time.
+
+That’s where random noise comes in.
+
+The generator uses noise functions to create natural-looking terrain clusters, keeping the layout grounded (yeah, I said it) while still feeling wild and emergent. And the terrain isn’t just cosmetic, it affects movement, strategy, and unit utility.
+
+But I wasn't done yet. 
+
+I needed to ensure that every player could reasonably reach the central objective without getting boxed in. Some early tests looked great—but left players spawning behind mountains or stuck with an entire lake swallowing their deployment zone. That’s when I introduced basic pathfinding logic, ensuring that every deployment zone has a viable route to the objective.
+
+This wasn’t just the most logical place to start, it reflects the heart of the game’s design philosophy: adaptability. The map generator had to be smart enough to create a fair and functional battlefield, but flexible enough to keep things interesting every single time you play.
+
+### The Visuals: Groundwork in Motion
+
+Words are great, but seeing it unfold is like biting into one of those gummi sharks from the 90s that they don't make anymore. Pure satisfying!
+
+Here’s a quick look at the map generator in action, transforming a blank canvas into a fully playable battlefield. It all happens pretty quickly, but there’s a lot going on under the hood:
+
+- First, the generator determines the map shape.
+
+- Then, it assigns terrain types based on weighted distribution.
+
+- It places the central objective tile and the 216 surrounding hexes.
+
+- Next, it calculates valid paths from each deployment zone, adapting based on whether it’s a 2- or 3-player match.
+
+- Finally, it swaps out any tiles that block access to the objective—ensuring that no one gets stuck behind a wall of mountains or lost at sea in their own deployment zone.
+
+<video autoPlay loop muted playsInline style={{ width: '75%', display: 'block', margin: '0 auto' }}>
+  <source src="/webm-files/map-generation.webm" type="video/webm" />
+  Your browser does not support the video tag.
+</video>
+
+It’s fast, it’s smart, and it lays the foundation for everything that comes next, every flank, every clash, every hard-earned win.
+
+### The Journey Ahead
+
+This is just the beginning.
+
+**Violence of Action** is a slow burn. I’m balancing a full-time Army job, a master’s program, and family life, so development won’t always move fast, but it will move forward. If you’re into tactical design, Godot development, or just want to see what it looks like to build a game from scratch in your 40s, I’d love to have you along for the ride.
+
+You can follow progress—or even peek under the hood—right here:
+
+- [GitHub: Violence of Action](https://github.com/Gitchegumi/Violence-of-Action)
+
+## What's Next?
+
+Now that the foundational pieces are in place, my next priority is getting **units on the board**. That means working on:
+
+- [Creating army assets](https://github.com/Gitchegumi/Violence-of-Action/issues/30)
+- [Defining unit resource/class types](https://github.com/Gitchegumi/Violence-of-Action/issues/27)
+- [Building map tile assets (replacing the placeholders)](https://github.com/Gitchegumi/Violence-of-Action/issues/31)
+
+I'm especially excited to begin exploring **sound design**, laying the groundwork for atmosphere with original sound effects and music. That’s still a few steps away, but it’s already on the radar.
+
+Thanks for reading. Whether you’re building something too or just tagging along, I hope you’ll stick around and see where this goes.
+
+Until next time,
+
+~ **Gitchegumi**
