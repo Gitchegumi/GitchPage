@@ -12,7 +12,7 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props) {
-  const { slug } = await params;
+  const { slug, category } = await params;
   const allPosts = await getAllPosts();
   const post = allPosts.find((p) => p.slug === slug);
 
@@ -20,8 +20,34 @@ export async function generateMetadata({ params }: Props) {
     return { title: "Gitchegumi Media | Not Found" };
   }
 
+  const { title, description, featureImage, author, date } = post;
+
   return {
-    title: `${post.title} | Blog | Gitchegumi Media`,
+    title: `${title} | Blog | Gitchegumi Media`,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://gitchegumi.com/blog/${category}/${slug}`,
+      siteName: "Gitchegumi Media",
+      images: [
+        {
+          url: featureImage,
+          width: 1200, // Adjust as needed
+          height: 630, // Adjust as needed
+        },
+      ],
+      locale: "en_US",
+      type: "article",
+      authors: [author],
+      publishedTime: date,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [featureImage],
+    },
   };
 }
 
@@ -46,12 +72,12 @@ export default async function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
             headline: metadata.title,
             datePublished: metadata.date,
             author: {
-              '@type': 'Person',
+              "@type": "Person",
               name: metadata.author,
             },
             image: metadata.featureImage,
@@ -61,13 +87,16 @@ export default async function BlogPostPage({ params }: Props) {
       />
       <ProseLayout title={metadata.title}>
         <article>
-          
           {/* Post content */}
           <Post />
         </article>
-        <hr className="border-muted"/>
+        <hr className="border-muted" />
         <div className="max-w-5xl mx-auto text-center px-4">
-          <p className="text-xl md:text-2xl font-bold">Feel like joining the conversation?<br/>Leave your comments below!</p>
+          <p className="text-xl md:text-2xl font-bold">
+            Feel like joining the conversation?
+            <br />
+            Leave your comments below!
+          </p>
           {/* Cusdis comment thread */}
           <div
             id="cusdis_thread"
@@ -79,7 +108,10 @@ export default async function BlogPostPage({ params }: Props) {
             className="mt-16 bg-brand-blue/50 rounded-lg ring-brand-orange ring"
           />
 
-          <Script src="https://cusdis.com/js/cusdis.es.js" strategy="lazyOnload" />
+          <Script
+            src="https://cusdis.com/js/cusdis.es.js"
+            strategy="lazyOnload"
+          />
         </div>
       </ProseLayout>
     </>
