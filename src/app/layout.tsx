@@ -16,6 +16,7 @@ const robotoSerif = Roboto_Serif({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.gitchegumi.com"),
   title: "Gitchegumi Media",
   description: "The web presence for Gitchegumi!",
   icons: {
@@ -24,11 +25,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Gitchegumi Media",
     description: "The web presence for Gitchegumi!",
-    url: "https://gitchegumi.com",
+    url: "https://www.gitchegumi.com",
     siteName: "Gitchegumi Media",
     images: [
       {
-        url: "https://www.gitchegumi.com/images/Mascot.png", // Must be an absolute URL
+        url: "/images/Mascot.png",
+        width: 1200,
+        height: 630,
+        alt: "Gitchegumi Mascot"
       },
     ],
     type: "website",
@@ -37,7 +41,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Gitchegumi Media",
     description: "The web presence for Gitchegumi!",
-    images: ["https://www.gitchegumi.com/images/Mascot.png"], // Must be an absolute URL
+    images: ["https://www.gitchegumi.com/images/Mascot.png"],
   },
 };
 
