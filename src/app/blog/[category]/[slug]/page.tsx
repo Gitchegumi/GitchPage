@@ -28,13 +28,13 @@ export async function generateMetadata({ params }: Props) {
     openGraph: {
       title,
       description,
-      url: `https://gitchegumi.com/blog/${category}/${slug}`,
+      url: `https://www.gitchegumi.com/blog/${category}/${slug}`,
       siteName: "Gitchegumi Media",
       images: [
         {
           url: featureImage,
-          width: 1200, // Adjust as needed
-          height: 630, // Adjust as needed
+          width: 1200,
+          height: 630,
         },
       ],
       locale: "en_US",
