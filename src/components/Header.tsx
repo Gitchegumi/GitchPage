@@ -28,10 +28,11 @@ export default function Header() {
           <div className="flex justify-between items-center w-full md:justify-start md:w-auto">
             <Image
               src={"/images/Mascot.png"}
-              width="70"
-              height="70"
+              width={70}
+              height={70}
+              priority
               alt="Logo Mascot"
-              className="hidden md:block"
+              className="hidden md:block w-auto h-15"
             />
             <div className="hidden px-4 text-4xl font-bold md:block font-oswald text-brand-orange">
               Gitchegumi Media
