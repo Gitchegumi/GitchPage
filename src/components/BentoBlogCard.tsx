@@ -1,4 +1,5 @@
 import { BentoCard } from "@/components/magicui/bento-grid";
+import { MagicCard } from "@/components/magicui/magic-card";
 import { PostMeta } from "@/lib/types";
 import Image from "next/image";
 
@@ -14,19 +15,24 @@ const BentoBlogCard = ({ post, className }: BentoBlogCardProps) => {
   return (
     <BentoCard
       name={post.title}
-      className={className}
+      className={className || ""}
       background={
-        post.featureImage ? (
-          <Image
-            src={post.featureImage}
-            alt={post.title}
-            layout="fill"
-            objectFit="cover"
-            className="pointer-events-none absolute left-0 top-0 h-2/3 w-full object-cover"
-          />
-        ) : (
-          <div className="pointer-events-none absolute left-0 top-0 h-2/3 w-full bg-gray-200" />
-        )
+        <MagicCard
+          gradientColor="#262626"
+          className="h-[170px] w-full overflow-hidden rounded-xl"
+        >
+          {post.featureImage ? (
+            <Image
+              src={post.featureImage}
+              alt={post.title}
+              width={400}
+              height={200}
+              className="transition-transform opacity-60 w-full h-auto rounded-lg duration-300 ease-in-out group-hover:scale-105"
+            />
+          ) : (
+            <div className="h-full w-full bg-gray-800" />
+          )}
+        </MagicCard>
       }
       Icon={EmptyIcon}
       description={post.description || ""}

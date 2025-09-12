@@ -41,7 +41,7 @@ export default function Home() {
             <div className="flex flex-col gap-8 my-8">
               <h1 className="text-3xl font-bold">About Me</h1>
               <p className="text-lg">
-                From the infantry to AI, my journey has been anything but
+                From the infantry to Blackhawk helicopter pilot to AI cloud technician, my journey has been anything but
                 ordinary.
               </p>
               <p className="text-lg">
