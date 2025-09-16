@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+extra-documentation/
 
 # debug
 npm-debug.log*
@@ -42,7 +43,14 @@ next-env.d.ts
 
 # Gemini files
 GEMINI.md
+.gemini/
 
 # VS Code files
 GitchPage.code-workspace
 .github/copilot-instructions.md
+
+# GitHub Spec Kit files
+.specify/
+
+# Design files
+Photoshop Template/

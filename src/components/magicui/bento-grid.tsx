@@ -1,7 +1,6 @@
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { ComponentPropsWithoutRef, ReactNode } from "react";
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface BentoGridProps extends ComponentPropsWithoutRef<"div"> {
@@ -9,7 +8,7 @@ interface BentoGridProps extends ComponentPropsWithoutRef<"div"> {
   className?: string;
 }
 
-interface BentoCardProps extends ComponentPropsWithoutRef<"div"> {
+interface BentoCardProps extends ComponentPropsWithoutRef<"a"> {
   name: string;
   className: string;
   background: ReactNode;
@@ -43,14 +42,15 @@ const BentoCard = ({
   cta,
   ...props
 }: BentoCardProps) => (
-  <div
+  <a
     key={name}
+    href={href} // Apply href to the entire card
     className={cn(
       "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl",
       // light styles
       "bg-background [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]",
       // dark styles
-      "transform-gpu dark:bg-background dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]",
+      "transform-gpu dark:bg-background dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset] dark:hover:bg-neutral-800/10", // Added hover effect
       className,
     )}
     {...props}
@@ -65,45 +65,23 @@ const BentoCard = ({
         <p className="max-w-lg text-neutral-400">{description}</p>
       </div>
 
+      {/* Re-introducing CTA text and arrow as visual elements, not a separate link */}
       <div
         className={cn(
-          "lg:hidden pointer-events-none flex w-full translate-y-0 transform-gpu flex-row items-center transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100",
+          "pointer-events-none flex w-full transform-gpu flex-row items-center transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100",
+          "absolute bottom-0 translate-y-10 opacity-0 p-4", // Hidden by default, appears on hover
+          "lg:flex" // Always visible on large screens
         )}
       >
-        <Button
-          variant="link"
-          asChild
-          size="sm"
-          className="pointer-events-auto p-0"
-        >
-          <a href={href}>
-            {cta}
-            <ArrowRightIcon className="ms-2 h-4 w-4 rtl:rotate-180" />
-          </a>
-        </Button>
+        <span className="text-sm font-medium text-soft-white">
+          {cta}
+        </span>
+        <ArrowRightIcon className="ms-2 h-4 w-4 rtl:rotate-180 text-soft-white" />
       </div>
     </div>
 
-    <div
-      className={cn(
-        "hidden lg:flex pointer-events-none absolute bottom-0 w-full translate-y-10 transform-gpu flex-row items-center p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100",
-      )}
-    >
-      <Button
-        variant="link"
-        asChild
-        size="sm"
-        className="pointer-events-auto p-0 text-soft-white"
-      >
-        <a href={href}>
-          {cta}
-          <ArrowRightIcon className="ms-2 h-4 w-4 rtl:rotate-180" />
-        </a>
-      </Button>
-    </div>
-
     <div className="pointer-events-none absolute inset-0 transform-gpu transition-all duration-300 group-hover:bg-black/[.03] group-hover:dark:bg-neutral-800/10" />
-  </div>
+  </a>
 );
 
 export { BentoCard, BentoGrid };

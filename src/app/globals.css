@@ -147,6 +147,13 @@
     a {
       color: var(--color-brand-blue) !important;
     }
+
+    code {
+      color: var(--color-soft-white) !important;
+      background-color: #4166f566 !important;
+      border-radius: 0.375rem !important;
+      font-weight: 500 !important;
+    }
   }
 
   [data-slot="dropdown-menu-content"] {

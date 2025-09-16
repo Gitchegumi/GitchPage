@@ -1,0 +1,72 @@
+export const metadata = {
+  title: "Devlog 2: Placing and Selecting Units in Violence of Action",
+  slug: "devlog-2-violence-of-action",
+  date: "2025-09-16",
+  author: "Mathew 'Gitchegumi' Lindholm",
+  description:
+    "In this devlog, I walk through adding unit interaction logic to Violence of Action, making it possible to click on a unit and pull up its info in a lower-third panel.",
+  category: "tech",
+  tags: [
+    "game development",
+    "Godot",
+    "unit interaction",
+    "UI",
+    "testing",
+    "devlog",
+    "Violence of Action",
+  ],
+  featureImage: "/images/blog/devlog-2-violence-of-action.png",
+};
+
+In the [last devlog](../tech/devlog-1-violence-of-action), I focused on generating the map. That laid the groundwork for everything else, having a functional grid was step one. The next big questions, then, were: _how do I place something on the map, and what happens when I try to interact with it?_
+
+That’s where unit placement and selection comes in. Being able to place a unit, click on it, show that it's been selected with highlighting, and display its stats makes the whole project start to feel like a real game.
+
+## The Goal
+
+The feature spec for this sprint was pretty clear: clicking on a tile with a unit should select it, highlight it, and show its information in a lower-third panel. Clicking away clears the panel. Clicking a different unit switches the selection.
+
+So, while Devlog 1 gave us a canvas to play on, Devlog 2 is about making the pieces on that canvas actually respond to you.
+
+## How I Tackled It
+
+Before diving into the code, I want to be transparent about some of the tools I’m using behind the scenes. As a solo developer, it’s important to have a system that keeps me moving without getting lost in the weeds. For this project, I’ve been leaning on [Gemini CLI](https://github.com/google-gemini/gemini-cli) alongside [GitHub Spec Kit](https://github.com/github/spec-kit). I am also using the [Godot MCP server](https://github.com/Coding-Solo/godot-mcp) which allows Gemini CLI to interact directly with the Godot engine. I found that running tests using the MCP was problematic and ended up having to run those manually, but otherwise, it worked out pretty nicely. These tools help me structure specs, plans, and tasks in a way that feels natural, while also giving me guardrails that keep the project from spiraling and providing historical context for my decisions. It's like having a little dev team on my side. This isn't an advertisment for any of these tools. I work in the space, so I've grown to be comfortable using these tools, but like any other tool, you still need to know what you're looking for and more or less how to do it (or at least how to look up how to do it). Otherwise you risk going in circles chasing down reoccuring errors. At some point, you're still going to need to read the documentation, and when it comes to making clean and secure code, it's important to inform yourself on best practices. But enough of that, let's get back to the devlog.
+
+Spec Kit helps keep the AI agent on track by generating a detailed [implementation plan](https://github.com/Gitchegumi/Violence-of-Action/blob/ed2a3b25fb23110564101b2a6a6da7d265e6d692/specs/001-develop-unit-selection/plan.md) that breaks things down nicely. This plan is fully editable by the user so I can tweak it as needed. Here’s what the short version of the plan for this feature:
+
+- Extend `tile_map.gd` to detect clicks on occupied tiles.
+- Add a `unit_selected(unit)` signal so other parts of the game can react.
+- Build a `unit_info_panel.tscn` scene to display the stats.
+- Wire it all up in the main scene so the panel updates when you select a unit.
+
+I'm a fan of TDD (test driven development) and luckily, Spec Kit likes to enforce a TDD approach. Using the GUT testing framework, I set up failing tests for the signal and the info panel. That gave me a clear target: nothing should pass until the feature was in place. As you can see below, I was able to get all the tests passing.
+
+<figure className="flex flex-col items-center my-6">
+  <img src="/gif/unit_tests_pass.gif" alt="GUT Unit Tests Passing" className="rounded shadow-lg" />
+  <figcaption className="mt-2 text-sm text-gray-400">
+    GUT unit tests passing for selection/deselection logic
+  </figcaption>
+</figure>
+
+I also added a simple logging system with a `Logger.gd` singleton. It prints structured info whenever a unit is selected or deselected, which helped confirm that clicks were being picked up correctly.
+
+## Seeing It in Action
+
+When everything came together, clicking on a unit finally brought up its details in the new lower-third panel. Right now it’s basic—labels for stats and a placeholder portrait—but the functionality is there.
+
+<figure className="flex flex-col items-center my-6">
+  <img src="/gif/unit_ui.gif" alt="Unit Info Panel" className="rounded shadow-lg" />
+  <figcaption className="mt-2 text-sm text-gray-400">
+    Unit Info Panel
+  </figcaption>
+</figure>
+
+It’s a small feature on paper, but it’s a huge shift in feel. It's one thing to have a map generate that follows a random noise pattern in order to make organic looking terrain for your units to move across, but it's something completely different to be able to place and interact with those units directly. After all, what good is a map if you can’t do anything on it?
+
+## What’s Next
+
+With map generation behind us and unit selection in place, the next step will involve polishing the information panel. I would like to show information about any tile that is selected, even if it’s empty. This will help ground the player in the game world and give context to the terrain they’re navigating. Then, I can start adding movement and actions for the units themselves, and other gameplay mechanics. At some point, I'll need to make some design decisions for UI/UX and apply those to a main menu and HUD, but that can wait until the core gameplay loop is more fleshed out.
+
+For now, though, I’m happy with this milestone. From generating the map in [Devlog 1](../tech/devlog-1-violence-of-action) to selecting units in Devlog 2, **Violence of Action** is steadily evolving from prototype to something that might one day resemble a game.
+
+Stay tuned—things are about to get even more tactical. If you want to follow along more closely, check out the [GitHub repo](https://github.com/Gitchegumi/Violence-of-Action/tree/main) where I push all my changes. If you want to join in on the conversation, leave a comment below, and as always, keep your head above water.
