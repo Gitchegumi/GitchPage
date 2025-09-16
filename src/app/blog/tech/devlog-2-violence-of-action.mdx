@@ -1,0 +1,88 @@
+export const metadata = {
+  title: "Devlog #2: Unit Selection and Information Display",
+  slug: "devlog-2-violence-of-action",
+  date: "2025-09-15",
+  author: "Mathew 'Gitchegumi' Lindholm",
+  description: "Continuing the journey of building Violence of Action: implementing unit selection, displaying unit information, and ensuring robust testing.",
+  category: "tech",
+  tags: ["game development", "Godot", "unit selection", "UI", "testing", "devlog"],
+  featureImage: "/images/blog/devlog-2-violence-of-action.png",
+};
+
+Welcome back, fellow strategists and game development enthusiasts! In our last devlog, we laid the groundwork for *Violence of Action*, focusing on the fundamental ability to place units onto our game map. It was a crucial first step, transforming a static battlefield into a dynamic canvas for tactical deployment. But what good are units if you can't interact with them? Today, we're diving into the next critical phase: implementing robust unit selection and displaying vital information to the player.
+
+## The Challenge: Bringing Units to Life
+
+Imagine a grand strategy game where your meticulously placed soldiers are mere statues. You can see them, but you can't command them, can't understand their strengths or weaknesses. That's precisely the void we aimed to fill. Our primary goal for this phase was to empower players to select any unit on the map and, upon selection, immediately gain access to its detailed statistics and status. This isn't just about aesthetics; it's about providing the player with the necessary data to make informed tactical decisions, turning mere pixels into actionable game pieces.
+
+The core problem was clear: how do we bridge the gap between a visual representation of a unit and the underlying data that defines it? We needed a system that could reliably detect player input, identify the unit at the clicked location, and then present its information in an intuitive, accessible manner.
+
+## Designing the Selection Logic
+
+Our approach to unit selection was designed for simplicity and clarity. The most natural interaction for a player in a grid-based strategy game is to click on the tile where a unit resides. This click should serve as the primary trigger for selection.
+
+The system's first task (FR-001) is to detect this click input on any tile across the game map. Once a click is registered, the game then queries that specific tile to determine if a unit occupies it (FR-002). If a unit is present, that unit is then designated as the "currently selected object." This straightforward detection and identification process forms the backbone of our interaction system.
+
+Visual feedback is paramount. A player needs to know, unequivocally, which unit they have selected. To achieve this, we decided to leverage our existing tile selection highlight function (FR-003). This meant that when a unit is selected, the tile it occupies illuminates, providing immediate and consistent visual confirmation to the player. This re-use of existing UI elements not only saved development time but also maintained a cohesive visual language within the game.
+
+The `Selected Unit` is a key entity in our game's state management, holding a reference to the Godot `Node` of the currently selected unit. This state, likely managed in a central `GameState.gd` or `tile_map.gd` script, transitions from `null` to a `Unit Node` upon selection, or from one `Unit Node` to another when switching selections. Clicking an empty tile or non-interactive UI element transitions the state back to `null`, effectively deselecting the unit.
+
+## The Information Panel: A Window into Your Army
+
+Once a unit is selected, the next crucial step is to present its information. We opted for a dedicated UI panel in the lower third of the screen (FR-004). This placement is strategic: it's prominent enough to be easily noticed but doesn't obstruct the main battlefield view, allowing players to maintain situational awareness while reviewing unit details.
+
+This lower-third panel is designed to be a comprehensive data hub. It displays the selected unit's key information (FR-005), which includes:
+
+*   **Core Stats**: Attack power, defense, movement range, health points, etc.
+*   **Unit Image**: A clear visual representation of the unit.
+*   **Active Status Effects**: Any buffs, debuffs, or temporary conditions affecting the unit.
+*   **Special Abilities**: Unique skills or actions the unit can perform.
+
+## Deselection and Edge Cases
+
+A robust selection system isn't just about selecting; it's also about deselecting. Players need a clear way to unselect a unit, either to clear their focus or to select a different one. Our system handles this by deselecting the current unit, removing its highlight, and hiding or clearing the info panel whenever a player clicks on an empty tile or another UI element (FR-006).
+
+We also considered an important edge case: what if the lower-third panel is already occupied, perhaps displaying information about a selected tile or an ongoing action? Our design dictates that selecting a unit will always take precedence, replacing any existing information in the lower-third panel with the newly selected unit's details. This ensures that unit information is always prioritized when a unit is actively chosen, providing immediate feedback to the player.
+
+## Ensuring Robustness with GUT (Godot Unit Test)
+
+Developing game logic, especially for core interactions like unit selection, demands rigorous testing. This is where GUT (Godot Unit Test) became an invaluable ally. Our research confirmed GUT as the ideal choice for its ease of use and comprehensive features.
+
+<p align="center">
+  <img src="/gif/unit_tests_pass.gif" alt="GUT Unit Tests Passing" />
+  <br />
+  <em>(Placeholder: GIF showing GUT unit tests passing for selection/deselection logic)</em>
+</p>
+
+We implemented a suite of unit tests specifically for our selection and deselection logic. These tests cover various scenarios:
+*   Clicking a tile with a unit: Does it select the correct unit?
+*   Clicking an empty tile: Does it deselect any active unit?
+*   Clicking a different unit: Does it correctly switch selection?
+*   Is the visual highlight applied and removed as expected?
+*   Does the information panel appear and disappear correctly?
+
+By running these tests frequently, we can quickly catch regressions and ensure that our core interaction systems remain stable and reliable as we continue to build out the game. This proactive approach to testing is critical for maintaining a healthy codebase and delivering a polished player experience. We also established a custom `Logger.gd` singleton for structured logging, enhancing our ability to debug and monitor the game's behavior.
+
+## Putting It All Together: A Glimpse of Interaction
+
+With unit placement from Devlog 1 and our new selection and information display logic, *Violence of Action* is starting to feel like a proper strategy game. The player's journey now involves:
+
+1.  Placing a unit strategically on the map.
+2.  Clicking on that unit to select it.
+3.  Observing the tile highlight and the detailed information appearing in the lower-third panel.
+
+<p align="center">
+  <img src="/gif/unit_ui.gif" alt="Unit Placement and Info Panel" />
+  <br />
+  <em>(Placeholder: GIF showing a unit being placed, then selected, and its info panel appearing)</em>
+</p>
+
+This seemingly simple interaction unlocks a world of strategic depth. Players can now assess their forces, understand their capabilities, and begin to formulate more complex plans.
+
+## Conclusion
+
+Devlog 2 marks a significant milestone in the development of *Violence of Action*. We've moved beyond static deployment to interactive command, giving players the ability to engage directly with their units. The implementation of robust selection logic, a clear information display, and comprehensive unit testing with GUT has brought us closer to a truly immersive strategy experience.
+
+What's next? With units now selectable, the natural progression is to enable them to move and perform actions. Stay tuned for Devlog 3, where we'll delve into pathfinding, movement commands, and the initial steps towards combat!
+
+As always, your feedback and thoughts are welcome. What features are you most excited to see in *Violence of Action*? Let us know in the comments below!
