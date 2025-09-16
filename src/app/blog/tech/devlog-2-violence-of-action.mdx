@@ -1,88 +1,72 @@
 export const metadata = {
-  title: "Devlog #2: Unit Selection and Information Display",
+  title: "Devlog 2: Placing and Selecting Units in Violence of Action",
   slug: "devlog-2-violence-of-action",
-  date: "2025-09-15",
+  date: "2025-09-16",
   author: "Mathew 'Gitchegumi' Lindholm",
-  description: "Continuing the journey of building Violence of Action: implementing unit selection, displaying unit information, and ensuring robust testing.",
+  description:
+    "In this devlog, I walk through adding unit interaction logic to Violence of Action, making it possible to click on a unit and pull up its info in a lower-third panel.",
   category: "tech",
-  tags: ["game development", "Godot", "unit selection", "UI", "testing", "devlog"],
+  tags: [
+    "game development",
+    "Godot",
+    "unit interaction",
+    "UI",
+    "testing",
+    "devlog",
+    "Violence of Action",
+  ],
   featureImage: "/images/blog/devlog-2-violence-of-action.png",
 };
 
-Welcome back, fellow strategists and game development enthusiasts! In our last devlog, we laid the groundwork for *Violence of Action*, focusing on the fundamental ability to place units onto our game map. It was a crucial first step, transforming a static battlefield into a dynamic canvas for tactical deployment. But what good are units if you can't interact with them? Today, we're diving into the next critical phase: implementing robust unit selection and displaying vital information to the player.
+In the [last devlog](../tech/devlog-1-violence-of-action), I focused on generating the map. That laid the groundwork for everything else, having a functional grid was step one. The next big questions, then, were: _how do I place something on the map, and what happens when I try to interact with it?_
 
-## The Challenge: Bringing Units to Life
+That’s where unit placement and selection comes in. Being able to place a unit, click on it, show that it's been selected with highlighting, and display its stats makes the whole project start to feel like a real game.
 
-Imagine a grand strategy game where your meticulously placed soldiers are mere statues. You can see them, but you can't command them, can't understand their strengths or weaknesses. That's precisely the void we aimed to fill. Our primary goal for this phase was to empower players to select any unit on the map and, upon selection, immediately gain access to its detailed statistics and status. This isn't just about aesthetics; it's about providing the player with the necessary data to make informed tactical decisions, turning mere pixels into actionable game pieces.
+## The Goal
 
-The core problem was clear: how do we bridge the gap between a visual representation of a unit and the underlying data that defines it? We needed a system that could reliably detect player input, identify the unit at the clicked location, and then present its information in an intuitive, accessible manner.
+The feature spec for this sprint was pretty clear: clicking on a tile with a unit should select it, highlight it, and show its information in a lower-third panel. Clicking away clears the panel. Clicking a different unit switches the selection.
 
-## Designing the Selection Logic
+So, while Devlog 1 gave us a canvas to play on, Devlog 2 is about making the pieces on that canvas actually respond to you.
 
-Our approach to unit selection was designed for simplicity and clarity. The most natural interaction for a player in a grid-based strategy game is to click on the tile where a unit resides. This click should serve as the primary trigger for selection.
+## How I Tackled It
 
-The system's first task (FR-001) is to detect this click input on any tile across the game map. Once a click is registered, the game then queries that specific tile to determine if a unit occupies it (FR-002). If a unit is present, that unit is then designated as the "currently selected object." This straightforward detection and identification process forms the backbone of our interaction system.
+Before diving into the code, I want to be transparent about some of the tools I’m using behind the scenes. As a solo developer, it’s important to have a system that keeps me moving without getting lost in the weeds. For this project, I’ve been leaning on [Gemini CLI](https://github.com/google-gemini/gemini-cli) alongside [GitHub Spec Kit](https://github.com/github/spec-kit). I am also using the [Godot MCP server](https://github.com/Coding-Solo/godot-mcp) which allows Gemini CLI to interact directly with the Godot engine. I found that running tests using the MCP was problematic and ended up having to run those manually, but otherwise, it worked out pretty nicely. These tools help me structure specs, plans, and tasks in a way that feels natural, while also giving me guardrails that keep the project from spiraling and providing historical context for my decisions. It's like having a little dev team on my side. This isn't an advertisment for any of these tools. I work in the space, so I've grown to be comfortable using these tools, but like any other tool, you still need to know what you're looking for and more or less how to do it (or at least how to look up how to do it). Otherwise you risk going in circles chasing down reoccuring errors. At some point, you're still going to need to read the documentation, and when it comes to making clean and secure code, it's important to inform yourself on best practices. But enough of that, let's get back to the devlog.
 
-Visual feedback is paramount. A player needs to know, unequivocally, which unit they have selected. To achieve this, we decided to leverage our existing tile selection highlight function (FR-003). This meant that when a unit is selected, the tile it occupies illuminates, providing immediate and consistent visual confirmation to the player. This re-use of existing UI elements not only saved development time but also maintained a cohesive visual language within the game.
+Spec Kit helps keep the AI agent on track by generating a detailed [implementation plan](https://github.com/Gitchegumi/Violence-of-Action/blob/ed2a3b25fb23110564101b2a6a6da7d265e6d692/specs/001-develop-unit-selection/plan.md) that breaks things down nicely. This plan is fully editable by the user so I can tweak it as needed. Here’s what the short version of the plan for this feature:
 
-The `Selected Unit` is a key entity in our game's state management, holding a reference to the Godot `Node` of the currently selected unit. This state, likely managed in a central `GameState.gd` or `tile_map.gd` script, transitions from `null` to a `Unit Node` upon selection, or from one `Unit Node` to another when switching selections. Clicking an empty tile or non-interactive UI element transitions the state back to `null`, effectively deselecting the unit.
+- Extend `tile_map.gd` to detect clicks on occupied tiles.
+- Add a `unit_selected(unit)` signal so other parts of the game can react.
+- Build a `unit_info_panel.tscn` scene to display the stats.
+- Wire it all up in the main scene so the panel updates when you select a unit.
 
-## The Information Panel: A Window into Your Army
+I'm a fan of TDD (test driven development) and luckily, Spec Kit likes to enforce a TDD approach. Using the GUT testing framework, I set up failing tests for the signal and the info panel. That gave me a clear target: nothing should pass until the feature was in place. As you can see below, I was able to get all the tests passing.
 
-Once a unit is selected, the next crucial step is to present its information. We opted for a dedicated UI panel in the lower third of the screen (FR-004). This placement is strategic: it's prominent enough to be easily noticed but doesn't obstruct the main battlefield view, allowing players to maintain situational awareness while reviewing unit details.
+<figure className="flex flex-col items-center my-6">
+  <img src="/gif/unit_tests_pass.gif" alt="GUT Unit Tests Passing" className="rounded shadow-lg" />
+  <figcaption className="mt-2 text-sm text-gray-400">
+    GUT unit tests passing for selection/deselection logic
+  </figcaption>
+</figure>
 
-This lower-third panel is designed to be a comprehensive data hub. It displays the selected unit's key information (FR-005), which includes:
+I also added a simple logging system with a `Logger.gd` singleton. It prints structured info whenever a unit is selected or deselected, which helped confirm that clicks were being picked up correctly.
 
-*   **Core Stats**: Attack power, defense, movement range, health points, etc.
-*   **Unit Image**: A clear visual representation of the unit.
-*   **Active Status Effects**: Any buffs, debuffs, or temporary conditions affecting the unit.
-*   **Special Abilities**: Unique skills or actions the unit can perform.
+## Seeing It in Action
 
-## Deselection and Edge Cases
+When everything came together, clicking on a unit finally brought up its details in the new lower-third panel. Right now it’s basic—labels for stats and a placeholder portrait—but the functionality is there.
 
-A robust selection system isn't just about selecting; it's also about deselecting. Players need a clear way to unselect a unit, either to clear their focus or to select a different one. Our system handles this by deselecting the current unit, removing its highlight, and hiding or clearing the info panel whenever a player clicks on an empty tile or another UI element (FR-006).
+<figure className="flex flex-col items-center my-6">
+  <img src="/gif/unit_ui.gif" alt="Unit Info Panel" className="rounded shadow-lg" />
+  <figcaption className="mt-2 text-sm text-gray-400">
+    Unit Info Panel
+  </figcaption>
+</figure>
 
-We also considered an important edge case: what if the lower-third panel is already occupied, perhaps displaying information about a selected tile or an ongoing action? Our design dictates that selecting a unit will always take precedence, replacing any existing information in the lower-third panel with the newly selected unit's details. This ensures that unit information is always prioritized when a unit is actively chosen, providing immediate feedback to the player.
+It’s a small feature on paper, but it’s a huge shift in feel. It's one thing to have a map generate that follows a random noise pattern in order to make organic looking terrain for your units to move across, but it's something completely different to be able to place and interact with those units directly. After all, what good is a map if you can’t do anything on it?
 
-## Ensuring Robustness with GUT (Godot Unit Test)
+## What’s Next
 
-Developing game logic, especially for core interactions like unit selection, demands rigorous testing. This is where GUT (Godot Unit Test) became an invaluable ally. Our research confirmed GUT as the ideal choice for its ease of use and comprehensive features.
+With map generation behind us and unit selection in place, the next step will involve polishing the information panel. I would like to show information about any tile that is selected, even if it’s empty. This will help ground the player in the game world and give context to the terrain they’re navigating. Then, I can start adding movement and actions for the units themselves, and other gameplay mechanics. At some point, I'll need to make some design decisions for UI/UX and apply those to a main menu and HUD, but that can wait until the core gameplay loop is more fleshed out.
 
-<p align="center">
-  <img src="/gif/unit_tests_pass.gif" alt="GUT Unit Tests Passing" />
-  <br />
-  <em>(Placeholder: GIF showing GUT unit tests passing for selection/deselection logic)</em>
-</p>
+For now, though, I’m happy with this milestone. From generating the map in [Devlog 1](../tech/devlog-1-violence-of-action) to selecting units in Devlog 2, **Violence of Action** is steadily evolving from prototype to something that might one day resemble a game.
 
-We implemented a suite of unit tests specifically for our selection and deselection logic. These tests cover various scenarios:
-*   Clicking a tile with a unit: Does it select the correct unit?
-*   Clicking an empty tile: Does it deselect any active unit?
-*   Clicking a different unit: Does it correctly switch selection?
-*   Is the visual highlight applied and removed as expected?
-*   Does the information panel appear and disappear correctly?
-
-By running these tests frequently, we can quickly catch regressions and ensure that our core interaction systems remain stable and reliable as we continue to build out the game. This proactive approach to testing is critical for maintaining a healthy codebase and delivering a polished player experience. We also established a custom `Logger.gd` singleton for structured logging, enhancing our ability to debug and monitor the game's behavior.
-
-## Putting It All Together: A Glimpse of Interaction
-
-With unit placement from Devlog 1 and our new selection and information display logic, *Violence of Action* is starting to feel like a proper strategy game. The player's journey now involves:
-
-1.  Placing a unit strategically on the map.
-2.  Clicking on that unit to select it.
-3.  Observing the tile highlight and the detailed information appearing in the lower-third panel.
-
-<p align="center">
-  <img src="/gif/unit_ui.gif" alt="Unit Placement and Info Panel" />
-  <br />
-  <em>(Placeholder: GIF showing a unit being placed, then selected, and its info panel appearing)</em>
-</p>
-
-This seemingly simple interaction unlocks a world of strategic depth. Players can now assess their forces, understand their capabilities, and begin to formulate more complex plans.
-
-## Conclusion
-
-Devlog 2 marks a significant milestone in the development of *Violence of Action*. We've moved beyond static deployment to interactive command, giving players the ability to engage directly with their units. The implementation of robust selection logic, a clear information display, and comprehensive unit testing with GUT has brought us closer to a truly immersive strategy experience.
-
-What's next? With units now selectable, the natural progression is to enable them to move and perform actions. Stay tuned for Devlog 3, where we'll delve into pathfinding, movement commands, and the initial steps towards combat!
-
-As always, your feedback and thoughts are welcome. What features are you most excited to see in *Violence of Action*? Let us know in the comments below!
+Stay tuned—things are about to get even more tactical. If you want to follow along more closely, check out the [GitHub repo](https://github.com/Gitchegumi/Violence-of-Action/tree/main) where I push all my changes. If you want to join in on the conversation, leave a comment below, and as always, keep your head above water.
