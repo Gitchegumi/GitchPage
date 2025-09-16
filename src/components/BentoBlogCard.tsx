@@ -2,7 +2,6 @@ import { BentoCard } from "@/components/magicui/bento-grid";
 import { MagicCard } from "@/components/magicui/magic-card";
 import { PostMeta } from "@/lib/types";
 import Image from "next/image";
-import Link from "next/link";
 
 // Define a dummy icon component that renders nothing
 const EmptyIcon = () => null;
