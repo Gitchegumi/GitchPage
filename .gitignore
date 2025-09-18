@@ -51,6 +51,7 @@ GitchPage.code-workspace
 
 # GitHub Spec Kit files
 .specify/
+prompts/
 
 # Design files
 Photoshop Template/
