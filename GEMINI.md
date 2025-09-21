@@ -1,15 +1,15 @@
 ﻿# GitchPage (Personal Website)
 
-This file expands the global GEMINI.md to provide guidance for GitchPage â€“ a personal website and blog project.
+This file expands the global GEMINI.md to provide guidance for GitchPage — a personal website and blog project.
 
-## ðŸŒ Site Overview
+## 🌍 Site Overview
 
 - **Framework**: Next.js
 - **Style**: TailwindCSS
 - **Content**: MDX blog, personal projects, faith/tech writings
 - **Deployment**: GitHub Pages (OCI or local preview)
 
-## âœ… Gemini Can Help
+## ✅ Gemini Can Help
 
 - Refactor React components
 - Suggest Tailwind improvements or layout fixes
@@ -18,14 +18,14 @@ This file expands the global GEMINI.md to provide guidance for GitchPage â€�
 - Assist with accessibility and semantic HTML
 - Use GitHub CLI to inspect issues and help with organizing and planning next steps
 
-## âš ï¸ Gemini Should Avoid
+## ⚠️ Gemini Should Avoid
 
 - Rewriting published posts unless labeled `draft`
 - Modifying `.next/`, `node_modules/`, or `.env`
 - Suggesting SEO or affiliate strategies unless prompted
 - Using GitHub CLI to create branches, close issues, or initiate PRs. This will all be handled by the developer.
 
-## ðŸ“ Structure
+## 📁 Structure
 
 - `.github/workflows/`: GitHub Actions for CI/CD
 - `public/`: Static files and assets
@@ -59,4 +59,3 @@ This file expands the global GEMINI.md to provide guidance for GitchPage â€�
 - Changes are made on the `dev`, tested locally, then merged to `main` for deployment.
 - Use `gh` CLI commands to inspect issues and assist with planning, but do not create branches or PRs.
 - Focus on improving user experience, accessibility, and code quality.
-

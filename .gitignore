@@ -82,9 +82,8 @@ extra-documentation/
 ### AI / Spec Kit / Prompt Systems ###
 # Governance & prompt system assets are intentionally tracked for transparency.
 # If sensitive experimental data appears later, create a nested .gitignore inside those dirs.
-# Keep these DIRECTORIES versioned (so do NOT ignore them). If they had been previously ignored,
-# remove entries: .specify/ .gemini/ prompts/
-# To ignore only transient artifacts inside, add patterns below, e.g.:
+# Keep these DIRECTORIES versioned (so do NOT ignore them). If you previously ignored .specify/, .gemini/, or prompts/, remove those entries.
+# Only ignore transient artifacts inside these directories using patterns below, e.g.:
 # .specify/cache/
 # .specify/tmp/
 # .gemini/sessions/
