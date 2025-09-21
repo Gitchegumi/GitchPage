@@ -1,56 +1,120 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+################################################################################
+# Base Reference: https://github.com/github/gitignore/blob/main/Node.gitignore
+# Adapted for: GitchPage (Next.js static-first personal site + future expansion)
+################################################################################
 
-# dependencies
-/node_modules
-/.pnp
+### Node / Package Managers ###
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+.pnp
 .pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-extra-documentation/
-
-# debug
+.npmrc.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+### Yarn v2+ (keep plugin artifacts if ever used) ###
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+!.yarn/sdks
+!.yarn/immutable
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
+### Next.js Build Artifacts ###
+.next/
+out/
+build/
 next-env.d.ts
 
-# Gemini files
-GEMINI.md
-.gemini/
+### Coverage / Test Outputs ###
+coverage/
+*.lcov
 
-# VS Code files
+### TypeScript ###
+*.tsbuildinfo
+
+### Environment / Secrets ###
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+### Logs & Diagnostics ###
+logs/
+*.log
+*.log.*
+report.[0-9]*.*
+
+### OS / Editor Noise ###
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.kate-swp
+*.orig
+*.tmp
+
+### SSL / Keys ###
+*.pem
+*.key
+*.crt
+
+### Tooling / Framework Specific ###
+.vercel
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.template.json
+
+### Generated Assets (optional – uncomment if regenerated each build) ###
+# public/sitemap.xml
+# public/sitemap-*.xml
+# public/robots.txt
+
+### Project Docs (ignored intentionally) ###
+extra-documentation/
+
+### AI / Spec Kit / Prompt Systems ###
+# Governance & prompt system assets are intentionally tracked for transparency.
+# If sensitive experimental data appears later, create a nested .gitignore inside those dirs.
+# Keep these DIRECTORIES versioned (so do NOT ignore them). If you previously ignored .specify/, .gemini/, or prompts/, remove those entries.
+# Only ignore transient artifacts inside these directories using patterns below, e.g.:
+# .specify/cache/
+# .specify/tmp/
+# .gemini/sessions/
+
+### Workspace / Project Files ###
 GitchPage.code-workspace
-.github/copilot-instructions.md
 
-# GitHub Spec Kit files
-.specify/
-
-# Design files
+### Design / Binary Sources ###
 Photoshop Template/
+
+### Media processing caches (if added later) ###
+# .cache/
+# .turbo/
+
+### Local tooling state (optional) ###
+# .eslintcache
+# .stylelintcache
+
+### Temporary Backups ###
+*.bak
+*.backup
+*.old
+
+### Crash Dumps ###
+*.stackdump
+core.*
+
+### Lockfiles Policy Note ###
+# Lockfiles currently ignored except package-lock.json included above intentionally.
+# Adjust if adopting pnpm or yarn deterministically (then remove ignore of its lockfile).
+
+################################################################################
+# End of .gitignore
+################################################################################
