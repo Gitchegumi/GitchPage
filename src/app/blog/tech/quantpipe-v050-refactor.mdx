@@ -1,0 +1,38 @@
+export const metadata = {
+  title: "Devlog: Unified CLI & CTI Restoration",
+  slug: "quantpipe-v050-refactor",
+  date: "2026-02-01",
+  author: "Mathew 'Gitchegumi' Lindholm",
+  description: "A look at the milestones in QuantPipe v0.5.0, focusing on CLI unification and restoring prop-firm logic.",
+  category: "tech",
+  tags: ["QuantPipe", "Python", "Trading", "Devlog"],
+  featureImage: "/images/blog/quantpipe-refactor.png",
+};
+
+# Devlog: Unified CLI & CTI Restoration
+
+The `quantpipe` project reached a major milestone today with the release of **v0.5.0**. This update focused on two primary pillars: simplifying the developer experience through CLI unification and restoring critical evaluation logic for prop-firm challenges.
+
+## Unifying the Command Line
+
+Previously, core tasks like dataset building and strategy scaffolding relied on separate standalone scripts. This created a fragmented workflow. In v0.5.0, we migrated these into the unified `quantpipe` entry point. Users can now perform the entire workflow—from ingestion to execution—under one tool:
+
+- `poetry run quantpipe ingest`: Standardizes raw data normalization.
+- `poetry run quantpipe scaffold`: Generates new strategy templates.
+- `poetry run quantpipe backtest`: Executes the core simulation.
+
+## CTI Logic Restoration
+
+Accuracy is paramount in trading infrastructure. During the recent refactor, the complex logic for tracking City Traders Imperium (CTI) challenge progression was temporarily omitted. v0.5.0 restores this Feature 027 logic, ensuring the engine correctly tracks:
+
+- **Attempt "Lives"**: Monitoring drawdown limits and promotion targets.
+- **Scaling Plans**: Simulating the transition from challenge to funded accounts.
+- **Payout Calculations**: Estimating net profit shares based on CTI rules.
+
+## The CUDA Foundation
+
+To support the next phase of high-throughput analysis, we've also integrated the foundation for CUDA-based acceleration. Using `cupy`, we've implemented an optional GPU-accelerated path for indicator calculations and signal scanning, which we expect to provide a significant speedup for multi-million candle datasets.
+
+***
+
+*QuantPipe is an open-source automated trading framework. Stay tuned for further updates as we move into Issue #8 and portfolio-level risk management.*
