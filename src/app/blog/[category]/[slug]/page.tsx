@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { getAllPosts } from "@/lib/getAllPosts";
 import ProseLayout from "@/components/ProseLayout";
+import Comments from "@/components/blog/Comments";
 import type { PostMeta } from "@/lib/types";
-import Script from "next/script";
 
 type Props = {
   params: Promise<{
@@ -91,28 +91,12 @@ export default async function BlogPostPage({ params }: Props) {
           <Post />
         </article>
         <hr className="border-muted" />
-        <div className="max-w-5xl mx-auto text-center px-4">
-          <p className="text-xl md:text-2xl font-bold">
-            Feel like joining the conversation?
-            <br />
-            Leave your comments below!
-          </p>
-          {/* Cusdis comment thread */}
-          <div
-            id="cusdis_thread"
-            data-host="https://cusdis.com"
-            data-app-id="ebb02184-7fe1-429c-abd2-bc34ed96dd6c"
-            data-page-id={slug}
-            data-page-url={`https://yourdomain.com/blog/${category}/${slug}`}
-            data-page-title={metadata.title}
-            className="mt-16 bg-brand-blue/50 rounded-lg ring-brand-orange ring"
-          />
-
-          <Script
-            src="https://cusdis.com/js/cusdis.es.js"
-            strategy="lazyOnload"
-          />
-        </div>
+        
+        <Comments 
+          slug={slug} 
+          title={metadata.title} 
+          category={category} 
+        />
       </ProseLayout>
     </>
   );
