@@ -301,7 +301,12 @@
                 monthDate.setMonth(baseDate.getMonth() + currentMonth - 1);
                 const dateStr = monthDate.toLocaleString('default', { month: 'short', year: 'numeric' });
 
-                const snapshot = { month: currentMonth, date: dateStr, balances: {}, payments: {}, interests: {}, total: 0 };
+                const snapshot = { month: currentMonth, date: dateStr, balances: {}, payments: {}, interests: {}, startingBalances: {}, total: 0 };
+
+                // Capture starting balances (before interest/payments this month)
+                currentDebts.forEach(d => {
+                    snapshot.startingBalances[d.name] = d.balance;
+                });
 
                 currentDebts.forEach(d => {
                     let interest = 0;
@@ -387,29 +392,40 @@
         }
 
         function renderTimelineTransposed(timeline, debtNames) {
+            // Header: row with month dates, each spanning 4 columns
             const headerRow = `<tr><th class="p-3 bg-slate-800 sticky-col z-30 min-w-[150px] border-b border-slate-600">Debt Name</th>` + 
-                timeline.map(step => `<th class="p-3 text-center border-l border-slate-700/50 min-w-[110px] border-b border-slate-600">${step.date}</th>`).join('') + `</tr>`;
+                timeline.map(step => `<th colspan="4" class="p-3 text-center border-l border-slate-700/50 min-w-[220px] border-b border-slate-600">${step.date}</th>`).join('') + `</tr>`;
             document.getElementById('timelineHeader').innerHTML = headerRow;
+
+            // Sub-header for each month: Start | Paid | Interest | Remaining
+            const subHeaderRow = `<tr><th class="p-3 bg-slate-800 sticky-col z-30 min-w-[150px] border-b border-slate-600"></th>` +
+                timeline.map(() => `
+                  <th class="p-1 border-l border-slate-700/50 min-w-[55px] text-[10px] uppercase text-slate-500 border-b border-slate-600">Start</th>
+                  <th class="p-1 border-l border-slate-700/50 min-w-[55px] text-[10px] uppercase text-slate-500 border-b border-slate-600">Paid</th>
+                  <th class="p-1 border-l border-slate-700/50 min-w-[55px] text-[10px] uppercase text-slate-500 border-b border-slate-600">Int</th>
+                  <th class="p-1 border-l border-slate-700/50 min-w-[55px] text-[10px] uppercase text-slate-500 border-b border-slate-600">Rem</th>
+                `).join('') + `</tr>`;
+            document.getElementById('timelineHeader').insertAdjacentHTML('beforeend', subHeaderRow);
 
             document.getElementById('timelineBody').innerHTML = debtNames.map(name => `
                 <tr class="hover:bg-slate-800/20 group">
-                    <td class="p-3 font-bold text-slate-200 sticky-col z-10 group-hover:bg-slate-800 transition-colors border-b border-slate-700/30 text-left">${name}</td>
-                    ${timeline.map(step => {
-                        const bal = step.balances[name];
-                        const paid = step.payments[name];
-                        const interest = step.interests[name];
-                        const isZero = bal <= 0 && (timeline[timeline.indexOf(step)-1]?.balances[name] > 0 || timeline.indexOf(step) === 0);
-                        return `
-                            <td class="p-3 text-center border-l border-slate-700/30 border-b border-slate-700/30 ${isZero ? 'bg-emerald-900/20' : ''}">
-                                <div class="${bal <= 0 ? 'text-emerald-500 font-bold' : 'text-slate-300'}">${bal <= 0 ? 'PAID' : '$' + Math.round(bal).toLocaleString()}</div>
-                                ${paid > 0 ? `<div class="text-[10px] text-emerald-400 font-bold mt-1">Pay $${Math.round(paid).toLocaleString()}</div>` : ''}
-                                ${interest > 0 ? `<div class="text-[9px] text-rose-500/80 font-medium italic">Int. $${Math.round(interest).toLocaleString()}</div>` : ''}
-                            </td>
-                        `;
-                    }).join('')}
+                  <td class="p-3 font-bold text-slate-200 sticky-col z-10 group-hover:bg-slate-800 transition-colors border-b border-slate-700/30 text-left">${name}</td>
+                  ${timeline.map(step => {
+                    const start = step.startingBalances[name] || 0;
+                    const paid = step.payments[name] || 0;
+                    const interest = step.interests[name] || 0;
+                    const remaining = step.balances[name] || 0;
+                    const isPaid = remaining <= 0 && (timeline[timeline.indexOf(step)-1]?.balances[name] > 0 || timeline.indexOf(step) === 0);
+                    return `
+                      <td class="p-2 border-l border-slate-700/30 border-b border-slate-700/30 text-slate-300 text-right">$${Math.round(start).toLocaleString()}</td>
+                      <td class="p-2 border-l border-slate-700/30 border-b border-slate-700/30 text-right ${paid > 0 ? 'text-emerald-400 font-bold' : 'text-slate-500'}">$${Math.round(paid).toLocaleString()}</td>
+                      <td class="p-2 border-l border-slate-700/30 border-b border-slate-700/30 text-right ${interest > 0 ? 'text-rose-400' : 'text-slate-500'}">$${Math.round(interest).toLocaleString()}</td>
+                      <td class="p-2 border-l border-slate-700/30 border-b border-slate-700/30 text-right ${isPaid ? 'bg-emerald-900/20 text-emerald-500 font-bold' : 'text-slate-300'}">${remaining <= 0 ? 'PAID' : '$' + Math.round(remaining).toLocaleString()}</td>
+                    `;
+                  }).join('')}
                 </tr>
-            `).join('');
-        }
+              `).join('');
+          }
 
         function updateChart(timeline) {
             const ctx = document.getElementById('payoffChart').getContext('2d');
@@ -500,14 +516,24 @@
 
                     <!-- Timeline -->
                     <div style="page-break-inside: avoid;">
-                        <h2 style="font-size: 12pt; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 10px; color: #0f172a;">Full Payoff Timeline (Balances)</h2>
+                        <h2 style="font-size: 12pt; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 10px; color: #0f172a;">Full Payoff Timeline (Per-Month Cash Flow)</h2>
+                        <p style="font-size: 8pt; color: #64748b; margin-bottom: 8px;">Shows: Starting balance → Amount paid → Interest accrued → Remaining balance (per debt, per month)</p>
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; font-size: 6pt; table-layout: fixed;">
                                 <thead>
                                     <tr style="background: #f1f5f9; color: #475569;">
-                                        <th style="padding: 3px; border: 1px solid #e2e8f0; width: 90px; text-align: left;">Debt Name</th>
+                                        <th style="padding: 3px; border: 1px solid #e2e8f0; width: 90px; text-align: left; font-weight: bold;">Debt Name</th>
                                         ${lastResult.timeline.filter((_, index) => index % 3 === 0 || index === lastResult.timeline.length - 1).map(step => `
-                                            <th style="padding: 3px; border: 1px solid #e2e8f0; text-align: center;">${step.date}</th>
+                                            <th colspan="4" style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; background: #e2e8f0; font-weight: bold;">${step.date}</th>
+                                        `).join('')}
+                                    </tr>
+                                    <tr style="background: #f1f5f9; color: #475569;">
+                                        <th style="padding: 3px; border: 1px solid #e2e8f0;"></th>
+                                        ${lastResult.timeline.filter((_, index) => index % 3 === 0 || index === lastResult.timeline.length - 1).map(() => `
+                                            <th style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; width: 55px;">Start</th>
+                                            <th style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; width: 55px;">Paid</th>
+                                            <th style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; width: 55px;">Int</th>
+                                            <th style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; width: 55px;">Rem</th>
                                         `).join('')}
                                     </tr>
                                 </thead>
@@ -516,12 +542,20 @@
                                         <tr style="page-break-inside: avoid;">
                                             <td style="padding: 3px; border: 1px solid #e2e8f0; font-weight: bold; background: #f8fafc; color: #1e293b; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${name}</td>
                                             ${lastResult.timeline.filter((_, index) => index % 3 === 0 || index === lastResult.timeline.length - 1).map(step => {
-                                                const bal = step.balances[name];
-                                                const isPaid = bal <= 0 && (lastResult.timeline[lastResult.timeline.indexOf(step)-1]?.balances[name] > 0 || lastResult.timeline.indexOf(step) === 0);
-                                                return `<td style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; ${isPaid ? 'background: #ecfdf5; color: #059669; font-weight: bold;' : 'color: #64748b;'}">${bal <= 0 ? 'PAID' : '$' + Math.round(bal).toLocaleString()}</td>`;
+                                                const start = step.startingBalances[name] || 0;
+                                                const paid = step.payments[name] || 0;
+                                                const interest = step.interests[name] || 0;
+                                                const remaining = step.balances[name] || 0;
+                                                const isPaid = remaining <= 0 && (lastResult.timeline[lastResult.timeline.indexOf(step)-1]?.balances[name] > 0 || lastResult.timeline.indexOf(step) === 0);
+                                                return `
+                                                    <td style="padding: 3px; border: 1px solid #e2e8f0; text-align: right; color: #64748b;">$${Math.round(start).toLocaleString()}</td>
+                                                    <td style="padding: 3px; border: 1px solid #e2e8f0; text-align: right; ${paid > 0 ? 'color: #10b981; font-weight: bold;' : 'color: #94a3b8;'}">$${Math.round(paid).toLocaleString()}</td>
+                                                    <td style="padding: 3px; border: 1px solid #e2e8f0; text-align: right; ${interest > 0 ? 'color: #f43f5e;' : 'color: #94a3b8;'}">$${Math.round(interest).toLocaleString()}</td>
+                                                    <td style="padding: 3px; border: 1px solid #e2e8f0; text-align: right; ${isPaid ? 'background: #ecfdf5; color: #059669; font-weight: bold;' : 'color: #334155;'}">${remaining <= 0 ? 'PAID' : '$' + Math.round(remaining).toLocaleString()}</td>
+                                                `;
                                             }).join('')}
                                         </tr>
-                                    `).join('')}
+                                      `).join('')}
                                 </tbody>
                             </table>
                         </div>
