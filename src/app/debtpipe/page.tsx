@@ -2,6 +2,29 @@
 
 import { useEffect } from "react";
 
+// Extend Window interface for external scripts
+declare global {
+  interface Window {
+    lucide?: {
+      createIcons: () => void;
+    };
+    html2pdf?: () => {
+      set: (options: {
+        margin: number;
+        filename: string;
+        image: { type: string; quality: number };
+        html2canvas: { scale: number; useCORS: boolean; letterRendering: boolean; scrollY: number; scrollX: number };
+        jsPDF: { unit: string; format: string; orientation: string };
+        pagebreak: { mode: string[] };
+      }) => {
+        from: (content: string) => {
+          save: () => void;
+        };
+      };
+    };
+  }
+}
+
 export default function DebtPipePage() {
   useEffect(() => {
     // Load external scripts once component mounts
@@ -19,8 +42,8 @@ export default function DebtPipePage() {
 
     // Initialize Lucide icons after scripts load
     const initIcons = () => {
-      if ((window as any).lucide) {
-        (window as any).lucide.createIcons();
+      if (window.lucide) {
+        window.lucide.createIcons();
       }
     };
     setTimeout(initIcons, 1000);
