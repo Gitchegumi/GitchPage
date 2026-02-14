@@ -405,12 +405,13 @@
                         const paid = step.payments[name];
                         const interest = step.interests[name];
                         const isZero = bal <= 0 && (timeline[timeline.indexOf(step)-1]?.balances[name] > 0 || timeline.indexOf(step) === 0);
+                        const fmt = n => n.toFixed(2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                         return `
                             <td class="p-3 text-center border-l border-slate-700/30 border-b border-slate-700/30 ${isZero ? 'bg-emerald-900/20' : ''}">
-                                <div class="${start > 0 && start !== bal ? 'text-slate-500 text-[9px] mb-1' : 'hidden'}">Start $${Math.round(start).toLocaleString()}</div>
-                                <div class="${bal <= 0 ? 'text-emerald-500 font-bold' : 'text-slate-300'}">${bal <= 0 ? 'PAID' : '$' + Math.round(bal).toLocaleString()}</div>
-                                ${paid > 0 ? `<div class="text-[10px] text-emerald-400 font-bold mt-1">Pay $${Math.round(paid).toLocaleString()}</div>` : ''}
-                                ${interest > 0 ? `<div class="text-[9px] text-rose-500/80 font-medium italic">Int. $${Math.round(interest).toLocaleString()}</div>` : ''}
+                                <div class="${start > 0 && start !== bal ? 'text-slate-500 text-[9px] mb-1' : 'hidden'}">Start $${fmt(start)}</div>
+                                <div class="${bal <= 0 ? 'text-emerald-500 font-bold' : 'text-slate-300'}">${bal <= 0 ? 'PAID' : '$' + fmt(bal)}</div>
+                                ${paid > 0 ? `<div class="text-[10px] text-emerald-400 font-bold mt-1">Pay $${fmt(paid)}</div>` : ''}
+                                ${interest > 0 ? `<div class="text-[9px] text-rose-500/80 font-medium italic">Int. $${fmt(interest)}</div>` : ''}
                             </td>
                         `;
                     }).join('')}
@@ -443,6 +444,7 @@
 
         function exportToPDF() {
             if (!lastResult) return alert("Run simulation first.");
+            const fmt = n => n.toFixed(2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             const html = `
                 <div style="font-family: Arial, sans-serif; color: #334155; padding: 15px; background: white; width: 950px;">
@@ -454,7 +456,7 @@
                         </div>
                         <div style="text-align: right; font-size: 8pt; color: #64748b;">
                             <p style="margin: 0;">Plan Generated: ${new Date().toLocaleDateString()}</p>
-                            <p style="margin: 1px 0 0 0;">Method: ${lastResult.method.toUpperCase()} | Extra: $${lastResult.extra}/mo</p>
+                            <p style="margin: 1px 0 0 0;">Method: ${lastResult.method.toUpperCase()} | Extra: $${fmt(lastResult.extra)}/mo</p>
                         </div>
                     </div>
 
@@ -467,17 +469,17 @@
                         </div>
                         <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
                             <div style="font-size: 6.5pt; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Total Interest</div>
-                            <div style="font-size: 12pt; font-weight: bold; color: #f43f5e;">$${Math.round(lastResult.metrics.interest).toLocaleString()}</div>
+                            <div style="font-size: 12pt; font-weight: bold; color: #f43f5e;">$${fmt(lastResult.metrics.interest)}</div>
                             <div style="font-size: 6.5pt; color: #64748b;">Paid to banks</div>
                         </div>
                         <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
                             <div style="font-size: 6.5pt; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Total Cost</div>
-                            <div style="font-size: 12pt; font-weight: bold; color: #0f172a;">$${Math.round(lastResult.metrics.total).toLocaleString()}</div>
+                            <div style="font-size: 12pt; font-weight: bold; color: #0f172a;">$${fmt(lastResult.metrics.total)}</div>
                             <div style="font-size: 6.5pt; color: #64748b;">Principal + Interest</div>
                         </div>
                         <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
                             <div style="font-size: 6.5pt; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Monthly Flow</div>
-                            <div style="font-size: 12pt; font-weight: bold; color: #0f172a;">$${Math.round(lastResult.metrics.budget).toLocaleString()}</div>
+                            <div style="font-size: 12pt; font-weight: bold; color: #0f172a;">$${fmt(lastResult.metrics.budget)}</div>
                             <div style="font-size: 6.5pt; color: #64748b;">Total Budget</div>
                         </div>
                     </div>
@@ -527,11 +529,12 @@
                                                 const paid = step.payments[name];
                                                 const interest = step.interests[name];
                                                 const isPaid = bal <= 0 && (lastResult.timeline[0] === step || lastResult.timeline[lastResult.timeline.indexOf(step)-1]?.balances[name] > 0);
+                                                const fmt = n => n.toFixed(2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                                                 return `<td style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; vertical-align: top; ${isPaid ? 'background: #ecfdf5; color: #059669; font-weight: bold;' : 'color: #64748b;'}">
-                                                    <div>${start > 0 && start !== bal ? `<span style="font-size:6pt;color:#94a3b8;">Start $${Math.round(start).toLocaleString()}</span><br>` : ''}
-                                                    <span class="${bal <= 0 ? 'text-emerald-500 font-bold' : ''}">${bal <= 0 ? 'PAID' : '$' + Math.round(bal).toLocaleString()}</span><br>
-                                                    ${paid > 0 ? `<span class="text-[10px] text-emerald-400 font-bold">Pay $${Math.round(paid).toLocaleString()}</span><br>` : ''}
-                                                    ${interest > 0 ? `<span class="text-[9px] text-rose-500/80 font-medium italic">Int. $${Math.round(interest).toLocaleString()}</span>` : ''}
+                                                    <div>${start > 0 && start !== bal ? `<span style="font-size:6pt;color:#94a3b8;">Start $${fmt(start)}</span><br>` : ''}
+                                                    <span class="${bal <= 0 ? 'text-emerald-500 font-bold' : ''}">${bal <= 0 ? 'PAID' : '$' + fmt(bal)}</span><br>
+                                                    ${paid > 0 ? `<span class="text-[10px] text-emerald-400 font-bold">Pay $${fmt(paid)}</span><br>` : ''}
+                                                    ${interest > 0 ? `<span class="text-[9px] text-rose-500/80 font-medium italic">Int. $${fmt(interest)}</span>` : ''}
                                                 </td>`;
                                             }).join('')}
                                         </tr>
