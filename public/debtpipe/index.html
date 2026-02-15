@@ -1,318 +1,1066 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DebtPipe - Bill Tracker</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DebtPipe 💸</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 20px; background: #f1f5f9; color: #475569; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h1 { color: #1e293b; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #475569; }
-        input, select { padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 200px; }
-        button { padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #2563eb; }
-        #results { margin-top: 30px; }
-        .debt-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-top: 10px; }
-        .debt-table th, .debt-table td { border: 1px solid #e2e8f0; padding: 4px; text-align: center; }
-        .debt-table th { background: #1e293b; color: #f1f5f9; font-weight: bold; }
-        .debt-table .debt-name { text-align: left; font-weight: bold; background: #f8fafc; position: sticky; left: 0; z-index: 10; }
-        .paid-row { background-color: #ecfdf5; }
-        .custom-row { background-color: #eff6ff; }
-        .header-month { min-width: 110px; }
-        .checkbox-cell { width: 24px; }
-        .payment-input { width: 60px; padding: 2px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; }
-        .flow-remaining { font-weight: bold; color: #64748b; }
-        .no-results { color: #64748b; font-style: italic; }
+      .glass {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      body {
+        background-color: #0f172a;
+        color: #f8fafc;
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+      }
+      .tab-active {
+        border-bottom: 2px solid #10b981;
+        color: #10b981;
+      }
+      .sticky-col {
+        position: sticky;
+        left: 0;
+        background: #0f172a;
+        z-index: 10;
+      }
+      /* Interactive Bill Tracking styles */
+      .checkbox-cell { width: 24px; }
+      .payment-input { width: 60px; padding: 2px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; background: #1e293b; color: #f8fafc; font-size: 10px; }
+      .paid-row { background-color: #064e3b !important; }
+      .custom-row { background-color: #1e3a8a !important; }
+      .interactive-note { font-size: 11px; color: #94a3b8; margin-top: 6px; font-style: italic; }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1>DebtPipe - Bill Tracker</h1>
+  </head>
+  <body class="p-4 md:p-8 min-h-screen font-sans">
+    <div class="max-w-7xl mx-auto">
+      <header class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+          <div
+            class="p-2 bg-emerald-500 rounded-lg shadow-lg shadow-emerald-500/20"
+          >
+            <i data-lucide="banknote" class="text-white"></i>
+          </div>
+          <h1 class="text-3xl font-bold tracking-tight text-white">DebtPipe</h1>
+        </div>
+        <div class="hidden sm:block text-sm text-slate-400 font-medium">
+          Unlimited Debt Payoff Simulator
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+            <input type="checkbox" id="interactiveMode" class="w-4 h-4 accent-emerald-500" />
+            <span>Interactive Bill Tracking</span>
+          </label>
+          <button onclick="downloadJSON()" class="hidden bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold py-2 px-3 rounded" title="Export Interactive State (JSON)">JSON Export</button>
+        </div>
+      </header>
 
-        <!-- Input Form -->
-        <div id="inputForm">
-            <div class="form-group">
-                <label for="billsInput">Bills (JSON array)</label>
-                <textarea id="billsInput" rows="4" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-family:monospace;" placeholder="[{'name':'Visa','dueDate':1,'statementBalance':1200}, ...]"></textarea>
+      <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+        <!-- Left Column: Inputs -->
+        <div class="xl:col-span-1 space-y-6">
+          <section class="glass p-6 rounded-2xl">
+            <h2
+              class="text-lg font-semibold mb-4 flex items-center gap-2 text-emerald-400"
+            >
+              <i data-lucide="settings-2" class="w-4 h-4"></i> Settings
+            </h2>
+            <div class="space-y-4 text-sm font-medium text-slate-300">
+              <div>
+                <label
+                  class="block text-xs uppercase tracking-wider text-slate-500 mb-2 font-bold"
+                  >Start Date</label
+                >
+                <input
+                  type="month"
+                  id="startDate"
+                  class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label
+                  class="block text-xs uppercase tracking-wider text-slate-500 mb-2 font-bold"
+                  >Method</label
+                >
+                <select
+                  id="method"
+                  class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                >
+                  <option value="snowball">Snowball (Smallest First)</option>
+                  <option value="avalanche">
+                    Avalanche (Highest Rate First)
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label
+                  class="block text-xs uppercase tracking-wider text-slate-500 mb-2 font-bold"
+                  >Extra Monthly Payment ($)</label
+                >
+                <input
+                  type="number"
+                  id="extra"
+                  value="500"
+                  class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-emerald-400"
+                />
+              </div>
             </div>
-            <div class="form-group">
-                <label for="paymentsInput">Monthly Payments (JSON mapping)</label>
-                <textarea id="paymentsInput" rows="3" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-family:monospace;" placeholder="[{'month':1,'Visa':200,'Mastercard':150}, ...]"></textarea>
+          </section>
+
+          <section class="glass p-6 rounded-2xl">
+            <h2
+              class="text-lg font-semibold mb-4 flex items-center gap-2 text-emerald-400"
+            >
+              <i data-lucide="list" class="w-4 h-4"></i> Debt Data
+            </h2>
+            <div class="flex flex-col gap-3">
+              <div class="flex gap-2">
+                <button
+                  onclick="document.getElementById('csvInput').click()"
+                  class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg p-2.5 flex items-center justify-center gap-2 transition-all group text-xs font-bold text-white"
+                >
+                  <i
+                    data-lucide="upload"
+                    class="w-4 h-4 group-hover:text-emerald-400"
+                  ></i>
+                  Upload
+                </button>
+                <button
+                  onclick="downloadTemplate()"
+                  class="bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg p-2.5 flex items-center justify-center gap-2 transition-all group text-xs font-bold text-white"
+                  title="Download CSV Template"
+                >
+                  <i
+                    data-lucide="download"
+                    class="w-4 h-4 group-hover:text-blue-400"
+                  ></i>
+                </button>
+              </div>
+              <input
+                type="file"
+                id="csvInput"
+                class="hidden"
+                accept=".csv,.tsv,.txt"
+                onchange="handleFileUpload(event)"
+              />
+
+              <div>
+                <div class="flex justify-between items-center mb-1 px-1">
+                  <label
+                    class="text-[10px] uppercase tracking-widest text-slate-500 font-bold"
+                    >Manual Entry Format</label
+                  >
+                  <span class="text-[9px] text-slate-600 italic"
+                    >Name, Bal, Rate, Min, [Day]</span
+                  >
+                </div>
+                <textarea
+                  id="debtData"
+                  rows="10"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 font-mono text-xs focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-white"
+                  placeholder="Name, Balance, Rate, Min, [DueDay]"
+                ></textarea>
+              </div>
+
+              <div class="flex gap-2 pt-2">
+                <button
+                  onclick="runSimulation()"
+                  class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/40"
+                >
+                  <i data-lucide="play" class="w-4 h-4 fill-current"></i> Run
+                </button>
+                <button
+                  onclick="exportToPDF()"
+                  class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2"
+                  title="Export Plan to PDF"
+                >
+                  <i
+                    data-lucide="file-text"
+                    class="w-4 h-4 text-emerald-400"
+                  ></i>
+                </button>
+                <button
+                  onclick="clearData()"
+                  class="bg-slate-800 hover:bg-rose-900/30 text-slate-500 hover:text-rose-400 p-3 rounded-xl transition-all border border-slate-700 text-white"
+                  title="Clear All Data"
+                >
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
             </div>
-            <button onclick="generateReport()">Generate Timeline</button>
-            <button onclick="downloadPDF()">Download PDF</button>
+          </section>
         </div>
 
-        <!-- Results -->
-        <div id="results"></div>
+        <!-- Right Column: Results -->
+        <div class="xl:col-span-3 space-y-6">
+          <!-- Metrics Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass p-5 rounded-2xl border-l-4 border-emerald-500">
+              <div
+                class="text-[10px] uppercase text-slate-500 font-extrabold mb-1 tracking-widest"
+              >
+                Time to Freedom
+              </div>
+              <div class="text-2xl font-bold text-white" id="metric-months">
+                0 Months
+              </div>
+              <div class="text-xs text-slate-400" id="metric-date">
+                Payoff Date: --
+              </div>
+            </div>
+            <div class="glass p-5 rounded-2xl border-l-4 border-amber-500">
+              <div
+                class="text-[10px] uppercase text-slate-500 font-extrabold mb-1 tracking-widest"
+              >
+                Total Interest
+              </div>
+              <div
+                class="text-2xl font-bold text-amber-400"
+                id="metric-interest"
+              >
+                $0.00
+              </div>
+              <div class="text-xs text-slate-400">Paid to banks</div>
+            </div>
+            <div class="glass p-5 rounded-2xl border-l-4 border-rose-500">
+              <div
+                class="text-[10px] uppercase text-slate-500 font-extrabold mb-1 tracking-widest"
+              >
+                Total Cost
+              </div>
+              <div class="text-2xl font-bold text-rose-400" id="metric-total">
+                $0.00
+              </div>
+              <div class="text-xs text-slate-400">Principal + Interest</div>
+            </div>
+            <div class="glass p-5 rounded-2xl border-l-4 border-blue-500">
+              <div
+                class="text-[10px] uppercase text-slate-500 font-extrabold mb-1 tracking-widest"
+              >
+                Monthly Flow
+              </div>
+              <div class="text-2xl font-bold text-blue-400" id="metric-budget">
+                $0.00
+              </div>
+              <div class="text-[10px] text-slate-400" id="metric-flow-split">
+                Split: --
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Chart -->
+          <section class="glass p-6 rounded-2xl h-[350px]">
+            <canvas id="payoffChart"></canvas>
+          </section>
+
+          <!-- Schedule Section -->
+          <section class="glass rounded-2xl overflow-hidden">
+            <div class="border-b border-slate-700/50 flex bg-slate-800/30">
+              <button
+                onclick="switchTab('milestones')"
+                id="tab-milestones"
+                class="p-4 px-6 text-sm font-bold transition-all tab-active"
+              >
+                Milestones
+              </button>
+              <button
+                onclick="switchTab('timeline')"
+                id="tab-timeline"
+                class="p-4 px-6 text-sm font-bold text-slate-400 hover:text-white transition-all"
+              >
+                Full Timeline View
+              </button>
+            </div>
+
+            <!-- Milestones View -->
+            <div id="view-milestones" class="p-0">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm border-collapse">
+                  <thead
+                    class="bg-slate-800/50 text-slate-400 uppercase text-[10px] tracking-widest font-bold"
+                  >
+                    <tr>
+                      <th class="p-4">Payoff Order</th>
+                      <th class="p-4">Debt Name</th>
+                      <th class="p-4 text-center">Interest Rate</th>
+                      <th class="p-4 text-center">Month #</th>
+                      <th class="p-4 text-right">Target Date</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    id="milestonesBody"
+                    class="divide-y divide-slate-700/50 text-slate-300 text-center"
+                  >
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Timeline View (Transposed) -->
+            <div id="view-timeline" class="p-0 hidden">
+              <div class="overflow-auto max-h-[600px]">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead
+                    id="timelineHeader"
+                    class="bg-slate-800 text-slate-400 uppercase text-[10px] tracking-widest sticky top-0 z-20 text-center"
+                  >
+                    <!-- Month/Date Headers -->
+                  </thead>
+                  <tbody
+                    id="timelineBody"
+                    class="divide-y divide-slate-700/50 text-slate-400 text-center"
+                  >
+                    <!-- Rows: Debts, X-Axis: Months -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
 
     <script>
-        // ========================================================================
-        // DebtPipe Bill Tracking with Custom Payments and Dynamic Timeline
-        // ========================================================================
+      let chartInstance = null;
+      let lastResult = null; // Globally accessible for PDF
+      let interactiveMode = false;
+      let debtBills = [];
+      let debtCustomPayments = {};
+      let debtPaymentsPaid = {};
+      let interactiveTimeline = null;
 
-        // State management
-        let debtBills = []; // static bill definitions
-        let debtPayments = {}; // { key: boolean } for checkbox paid state (interactive)
-        let debtCustomPayments = {}; // { key: amount } for custom payment amounts
-        let lastResult = null; // stores the latest simulation result
+      window.onload = () => {
+        const now = new Date();
+        document.getElementById("startDate").value = now.toISOString().slice(0, 7);
 
-        // Load from localStorage on startup
-        function loadDebtData() {
-            const savedBills = localStorage.getItem('debtBills');
-            const savedPayments = localStorage.getItem('debtPayments');
-            const savedCustom = localStorage.getItem('debtCustomPayments');
+        const savedData = localStorage.getItem("debtpipe_data");
+        const savedExtra = localStorage.getItem("debtpipe_extra");
+        const savedMethod = localStorage.getItem("debtpipe_method");
+        const savedStart = localStorage.getItem("debtpipe_start");
 
-            if (savedBills) {
-                debtBills = JSON.parse(savedBills);
-                document.getElementById('billsInput').value = JSON.stringify(debtBills, null, 2);
+        const savedBills = localStorage.getItem('debtBills');
+        const savedCustom = localStorage.getItem('debtCustomPayments');
+        const savedPaid = localStorage.getItem('debtPaymentsPaid');
+
+        if (savedBills) debtBills = JSON.parse(savedBills);
+        if (savedCustom) debtCustomPayments = JSON.parse(savedCustom);
+        if (savedPaid) debtPaymentsPaid = JSON.parse(savedPaid);
+
+        if (savedData) document.getElementById("debtData").value = savedData;
+        if (savedExtra) document.getElementById("extra").value = savedExtra;
+        if (savedMethod) document.getElementById("method").value = savedMethod;
+        if (savedStart) document.getElementById("startDate").value = savedStart;
+
+        lucide.createIcons();
+        runSimulation();
+
+        const toggle = document.getElementById('interactiveMode');
+        if (toggle) {
+          toggle.addEventListener('change', (e) => {
+            toggleInteractiveMode(e.target.checked);
+          });
+        }
+        if (Object.keys(debtCustomPayments).length > 0 || Object.keys(debtPaymentsPaid).length > 0) {
+          if (toggle) toggle.checked = true;
+          toggleInteractiveMode(true);
+        }
+      };
+
+      // Interactive Bill Tracking
+      function saveInteractiveData() {
+        localStorage.setItem('debtBills', JSON.stringify(debtBills));
+        localStorage.setItem('debtCustomPayments', JSON.stringify(debtCustomPayments));
+        localStorage.setItem('debtPaymentsPaid', JSON.stringify(debtPaymentsPaid));
+      }
+
+      function toggleInteractiveMode(on) {
+        interactiveMode = on;
+        const toggle = document.getElementById('interactiveMode');
+        if (toggle) toggle.checked = on;
+        const jsonBtn = document.querySelector('button[onclick="downloadJSON()"]');
+        if (jsonBtn) jsonBtn.classList.toggle('hidden', !on);
+        let note = document.getElementById('interactiveNote');
+        if (!note && on) {
+          note = document.createElement('div');
+          note.id = 'interactiveNote';
+          note.className = 'interactive-note';
+          const results = document.getElementById('results');
+          if (results) results.insertBefore(note, results.firstChild);
+        }
+        if (note) note.textContent = on ? "Interactive Bill Tracking is ON: adjust payments below. Changes persist in browser." : "";
+        if (!lastResult) return;
+        if (on) {
+          if (debtBills.length === 0 && lastResult.debtNames) {
+            debtBills = lastResult.debtNames.map(name => ({
+              name,
+              statementBalance: lastResult.timeline[0]?.startingBalances[name] || 0,
+              interestRate: 0,
+              minPayment: 0,
+              dueDay: 1
+            }));
+          }
+          recalculateTimeline();
+          renderInteractiveTimeline();
+        } else {
+          interactiveTimeline = null;
+          renderTimelineTransposed(lastResult.timeline, lastResult.debtNames);
+        }
+      }
+
+      function recalculateTimeline() {
+        if (!lastResult) return;
+        interactiveTimeline = JSON.parse(JSON.stringify(lastResult.timeline));
+        for (const name of lastResult.debtNames) {
+          let carryBalance = 0;
+          for (let i = 0; i < interactiveTimeline.length; i++) {
+            const step = interactiveTimeline[i];
+            const start = step.startingBalances[name] || 0;
+            const planned = step.plannedPayments[name] || 0;
+            const interest = step.interests[name] || 0;
+            const key = `${name}::${i}`;
+            const customAmt = debtCustomPayments[key] || 0;
+            const isPaid = debtPaymentsPaid[key] === true;
+            let actualPaid = 0;
+            if (isPaid) {
+              actualPaid = customAmt > 0 ? customAmt : planned;
+            } else if (customAmt > 0) {
+              actualPaid = customAmt;
+            } else if (planned > 0) {
+              actualPaid = planned;
             }
-            if (savedPayments) {
-                debtPayments = JSON.parse(savedPayments);
+            let balanceBeforeInterest = carryBalance + start - actualPaid;
+            let interestAccrued = 0;
+            if (balanceBeforeInterest > 0) {
+              interestAccrued = balanceBeforeInterest * (lastResult.rates[name] / 100 / 12);
             }
-            if (savedCustom) {
-                debtCustomPayments = JSON.parse(savedCustom);
-            }
+            let newBalance = balanceBeforeInterest + interestAccrued;
+            step.balances[name] = newBalance;
+            step.payments[name] = actualPaid;
+            step.interests[name] = interestAccrued;
+            carryBalance = newBalance > 0 ? newBalance : 0;
+          }
+        }
+      }
+
+      function renderInteractiveTimeline() {
+        if (!interactiveTimeline) return;
+        const { timeline, debtNames } = lastResult;
+        renderTimelineHeader(timeline);
+        renderInteractiveBody(interactiveTimeline, debtNames);
+      }
+
+      function renderInteractiveBody(timeline, debtNames) {
+        const container = document.getElementById('timelineBody');
+        container.innerHTML = '';
+        debtNames.forEach((name) => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-800/20 group';
+          tr.innerHTML = `<td class="p-3 font-bold text-slate-200 sticky-col z-10 group-hover:bg-slate-800 transition-colors border-b border-slate-700/30 text-left">${name}</td>`;
+          timeline.forEach((step, monthIdx) => {
+            const start = step.startingBalances[name] || 0;
+            const bal = step.balances[name];
+            const planned = step.plannedPayments[name] || 0;
+            const key = `${name}::${monthIdx}`;
+            const isPaid = debtPaymentsPaid[key] === true;
+            const customAmt = debtCustomPayments[key] || 0;
+            const isFullyPaid = bal <= 0.01 && start > 0;
+            const rowClass = isFullyPaid ? 'paid-row' : (customAmt > 0 ? 'custom-row' : '');
+            const cell = document.createElement('td');
+            cell.className = `p-3 text-center border-l border-slate-700/30 border-b border-slate-700/30 ${rowClass}`;
+            cell.innerHTML = `
+              <div style="font-size:9px; color:#94a3b8;">Start $${start.toFixed(2)}</div>
+              ${planned > 0 ? `<div class="text-[9px] text-rose-500/80">Min: $${planned.toFixed(2)}</div>` : ''}
+              <div style="margin:2px 0;">
+                <input type="checkbox" class="checkbox-cell" ${isPaid ? 'checked' : ''} onchange="onPaidToggle('${name}', ${monthIdx})" title="Mark as paid">
+                <input type="number" step="0.01" min="0" class="payment-input" value="${customAmt.toFixed(2)}" onchange="onCustomPaymentChange('${name}', ${monthIdx}, this.value)" title="Custom payment amount">
+              </div>
+              <div style="font-weight:bold; color:${bal <= 0 ? '#10b981' : '#f8fafc'};">${bal <= 0 ? 'PAID' : '$' + bal.toFixed(2)}</div>
+            `;
+            tr.appendChild(cell);
+          });
+          container.appendChild(tr);
+        });
+      }
+
+      function onPaidToggle(debtName, monthIdx) {
+        const key = `${debtName}::${monthIdx}`;
+        debtPaymentsPaid[key] = !debtPaymentsPaid[key];
+        saveInteractiveData();
+        recalculateTimeline();
+        renderInteractiveTimeline();
+      }
+
+      function onCustomPaymentChange(debtName, monthIdx, value) {
+        const key = `${debtName}::${monthIdx}`;
+        const numVal = parseFloat(value) || 0;
+        if (numVal <= 0) {
+          delete debtCustomPayments[key];
+        } else {
+          debtCustomPayments[key] = numVal;
+        }
+        saveInteractiveData();
+        recalculateTimeline();
+        renderInteractiveTimeline();
+      }
+
+      function downloadJSON() {
+        if (!lastResult) return;
+        const data = {
+          original: lastResult,
+          custom: debtCustomPayments,
+          paid: debtPaymentsPaid,
+          modifiedTimeline: interactiveTimeline
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'DebtPipe_Interactive_State.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function switchTab(view) {
+        const mTab = document.getElementById("tab-milestones");
+        const tTab = document.getElementById("tab-timeline");
+        const mView = document.getElementById("view-milestones");
+        const tView = document.getElementById("view-timeline");
+
+        if (view === "milestones") {
+          mTab.classList.add("tab-active");
+          mTab.classList.remove("text-slate-400");
+          tTab.classList.remove("tab-active");
+          tTab.classList.add("text-slate-400");
+          mView.classList.remove("hidden");
+          tView.classList.add("hidden");
+        } else {
+          tTab.classList.add("tab-active");
+          tTab.classList.remove("text-slate-400");
+          mTab.classList.remove("tab-active");
+          mTab.classList.add("text-slate-400");
+          tView.classList.remove("hidden");
+          mView.classList.add("hidden");
+        }
+      }
+
+      function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const text = e.target.result;
+          const rows = text.split(/\r?\n/).filter((r) => r.trim());
+          const cleanData = rows
+            .map((r) => {
+              const separator = r.includes("\t") ? "\t" : ",";
+              return r
+                .split(separator)
+                .map((cell) => cell.trim().replace(/[$,]/g, ""))
+                .join(", ");
+            })
+            .join("\n");
+          document.getElementById("debtData").value = cleanData;
+          runSimulation();
+        };
+        reader.readAsText(file);
+      }
+
+      function clearData() {
+        if (confirm("Clear all data and reset?")) {
+          localStorage.clear();
+          location.reload();
+        }
+      }
+
+      function downloadTemplate() {
+        const headers =
+          "Name, Balance, Interest Rate (Decimal), Min Payment, Due Day (Optional)\n";
+        const example =
+          "Credit Card A, 5000, 0.1899, 150, 15\nPersonal Loan, 12000, 0.085, 350, 1\nCar Loan, 8000, 0.05, 250, 28";
+        const blob = new Blob([headers + example], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.setAttribute("hidden", "");
+        a.setAttribute("href", url);
+        a.setAttribute("download", "DebtPipe_Template.csv");
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      function runSimulation() {
+        const rawData = document.getElementById("debtData").value;
+        const extraPayment =
+          parseFloat(document.getElementById("extra").value) || 0;
+        const method = document.getElementById("method").value;
+        const startVal = document.getElementById("startDate").value;
+
+        localStorage.setItem("debtpipe_data", rawData);
+        localStorage.setItem("debtpipe_extra", extraPayment);
+        localStorage.setItem("debtpipe_method", method);
+        localStorage.setItem("debtpipe_start", startVal);
+
+        const baseDate = new Date(startVal + "-01T12:00:00");
+
+        // 1. Parse
+        const debts = rawData
+          .trim()
+          .split("\n")
+          .map((line) => {
+            const parts = line.split(",").map((s) => s.trim());
+            let rate = parseFloat(parts[2]);
+            if (rate < 1 && rate > 0) rate = rate * 100;
+            return {
+              name: parts[0],
+              balance: parseFloat(parts[1]),
+              interestRate: rate || 0,
+              minPayment: parseFloat(parts[3]),
+              dueDay: parseInt(parts[4]) || 1,
+            };
+          })
+          .filter((d) => !isNaN(d.balance) && !isNaN(d.minPayment));
+
+        if (debts.length === 0) return;
+
+        // Capture debt definitions for interactive mode
+        debtBills = debts.map(d => ({
+          name: d.name,
+          statementBalance: d.balance,
+          interestRate: d.interestRate,
+          minPayment: d.minPayment,
+          dueDay: d.dueDay
+        }));
+        const firstHalfMins = debts
+          .filter((d) => d.dueDay <= 14)
+          .reduce((sum, d) => sum + d.minPayment, 0);
+        const secondHalfMins = debts
+          .filter((d) => d.dueDay > 14)
+          .reduce((sum, d) => sum + d.minPayment, 0);
+        const monthlyBudget = extraPayment + firstHalfMins + secondHalfMins;
+
+        // 2. Sort
+        const prioritizedDebts = [...debts];
+        if (method === "snowball") {
+          prioritizedDebts.sort((a, b) => a.balance - b.balance);
+        } else {
+          prioritizedDebts.sort((a, b) => b.interestRate - a.interestRate);
         }
 
-        // Save to localStorage
-        function saveDebtData() {
-            localStorage.setItem('debtBills', JSON.stringify(debtBills));
-            localStorage.setItem('debtPayments', JSON.stringify(debtPayments));
-            localStorage.setItem('debtCustomPayments', JSON.stringify(debtCustomPayments));
-        }
+        // 3. Simulation Loop
+        let currentMonth = 0;
+        let totalInterestPaid = 0;
+        const initialPrincipal = debts.reduce((sum, d) => sum + d.balance, 0);
 
-        // Format number as currency with 2 decimals
-        function fmt(n) {
-            return Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
+        const timeline = [];
+        const milestones = [];
+        let currentDebts = JSON.parse(JSON.stringify(prioritizedDebts));
 
-        // Recalculate timeline based on custom payments and carry forward
-        function recalculateTimeline() {
-            if (!lastResult || !lastResult.timeline) return;
+        while (currentDebts.some((d) => d.balance > 0) && currentMonth < 600) {
+          currentMonth++;
+          let budget = monthlyBudget;
+          const monthDate = new Date(baseDate);
+          monthDate.setMonth(baseDate.getMonth() + currentMonth - 1);
+          const dateStr = monthDate.toLocaleString("default", {
+            month: "short",
+            year: "numeric",
+          });
 
-            // Clone timeline deeply
-            const newTimeline = JSON.parse(JSON.stringify(lastResult.timeline));
+          const snapshot = {
+            month: currentMonth,
+            date: dateStr,
+            balances: {},
+            payments: {},
+            interests: {},
+            startingBalances: {},
+            total: 0,
+          };
 
-            // For each debt, apply custom payments and carry balance forward
-            for (const name of lastResult.debtNames) {
-                let carryBalance = 0; // unpaid amount carried to next month
+          // Capture starting balances (before interest/payments this month)
+          currentDebts.forEach((d) => {
+            snapshot.startingBalances[d.name] = d.balance;
+          });
 
-                for (let i = 0; i < newTimeline.length; i++) {
-                    const step = newTimeline[i];
-                    const start = step.startingBalances[name] || 0;
-                    const planned = step.plannedPayments[name] || 0;
-                    const interest = step.interests[name] || 0;
-                    const key = `${name}::${i}`;
-                    const customAmt = debtCustomPayments[key] || 0;
-                    const isPaid = debtPayments[key] === true;
-
-                    // Determine actual payment applied this month
-                    let actualPaid = 0;
-                    if (isPaid) {
-                        actualPaid = customAmt > 0 ? customAmt : planned;
-                    } else if (customAmt > 0) {
-                        actualPaid = customAmx; // allow partial custom payments without marking as fully paid
-                    } else if (planned > 0) {
-                        actualPaid = planned;
-                    }
-
-                    // Calculate balance before interest
-                    let balanceBeforeInterest = carryBalance + start - actualPaid;
-
-                    // Apply interest only on positive balance
-                    let interestAccrued = 0;
-                    if (balanceBeforeInterest > 0) {
-                        interestAccrued = interest;
-                    }
-
-                    let newBalance = balanceBeforeInterest + interestAccrued;
-
-                    // Update step values for rendering
-                    step.payments[name] = actualPaid;
-                    step.balances[name] = newBalance;
-                    step.interests[name] = interestAccrued;
-
-                    // Carry forward to next month
-                    carryBalance = newBalance;
-                }
+          currentDebts.forEach((d) => {
+            let interest = 0;
+            if (d.balance > 0) {
+              interest = d.balance * (d.interestRate / 100 / 12);
+              totalInterestPaid += interest;
+              d.balance += interest;
             }
+            snapshot.interests[d.name] = interest;
+          });
 
-            lastResult.timeline = newTimeline;
-            renderTimeline(lastResult);
-        }
-
-        // Handle checkbox toggle (mark as paid/unpaid)
-        function onPaidToggle(debtName, monthIdx) {
-            const key = `${debtName}::${monthIdx}`;
-            debtPayments[key] = !debtPayments[key];
-            saveDebtData();
-            recalculateTimeline();
-        }
-
-        // Handle custom payment input change
-        function onCustomPaymentChange(debtName, monthIdx, value) {
-            const key = `${debtName}::${monthIdx}`;
-            const numVal = parseFloat(value) || 0;
-            if (numVal <= 0) {
-                delete debtCustomPayments[key];
-            } else {
-                debtCustomPayments[key] = numVal;
+          currentDebts.forEach((d) => {
+            let paid = 0;
+            if (d.balance > 0) {
+              paid = Math.min(d.balance, d.minPayment);
+              d.balance -= paid;
+              budget -= paid;
             }
-            saveDebtData();
-            recalculateTimeline();
+            snapshot.payments[d.name] = paid;
+          });
+
+          for (let d of currentDebts) {
+            if (d.balance > 0 && budget > 0) {
+              const extra = Math.min(d.balance, budget);
+              d.balance -= extra;
+              budget -= extra;
+              snapshot.payments[d.name] += extra;
+            }
+            snapshot.balances[d.name] = d.balance;
+            snapshot.total += d.balance;
+            if (d.balance <= 0 && !milestones.find((m) => m.name === d.name)) {
+              milestones.push({
+                name: d.name,
+                month: currentMonth,
+                date: dateStr,
+                rate: d.interestRate,
+              });
+            }
+          }
+          timeline.push(snapshot);
         }
 
-        // Render the interactive timeline table
-        function renderTimeline(result) {
-            const container = document.getElementById('results');
-            if (!result || !result.timeline || result.timeline.length === 0) {
-                container.innerHTML = '<p class="no-results">No timeline data. Generate a report first.</p>';
-                return;
-            }
+        // Store for PDF
+        lastResult = {
+          metrics: {
+            months: currentMonth,
+            date: new Date(baseDate).setMonth(
+              baseDate.getMonth() + currentMonth - 1,
+            ),
+            interest: totalInterestPaid,
+            total: initialPrincipal + totalInterestPaid,
+            budget: monthlyBudget,
+            split: `1-14th: $${(extraPayment + firstHalfMins).toLocaleString()} | 15th+: $${secondHalfMins.toLocaleString()}`,
+          },
+          milestones: milestones,
+          timeline: timeline,
+          debtNames: prioritizedDebts.map((d) => d.name),
+          method: method,
+          extra: extraPayment,
+          rates: {} // for interactive recalculation
+        };
+        // Capture rates by debt name
+        debts.forEach(d => lastResult.rates[d.name] = d.interestRate);
 
-            const { timeline, debtNames } = result;
-            const displayMonths = timeline.slice(0, 6); // only show first 6 months for PDF and UI as requested
+        // UI Update
+        document.getElementById("metric-months").innerText =
+          `${currentMonth} Months`;
+        const finalDate = new Date(lastResult.metrics.date);
+        document.getElementById("metric-date").innerText =
+          `Payoff Date: ${finalDate.toLocaleString("default", { month: "long", year: "numeric" })}`;
+        document.getElementById("metric-interest").innerText =
+          `$${totalInterestPaid.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+        document.getElementById("metric-total").innerText =
+          `$${lastResult.metrics.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+        document.getElementById("metric-budget").innerText =
+          `$${monthlyBudget.toLocaleString()}`;
+        document.getElementById("metric-flow-split").innerText =
+          lastResult.metrics.split;
 
-            const tableHTML = `
-                <div style="margin-top:20px;">
-                    <h3>Bill Tracking Timeline</h3>
-                    <p style="font-size:9pt; color:#64748b;">Check "Paid" to mark bill as paid. Enter custom payment amounts to apply partial payments. Remaining balance flows forward automatically.</p>
-                    <table class="debt-table">
+        renderMilestones(milestones, prioritizedDebts);
+        renderTimelineTransposed(timeline, lastResult.debtNames);
+        updateChart(timeline);
+      }
+
+      function renderMilestones(milestones, allDebts) {
+        const payoffOrder = milestones.map((m) => m.name);
+        const remaining = allDebts
+          .filter((d) => !payoffOrder.includes(d.name))
+          .map((d) => d.name);
+        const combined = [
+          ...milestones,
+          ...remaining.map((name) => ({
+            name,
+            month: "--",
+            date: "--",
+            rate: allDebts.find((d) => d.name === name).interestRate,
+          })),
+        ];
+
+        document.getElementById("milestonesBody").innerHTML = combined
+          .map(
+            (m, i) => `
+                <tr class="hover:bg-slate-800/30 transition-colors border-b border-slate-700/30">
+                    <td class="p-4 text-slate-500 font-mono">#${i + 1}</td>
+                    <td class="p-4 font-bold text-white">${m.name}</td>
+                    <td class="p-4 text-center text-slate-400 font-medium">${m.rate.toFixed(2)}%</td>
+                    <td class="p-4 text-center font-medium">${m.month}</td>
+                    <td class="p-4 text-right text-emerald-400 font-extrabold">${m.date}</td>
+                </tr>
+            `,
+          )
+          .join("");
+      }
+
+      function renderTimelineTransposed(timeline, debtNames) {
+        const headerRow =
+          `<tr><th class="p-3 bg-slate-800 sticky-col z-30 min-w-[150px] border-b border-slate-600">Debt Name</th>` +
+          timeline
+            .map(
+              (step) =>
+                `<th class="p-3 text-center border-l border-slate-700/50 min-w-[110px] border-b border-slate-600">${step.date}</th>`,
+            )
+            .join("") +
+          `</tr>`;
+        document.getElementById("timelineHeader").innerHTML = headerRow;
+
+        document.getElementById("timelineBody").innerHTML = debtNames
+          .map(
+            (name) => `
+                <tr class="hover:bg-slate-800/20 group">
+                    <td class="p-3 font-bold text-slate-200 sticky-col z-10 group-hover:bg-slate-800 transition-colors border-b border-slate-700/30 text-left">${name}</td>
+                    ${timeline
+                      .map((step) => {
+                        const start = step.startingBalances[name] || 0;
+                        const bal = step.balances[name];
+                        const paid = step.payments[name];
+                        const interest = step.interests[name];
+                        const isZero =
+                          bal <= 0 &&
+                          (timeline[timeline.indexOf(step) - 1]?.balances[
+                            name
+                          ] > 0 ||
+                            timeline.indexOf(step) === 0);
+                        const fmt = (n) =>
+                          n.toFixed(2).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          });
+                        return `
+                            <td class="p-3 text-center border-l border-slate-700/30 border-b border-slate-700/30 ${isZero ? "bg-emerald-900/20" : ""}">
+                                <div class="${start > 0 && start !== bal ? "text-slate-500 text-[9px] mb-1" : "hidden"}">Start $${fmt(start)}</div>
+                                ${interest > 0 ? `<div class="text-[9px] text-rose-500/80 font-medium italic">Int. $${fmt(interest)}</div>` : ""}
+                                ${paid > 0 ? `<div class="text-[10px] text-emerald-400 font-bold mt-1">Pay $${fmt(paid)}</div>` : ""}
+                                <div class="${bal <= 0 ? "text-emerald-500 font-bold" : "text-slate-300"}">${bal <= 0 ? "PAID" : "$" + fmt(bal)}</div>
+                            </td>
+                        `;
+                      })
+                      .join("")}
+                </tr>
+            `,
+          )
+          .join("");
+      }
+
+      function updateChart(timeline) {
+        const ctx = document.getElementById("payoffChart").getContext("2d");
+        if (chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: timeline.map((d) => d.date),
+            datasets: [
+              {
+                label: "Total Debt",
+                data: timeline.map((d) => d.total),
+                borderColor: "#10b981",
+                backgroundColor: "rgba(16, 185, 129, 0.1)",
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                grid: { color: "rgba(255,255,255,0.05)" },
+                ticks: {
+                  color: "#64748b",
+                  callback: (v) => "$" + v.toLocaleString(),
+                },
+              },
+              x: {
+                grid: { display: false },
+                ticks: { color: "#64748b", autoSkip: true, maxTicksLimit: 12 },
+              },
+            },
+            plugins: { legend: { display: false } },
+          },
+        });
+      }
+
+      function exportToPDF() {
+        if (!lastResult) return alert("Run simulation first.");
+        const fmt = (n) =>
+          n.toFixed(2).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+
+        // Use interactive-modified timeline if in interactive mode
+        const timelineForPDF = (interactiveMode && interactiveTimeline) ? interactiveTimeline : lastResult.timeline;
+
+        const html = `
+                <div style="font-family: Arial, sans-serif; color: #334155; padding: 15px; background: white; width: 950px;">
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #10b981; padding-bottom: 8px; margin-bottom: 15px;">
+                        <div>
+                            <h1 style="font-size: 20pt; margin: 0; color: #0f172a; font-weight: 900;">DebtPipe</h1>
+                            <p style="color: #10b981; font-weight: bold; margin: 1px 0 0 0; text-transform: uppercase; font-size: 8pt;">by Gitchegumi</p>
+                        </div>
+                        <div style="text-align: right; font-size: 8pt; color: #64748b;">
+                            <p style="margin: 0;">Plan Generated: ${new Date().toLocaleDateString()}</p>
+                            <p style="margin: 1px 0 0 0;">Method: ${lastResult.method.toUpperCase()} | Extra: $${fmt(lastResult.extra)}/mo</p>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;">
+                        <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
+                            <div style="font-size: 6.5pt; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Time to Freedom</div>
+                            <div style="font-size: 12pt; font-weight: bold; color: #0f172a;">${lastResult.metrics.months} Months</div>
+                            <div style="font-size: 6.5pt; color: #64748b;">Payoff: ${new Date(lastResult.metrics.date).toLocaleString("default", { month: "short", year: "numeric" })}</div>
+                        </div>
+                        <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
+                            <div style="font-size: 6.5pt; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Total Interest</div>
+                            <div style="font-size: 12pt; font-weight: bold; color: #f43f5e;">$${fmt(lastResult.metrics.interest)}</div>
+                            <div style="font-size: 6.5pt; color: #64748b;">Paid to banks</div>
+                        </div>
+                        <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
+                            <div style="font-size: 6.5pt; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Total Cost</div>
+                            <div style="font-size: 12pt; font-weight: bold; color: #0f172a;">$${fmt(lastResult.metrics.total)}</div>
+                            <div style="font-size: 6.5pt; color: #64748b;">Principal + Interest</div>
+                        </div>
+                        <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; background: #f8fafc;">
+                            <div style="font-size: 6.5pt; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Monthly Flow</div>
+                            <div style="font-size: 12pt; font-weight: bold; color: #0f172a;">$${fmt(lastResult.metrics.budget)}</div>
+                            <div style="font-size: 6.5pt; color: #64748b;">Total Budget</div>
+                        </div>
+                    </div>
+
+                    <!-- Milestones -->
+                    <h2 style="font-size: 12pt; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 10px; color: #0f172a;">Payoff Milestones</h2>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                         <thead>
-                            <tr>
-                                <th rowspan="2" style="min-width:150px;">Debt Name</th>
-                                ${displayMonths.map(() => `<th colspan="2">Payment & Balance</th>`).join('')}
-                            </tr>
-                            <tr>
-                                ${displayMonths.map(step => `
-                                    <th>Paid</th>
-                                    <th class="flow-remaining">Flow Remaining</th>
-                                `).join('')}
+                            <tr style="background: #f1f5f9; text-align: left; font-size: 7.5pt; color: #475569;">
+                                <th style="padding: 6px; border-bottom: 2px solid #e2e8f0;">Priority</th>
+                                <th style="padding: 6px; border-bottom: 2px solid #e2e8f0;">Debt Name</th>
+                                <th style="padding: 6px; border-bottom: 2px solid #e2e8f0;">Month</th>
+                                <th style="padding: 6px; border-bottom: 2px solid #e2e8f0; text-align: right;">Target Date</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            ${debtNames.map(name => `
-                                <tr>
-                                    <td class="debt-name">${name}</td>
-                                    ${displayMonths.map((step, monthIdx) => {
-                                        const start = step.startingBalances[name] || 0;
-                                        const bal = step.balances[name];
-                                        const key = `${name}::${monthIdx}`;
-                                        const isPaid = debtPayments[key] === true;
-                                        const customAmt = debtCustomPayments[key] || 0;
-                                        const isFullyPaid = bal <= 0.01 && start > 0;
-                                        const rowClass = isFullyPaid ? 'paid-row' : (customAmt > 0 ? 'custom-row' : '');
-
-                                        // Display values
-                                        const displayBal = bal <= 0 ? 'PAID' : '$' + fmt(bal);
-
-                                        return `
-                                            <td class="${rowClass}">
-                                                <input type="checkbox" ${isPaid ? 'checked' : ''} onclick="onPaidToggle('${name}', ${monthIdx})" title="Mark bill as paid">
-                                                <input type="number" min="0" step="0.01" value="${customAmt.toFixed(2)}" class="payment-input" onchange="onCustomPaymentChange('${name}', ${monthIdx}, this.value)" placeholder=" Amt">
-                                                <div style="margin-top:2px; font-size:9pt;">
-                                                    ${displayBal}
-                                                </div>
-                                            </td>
-                                        `;
-                                    }).join('')}
+                        <tbody style="font-size: 8pt;">
+                            ${lastResult.milestones
+                              .map(
+                                (m, i) => `
+                                <tr style="page-break-inside: avoid;">
+                                    <td style="padding: 5px; border-bottom: 1px solid #f1f5f9; color: #94a3b8; font-family: monospace;">#${String(i + 1).padStart(2, "0")}</td>
+                                    <td style="padding: 5px; border-bottom: 1px solid #f1f5f9; font-weight: bold; color: #1e293b;">${m.name}</td>
+                                    <td style="padding: 5px; border-bottom: 1px solid #f1f5f9;">Month ${m.month}</td>
+                                    <td style="padding: 5px; border-bottom: 1px solid #f1f5f9; text-align: right; color: #059669; font-weight: bold;">${m.date}</td>
                                 </tr>
-                            `).join('')}
+                            `,
+                              )
+                              .join("")}
                         </tbody>
                     </table>
-                </div>
 
-                <div style="margin-top:30px; padding:15px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
-                    <h4>Instructions</h4>
-                    <ul style="font-size:9pt; color:#475569;">
-                        <li>Check the box to mark a bill as paid for that month. The full planned payment will be applied unless you specify a custom amount.</li>
-                        <li>Enter a custom amount to pay a partial amount (e.g., a windfall across multiple bills).</li>
-                        <li>Remaining balance (Flow Remaining) updates automatically and carries to the next month with interest.</li>
-                        <li>Changes are saved automatically to your browser's local storage.</li>
-                    </ul>
+                    <!-- Timeline -->
+                    <div style="page-break-inside: avoid;">
+                        <h2 style="font-size: 12pt; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 10px; color: #0f172a;">Full Payoff Timeline (First 6 Months)</h2>
+                        <p style="font-size: 8pt; color: #64748b; margin-bottom: 8px;">Shows per-month cash flow: Starting balance, Amount paid, Interest accrued, Remaining balance</p>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 6pt; table-layout: fixed;">
+                                <thead>
+                                    <tr style="background: #f1f5f9; color: #475569;">
+                                        <th style="padding: 3px; border: 1px solid #e2e8f0; width: 90px; text-align: left; font-weight: bold;">Debt Name</th>
+                                        ${timelineForPDF
+                                          .slice(0, 6)
+                                          .map(
+                                            (step) =>
+                                              `<th style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; min-width: 110px;">${step.date}</th>`,
+                                          )
+                                          .join("")}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${lastResult.debtNames
+                                      .map(
+                                        (name) => `
+                                        <tr style="page-break-inside: avoid;">
+                                            <td style="padding: 3px; border: 1px solid #e2e8f0; font-weight: bold; background: #f8fafc; color: #1e293b; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${name}</td>
+                                            ${timelineForPDF
+                                              .slice(0, 6)
+                                              .map((step) => {
+                                                const start =
+                                                  step.startingBalances[name] ||
+                                                  0;
+                                                const bal = step.balances[name];
+                                                const paid =
+                                                  step.payments[name];
+                                                const interest =
+                                                  step.interests[name];
+                                                const isPaid =
+                                                  bal <= 0 &&
+                                                  (timelineForPDF[0] === step ||
+                                                    timelineForPDF[
+                                                      timelineForPDF.indexOf(step) - 1
+                                                    ]?.balances[name] > 0);
+                                                const fmt = (n) =>
+                                                  n
+                                                    .toFixed(2)
+                                                    .toLocaleString(undefined, {
+                                                      minimumFractionDigits: 2,
+                                                      maximumFractionDigits: 2,
+                                                    });
+                                                return `<td style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; vertical-align: top; ${isPaid ? "background: #ecfdf5; color: #059669; font-weight: bold;" : "color: #64748b;"}">
+                                                    <div>${start > 0 && start !== bal ? `<span style="font-size:6pt;color:#94a3b8;">Start $${fmt(start)}</span><br>` : ""}
+                                                    ${interest > 0 ? `<span class="text-[9px] text-rose-500/80 font-medium italic">Int. $${fmt(interest)}</span><br>` : ""}
+                                                    ${paid > 0 ? `<span class="text-[10px] text-emerald-400 font-bold">Pay $${fmt(paid)}</span><br>` : ""}
+                                                    <span class="${bal <= 0 ? "text-emerald-500 font-bold" : ""}">${bal <= 0 ? "PAID" : "$" + fmt(bal)}</span>
+                                                </td>`;
+                                              })
+                                              .join("")}
+                                        </tr>
+                                    `,
+                                      )
+                                      .join("")}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             `;
 
-            container.innerHTML = tableHTML;
-        }
+        const opt = {
+          margin: 10,
+          filename: "DebtPipe_Payoff_Report.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            letterRendering: true,
+            scrollY: 0,
+            scrollX: 0,
+          },
+          jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+          pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+        };
 
-        // Generate a sample report with dummy data (for demo/testing)
-        // In production, this would be the actual DebtPipe simulation output
-        function generateReport() {
-            // Example: read bills and payment plans from inputs (simplified)
-            try {
-                const bills = JSON.parse(document.getElementById('billsInput').value || '[]');
-                const payments = JSON.parse(document.getElementById('paymentsInput').value || '[]');
-
-                // Build timeline with starting balances, planned payments, and interest
-                const months = 12;
-                const debtNames = bills.map(b => b.name);
-                const timeline = [];
-
-                // Simple interest rate for demo (could be configurable)
-                const annualRate = 0.08;
-                const monthlyRate = annualRate / 12;
-
-                for (let m = 0; m < months; m++) {
-                    const step = {
-                        date: new Date(2025, m, 1).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }),
-                        startingBalances: {},
-                        plannedPayments: {},
-                        interests: {},
-                        balances: {}
-                    };
-
-                    for (const bill of bills) {
-                        const prevBal = (timeline.length > 0) ? timeline[timeline.length-1].balances[bill.name] || 0 : bill.statementBalance;
-                        step.startingBalances[bill.name] = prevBal;
-                        step.plannedPayments[bill.name] = bill.minPayment || (bill.statementBalance * 0.02); // example min payment
-                        step.interests[bill.name] = prevBal * monthlyRate;
-                        step.balances[bill.name] = prevBal + step.interests[bill.name] - step.plannedPayments[bill.name];
-                    }
-
-                    timeline.push(step);
-                }
-
-                lastResult = { timeline, debtNames };
-                // Apply any persisted custom payments before initial render
-                recalculateTimeline();
-                return lastResult;
-            } catch (e) {
-                alert('Invalid input JSON. Please check format.');
-                console.error(e);
-                return null;
-            }
-        }
-
-        // Download current view as PDF
-        function downloadPDF() {
-            const element = document.getElementById('results');
-            if (!element || !element.innerHTML.trim()) {
-                alert('No timeline to export. Generate a report first.');
-                return;
-            }
-
-            const opt = {
-                margin: 10,
-                filename: 'DebtPipe_Bill_Tracker.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, scrollX: 0 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            };
-
-            html2pdf().set(opt).from(element).save();
-        }
-
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            loadDebtData();
-        });
+        html2pdf().set(opt).from(html).save();
+      }
     </script>
-</body>
+  </body>
 </html>
