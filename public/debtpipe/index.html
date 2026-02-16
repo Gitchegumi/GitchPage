@@ -41,6 +41,43 @@
         background: #0f172a;
         z-index: 10;
       }
+      /* Interactive cell styles */
+      .cell-paid {
+        background: rgba(5, 123, 150, 0.08);
+      }
+      .cell-wrapper {
+        position: relative;
+        padding-top: 20px !important;
+      }
+      .cell-checkbox {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        accent-color: #053396;
+        cursor: pointer;
+        width: 13px;
+        height: 13px;
+      }
+      .inline-edit {
+        width: 72px;
+        background: #1e293b;
+        border: 1px solid #334155;
+        color: #10b981;
+        border-radius: 4px;
+        padding: 2px 4px;
+        font-size: 10px;
+        text-align: center;
+        outline: none;
+      }
+      .inline-edit:focus {
+        border-color: #10b981;
+      }
+      .month-flow {
+        font-size: 9px;
+        color: #60a5fa;
+        font-weight: 600;
+        margin-top: 2px;
+      }
     </style>
   </head>
   <body class="p-4 md:p-8 min-h-screen font-sans">
@@ -57,7 +94,99 @@
         <div class="hidden sm:block text-sm text-slate-400 font-medium">
           Unlimited Debt Payoff Simulator
         </div>
+        <!-- Interactive mode always on -->
       </header>
+
+      <!-- Bill Edit Modal -->
+      <div
+        id="billEditModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+        onclick="closeBillModal()"
+      >
+        <div
+          class="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-6 w-full max-w-md mx-4"
+          onclick="event.stopPropagation()"
+        >
+          <h3 class="text-lg font-bold text-emerald-400 mb-4">Edit Bill</h3>
+          <div class="space-y-4">
+            <div>
+              <label
+                class="block text-xs uppercase tracking-wider text-slate-500 mb-1 font-bold"
+                >Name</label
+              >
+              <input
+                type="text"
+                id="modalBillName"
+                class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white"
+                readonly
+              />
+            </div>
+            <div>
+              <label
+                class="block text-xs uppercase tracking-wider text-slate-500 mb-1 font-bold"
+                >Balance ($)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                id="modalBillBalance"
+                class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-xs uppercase tracking-wider text-slate-500 mb-1 font-bold"
+                >Interest Rate (%)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                id="modalBillRate"
+                class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-xs uppercase tracking-wider text-slate-500 mb-1 font-bold"
+                >Minimum Payment ($)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                id="modalBillMin"
+                class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-xs uppercase tracking-wider text-slate-500 mb-1 font-bold"
+                >Due Day (1-31)</label
+              >
+              <input
+                type="number"
+                min="1"
+                max="31"
+                id="modalBillDay"
+                class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white"
+              />
+            </div>
+          </div>
+          <div class="flex justify-end gap-3 mt-6">
+            <button
+              onclick="closeBillModal()"
+              class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-white"
+            >
+              Cancel
+            </button>
+            <button
+              onclick="saveBillModal()"
+              class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded text-white font-bold"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
         <!-- Left Column: Inputs -->
@@ -106,6 +235,15 @@
                   value="500"
                   class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-emerald-400"
                 />
+              </div>
+              <div class="pt-2 border-t border-slate-700/50">
+                <button
+                  onclick="resetOverrides()"
+                  class="w-full bg-slate-800 hover:bg-rose-900/30 text-slate-400 hover:text-rose-400 text-xs font-bold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2 border border-slate-700"
+                >
+                  <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Reset
+                  Overrides
+                </button>
               </div>
             </div>
           </section>
@@ -162,7 +300,10 @@
                   rows="10"
                   class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 font-mono text-xs focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-white"
                   placeholder="Name, Balance, Rate, Min, [DueDay]"
-                ></textarea>
+                >Credit Card A, 5000, 24.99, 150, 1
+Credit Card B, 3000, 19.99, 75, 15
+Student Loan, 15000, 6.8, 200, 1
+Car Loan, 8000, 7.5, 250, 10
               </div>
 
               <div class="flex gap-2 pt-2">
@@ -327,6 +468,10 @@
     <script>
       let chartInstance = null;
       let lastResult = null; // Globally accessible for PDF
+      let interactiveOverrides = {}; // Key: "debtName|monthIdx", Value: { paid: bool, amountOverride: number|null }
+      let baselineTimeline = [];
+      let parsedDebtsCache = [];
+      let monthlyBudgetCache = 0;
 
       window.onload = () => {
         const now = new Date();
@@ -338,15 +483,262 @@
         const savedExtra = localStorage.getItem("debtpipe_extra");
         const savedMethod = localStorage.getItem("debtpipe_method");
         const savedStart = localStorage.getItem("debtpipe_start");
+        const savedOverrides = localStorage.getItem("debtpipe_overrides");
+
+        const savedBills = localStorage.getItem("debtBills");
+        const savedCustom = localStorage.getItem("debtCustomPayments");
+        const savedPaid = localStorage.getItem("debtPaymentsPaid");
+
+        if (savedBills) debtBills = JSON.parse(savedBills);
+        if (savedCustom) debtCustomPayments = JSON.parse(savedCustom);
+        if (savedPaid) debtPaymentsPaid = JSON.parse(savedPaid);
 
         if (savedData) document.getElementById("debtData").value = savedData;
         if (savedExtra) document.getElementById("extra").value = savedExtra;
         if (savedMethod) document.getElementById("method").value = savedMethod;
         if (savedStart) document.getElementById("startDate").value = savedStart;
+        if (savedOverrides) {
+          try {
+            interactiveOverrides = JSON.parse(savedOverrides);
+          } catch (e) {
+            interactiveOverrides = {};
+          }
+        }
 
         lucide.createIcons();
         runSimulation();
+
+        const toggle = document.getElementById("interactiveMode");
+        if (toggle) {
+          toggle.addEventListener("change", (e) => {
+            toggleInteractiveMode(e.target.checked);
+          });
+        }
+        // Interactive mode always on by default
+        toggleInteractiveMode(true);
       };
+
+      // Interactive Bill Tracking
+      function saveInteractiveData() {
+        localStorage.setItem("debtBills", JSON.stringify(debtBills));
+        localStorage.setItem(
+          "debtCustomPayments",
+          JSON.stringify(debtCustomPayments),
+        );
+        localStorage.setItem(
+          "debtPaymentsPaid",
+          JSON.stringify(debtPaymentsPaid),
+        );
+      }
+
+      function toggleInteractiveMode(on) {
+        interactiveMode = on;
+        const toggle = document.getElementById("interactiveMode");
+        if (toggle) toggle.checked = on;
+        // JSON export button removed - interactive by default
+        let note = document.getElementById("interactiveNote");
+        if (!note && on) {
+          note = document.createElement("div");
+          note.id = "interactiveNote";
+          note.className = "interactive-note";
+          const results = document.getElementById("results");
+          if (results) results.insertBefore(note, results.firstChild);
+        }
+        if (note)
+          note.textContent = on
+            ? "Interactive Bill Tracking is ON: adjust payments below. Changes persist in browser."
+            : "";
+        if (!lastResult) return;
+        if (on) {
+          if (debtBills.length === 0 && lastResult.debtNames) {
+            debtBills = lastResult.debtNames.map((name) => ({
+              name,
+              statementBalance:
+                lastResult.timeline[0]?.startingBalances[name] || 0,
+              interestRate: 0,
+              minPayment: 0,
+              dueDay: 1,
+            }));
+          }
+          recalculateTimeline();
+          renderInteractiveTimeline();
+        } else {
+          interactiveTimeline = null;
+          renderTimelineTransposed(lastResult.timeline, lastResult.debtNames);
+        }
+      }
+
+      function recalculateTimeline() {
+        if (!lastResult) return;
+        interactiveTimeline = JSON.parse(JSON.stringify(lastResult.timeline));
+        for (const name of lastResult.debtNames) {
+          let carryBalance = 0;
+          for (let i = 0; i < interactiveTimeline.length; i++) {
+            const step = interactiveTimeline[i];
+            const start = step.startingBalances[name] || 0;
+            const planned = step.plannedPayments[name] || 0;
+            const interest = step.interests[name] || 0;
+            const key = `${name}::${i}`;
+            const customAmt = debtCustomPayments[key] || 0;
+            const isPaid = debtPaymentsPaid[key] === true;
+            let actualPaid = 0;
+            if (isPaid) {
+              actualPaid = customAmt > 0 ? customAmt : planned;
+            } else if (customAmt > 0) {
+              actualPaid = customAmt;
+            } else if (planned > 0) {
+              actualPaid = planned;
+            }
+            let balanceBeforeInterest = carryBalance + start - actualPaid;
+            let interestAccrued = 0;
+            if (balanceBeforeInterest > 0) {
+              interestAccrued =
+                balanceBeforeInterest * (lastResult.rates[name] / 100 / 12);
+            }
+            let newBalance = balanceBeforeInterest + interestAccrued;
+            step.balances[name] = newBalance;
+            step.payments[name] = actualPaid;
+            step.interests[name] = interestAccrued;
+            carryBalance = newBalance > 0 ? newBalance : 0;
+          }
+        }
+      }
+
+      function renderInteractiveTimeline() {
+        if (!interactiveTimeline) return;
+        const { timeline, debtNames } = lastResult;
+        renderTimelineHeader(timeline);
+        renderInteractiveBody(interactiveTimeline, debtNames);
+      }
+
+      function renderInteractiveBody(timeline, debtNames) {
+        const container = document.getElementById("timelineBody");
+        container.innerHTML = "";
+        debtNames.forEach((name) => {
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-slate-800/20 group cursor-pointer";
+          // Make first cell (debt name) clickable to edit
+          tr.innerHTML = `<td class="p-3 font-bold text-slate-200 sticky-col z-10 group-hover:bg-slate-800 transition-colors border-b border-slate-700/30 text-left" onclick='openBillModal(debtBills.find(b => b.name === "${name}"))'>${name} ✎</td>`;
+          timeline.forEach((step, monthIdx) => {
+            const start = step.startingBalances[name] || 0;
+            const bal = step.balances[name];
+            const planned = step.plannedPayments[name] || 0;
+            const key = `${name}::${monthIdx}`;
+            const isPaid = debtPaymentsPaid[key] === true;
+            const customAmt = debtCustomPayments[key] || 0;
+            const isFullyPaid = bal <= 0.01 && start > 0;
+            const rowClass = isFullyPaid
+              ? "paid-row"
+              : customAmt > 0
+                ? "custom-row"
+                : "";
+            const cell = document.createElement("td");
+            cell.className = `p-3 text-center border-l border-slate-700/30 border-b border-slate-700/30 ${rowClass}`;
+            cell.innerHTML = `
+              <div style="font-size:9px; color:#94a3b8;">Start $${start.toFixed(2)}</div>
+              ${planned > 0 ? `<div class="text-[9px] text-rose-500/80">Min: $${planned.toFixed(2)}</div>` : ""}
+              <div style="margin:2px 0;">
+                <input type="checkbox" class="checkbox-cell" ${isPaid ? "checked" : ""} onchange="onPaidToggle('${name}', ${monthIdx})" title="Mark as paid">
+                <input type="number" step="0.01" min="0" class="payment-input" value="${customAmt.toFixed(2)}" onchange="onCustomPaymentChange('${name}', ${monthIdx}, this.value)" title="Custom payment amount">
+              </div>
+              <div style="font-weight:bold; color:${bal <= 0 ? "#10b981" : "#f8fafc"};">${bal <= 0 ? "PAID" : "$" + bal.toFixed(2)}</div>
+            `;
+            tr.appendChild(cell);
+          });
+          container.appendChild(tr);
+        });
+      }
+
+      function onPaidToggle(debtName, monthIdx) {
+        const key = `${debtName}::${monthIdx}`;
+        debtPaymentsPaid[key] = !debtPaymentsPaid[key];
+        saveInteractiveData();
+        recalculateTimeline();
+        renderInteractiveTimeline();
+      }
+
+      function onCustomPaymentChange(debtName, monthIdx, value) {
+        const key = `${debtName}::${monthIdx}`;
+        const numVal = parseFloat(value) || 0;
+        if (numVal <= 0) {
+          delete debtCustomPayments[key];
+        } else {
+          debtCustomPayments[key] = numVal;
+        }
+        saveInteractiveData();
+        recalculateTimeline();
+        renderInteractiveTimeline();
+      }
+
+      function downloadJSON() {
+        if (!lastResult) return;
+        const data = {
+          original: lastResult,
+          custom: debtCustomPayments,
+          paid: debtPaymentsPaid,
+          modifiedTimeline: interactiveTimeline,
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "DebtPipe_Interactive_State.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      // Bill editing modal
+      function openBillModal(bill) {
+        editingBillIndex = debtBills.findIndex((b) => b.name === bill.name);
+        if (editingBillIndex === -1) return;
+        document.getElementById("modalBillName").value = bill.name;
+        document.getElementById("modalBillBalance").value =
+          bill.statementBalance;
+        document.getElementById("modalBillRate").value = bill.interestRate;
+        document.getElementById("modalBillMin").value = bill.minPayment;
+        document.getElementById("modalBillDay").value = bill.dueDay;
+        document.getElementById("billEditModal").classList.remove("hidden");
+      }
+
+      function closeBillModal() {
+        document.getElementById("billEditModal").classList.add("hidden");
+        editingBillIndex = null;
+      }
+
+      function saveBillModal() {
+        if (editingBillIndex === null) return;
+        const name = document.getElementById("modalBillName").value;
+        const balance = parseFloat(
+          document.getElementById("modalBillBalance").value,
+        );
+        const rate = parseFloat(document.getElementById("modalBillRate").value);
+        const minPayment = parseFloat(
+          document.getElementById("modalBillMin").value,
+        );
+        const dueDay = parseInt(document.getElementById("modalBillDay").value);
+
+        // Update debtBills
+        debtBills[editingBillIndex] = {
+          name,
+          statementBalance: balance,
+          interestRate: rate,
+          minPayment,
+          dueDay,
+        };
+
+        // Update CSV textarea with current debtBills
+        const csvLines = debtBills.map(
+          (b) =>
+            `${b.name},${b.statementBalance},${b.interestRate},${b.minPayment},${b.dueDay}`,
+        );
+        document.getElementById("debtData").value = csvLines.join("\n");
+
+        saveInteractiveData();
+        runSimulation();
+        closeBillModal();
+      }
 
       function switchTab(view) {
         const mTab = document.getElementById("tab-milestones");
@@ -450,6 +842,14 @@
 
         if (debts.length === 0) return;
 
+        // Capture debt definitions for interactive mode
+        debtBills = debts.map((d) => ({
+          name: d.name,
+          statementBalance: d.balance,
+          interestRate: d.interestRate,
+          minPayment: d.minPayment,
+          dueDay: d.dueDay,
+        }));
         const firstHalfMins = debts
           .filter((d) => d.dueDay <= 14)
           .reduce((sum, d) => sum + d.minPayment, 0);
@@ -466,7 +866,7 @@
           prioritizedDebts.sort((a, b) => b.interestRate - a.interestRate);
         }
 
-        // 3. Simulation Loop
+        // 3. Simulation Loop (Baseline)
         let currentMonth = 0;
         let totalInterestPaid = 0;
         const initialPrincipal = debts.reduce((sum, d) => sum + d.balance, 0);
@@ -492,12 +892,14 @@
             payments: {},
             interests: {},
             startingBalances: {},
+            plannedPayments: {},
             total: 0,
           };
 
-          // Capture starting balances (before interest/payments this month)
+          // Capture starting balances
           currentDebts.forEach((d) => {
             snapshot.startingBalances[d.name] = d.balance;
+            snapshot.plannedPayments[d.name] = d.balance > 0 ? d.minPayment : 0;
           });
 
           currentDebts.forEach((d) => {
@@ -527,6 +929,7 @@
               budget -= extra;
               snapshot.payments[d.name] += extra;
             }
+            snapshot.plannedPayments[d.name] = snapshot.payments[d.name];
             snapshot.balances[d.name] = d.balance;
             snapshot.total += d.balance;
             if (d.balance <= 0 && !milestones.find((m) => m.name === d.name)) {
@@ -541,7 +944,7 @@
           timeline.push(snapshot);
         }
 
-        // Store for PDF
+        // Store for PDF (baseline data only)
         lastResult = {
           metrics: {
             months: currentMonth,
@@ -558,9 +961,20 @@
           debtNames: prioritizedDebts.map((d) => d.name),
           method: method,
           extra: extraPayment,
+          rates: {}, // for interactive recalculation
         };
+        // Capture rates by debt name
+        debts.forEach((d) => (lastResult.rates[d.name] = d.interestRate));
 
-        // UI Update
+        // Cache baseline for interactive replay
+        baselineTimeline = JSON.parse(JSON.stringify(timeline));
+        parsedDebtsCache = JSON.parse(JSON.stringify(prioritizedDebts));
+        monthlyBudgetCache = monthlyBudget;
+
+        // Build interactive timeline (applies overrides if any)
+        const activeTimeline = buildInteractiveTimeline();
+
+        // UI Update (metrics always show baseline)
         document.getElementById("metric-months").innerText =
           `${currentMonth} Months`;
         const finalDate = new Date(lastResult.metrics.date);
@@ -576,8 +990,139 @@
           lastResult.metrics.split;
 
         renderMilestones(milestones, prioritizedDebts);
-        renderTimelineTransposed(timeline, lastResult.debtNames);
+        renderTimelineTransposed(activeTimeline, lastResult.debtNames);
         updateChart(timeline);
+      }
+
+      /**
+       * Build the interactive timeline by replaying the simulation with overrides.
+       * Returns baseline timeline if no overrides exist.
+       */
+      function buildInteractiveTimeline() {
+        if (Object.keys(interactiveOverrides).length === 0) {
+          return baselineTimeline;
+        }
+        return replayWithOverrides(
+          parsedDebtsCache,
+          monthlyBudgetCache,
+          baselineTimeline,
+          interactiveOverrides,
+        ).timeline;
+      }
+
+      /**
+       * Re-run the simulation from scratch, applying overrides per-month.
+       * Overrides reduce/increase a specific debt's payment but do NOT
+       * feed the snowball pool (snowball isolation rule).
+       */
+      function replayWithOverrides(
+        parsedDebts,
+        monthlyBudget,
+        baseline,
+        overrides,
+      ) {
+        let currentDebts = JSON.parse(JSON.stringify(parsedDebts));
+        const timeline = [];
+        const milestones = [];
+        let totalInterestPaid = 0;
+
+        for (let monthIdx = 0; monthIdx < 600; monthIdx++) {
+          if (!currentDebts.some((d) => d.balance > 0)) break;
+
+          const baseDateStr =
+            monthIdx < baseline.length
+              ? baseline[monthIdx].date
+              : (() => {
+                  // Extend dates beyond baseline if needed
+                  const startVal = document.getElementById("startDate").value;
+                  const d = new Date(startVal + "-01T12:00:00");
+                  d.setMonth(d.getMonth() + monthIdx);
+                  return d.toLocaleString("default", {
+                    month: "short",
+                    year: "numeric",
+                  });
+                })();
+
+          let budget = monthlyBudget;
+          const snapshot = {
+            month: monthIdx + 1,
+            date: baseDateStr,
+            balances: {},
+            payments: {},
+            interests: {},
+            startingBalances: {},
+            plannedPayments: {},
+            total: 0,
+          };
+
+          // Starting balances
+          currentDebts.forEach((d) => {
+            snapshot.startingBalances[d.name] = d.balance;
+          });
+
+          // Interest
+          currentDebts.forEach((d) => {
+            let interest = 0;
+            if (d.balance > 0) {
+              interest = d.balance * (d.interestRate / 100 / 12);
+              totalInterestPaid += interest;
+              d.balance += interest;
+            }
+            snapshot.interests[d.name] = interest;
+          });
+
+          // Pay minimums
+          currentDebts.forEach((d) => {
+            let paid = 0;
+            if (d.balance > 0) {
+              paid = Math.min(d.balance, d.minPayment);
+              d.balance -= paid;
+              budget -= paid;
+            }
+            snapshot.payments[d.name] = paid;
+          });
+
+          // Snowball extra (normal rules, unaffected by overrides)
+          for (let d of currentDebts) {
+            if (d.balance > 0 && budget > 0) {
+              const extra = Math.min(d.balance, budget);
+              d.balance -= extra;
+              budget -= extra;
+              snapshot.payments[d.name] += extra;
+            }
+            // Store what simulation computed (before overrides)
+            snapshot.plannedPayments[d.name] = snapshot.payments[d.name];
+          }
+
+          // Apply overrides (post-process): only amountOverride changes math
+          currentDebts.forEach((d) => {
+            const key = `${d.name}|${monthIdx}`;
+            const ov = overrides[key];
+            if (ov && ov.amountOverride != null && ov.amountOverride > 0) {
+              const planned = snapshot.payments[d.name];
+              // Undo planned payment on balance, then apply override
+              d.balance += planned;
+              const actual = Math.min(d.balance, ov.amountOverride);
+              d.balance -= actual;
+              snapshot.payments[d.name] = actual;
+            }
+
+            snapshot.balances[d.name] = d.balance;
+            snapshot.total += d.balance;
+            if (d.balance <= 0 && !milestones.find((m) => m.name === d.name)) {
+              milestones.push({
+                name: d.name,
+                month: monthIdx + 1,
+                date: baseDateStr,
+                rate: d.interestRate,
+              });
+            }
+          });
+
+          timeline.push(snapshot);
+        }
+
+        return { timeline, milestones, totalInterestPaid };
       }
 
       function renderMilestones(milestones, allDebts) {
@@ -611,45 +1156,75 @@
       }
 
       function renderTimelineTransposed(timeline, debtNames) {
+        const baseFlow = monthlyBudgetCache;
+        const esc = (s) => s.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        const fmt = (n) =>
+          n.toFixed(2).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+
+        // Header row with optional month-specific flow
         const headerRow =
           `<tr><th class="p-3 bg-slate-800 sticky-col z-30 min-w-[150px] border-b border-slate-600">Debt Name</th>` +
           timeline
-            .map(
-              (step) =>
-                `<th class="p-3 text-center border-l border-slate-700/50 min-w-[110px] border-b border-slate-600">${step.date}</th>`,
-            )
+            .map((step, monthIdx) => {
+              // Compute month flow: sum of payments for debts NOT yet toggled paid
+              let unpaidSum = 0;
+              debtNames.forEach((name) => {
+                const key = `${name}|${monthIdx}`;
+                const ov = interactiveOverrides[key];
+                const isPaid = ov && ov.paid;
+                if (!isPaid) {
+                  unpaidSum += step.payments[name] || 0;
+                }
+              });
+              const monthFlow = unpaidSum;
+              const showFlow = Math.abs(monthFlow - baseFlow) >= 0.01;
+              return `<th class="p-3 text-center border-l border-slate-700/50 min-w-[130px] border-b border-slate-600">${step.date}${showFlow ? `<div class="month-flow">Flow: $${fmt(monthFlow)}</div>` : ""}</th>`;
+            })
             .join("") +
           `</tr>`;
         document.getElementById("timelineHeader").innerHTML = headerRow;
 
+        // Body rows with interactive controls
         document.getElementById("timelineBody").innerHTML = debtNames
           .map(
             (name) => `
                 <tr class="hover:bg-slate-800/20 group">
                     <td class="p-3 font-bold text-slate-200 sticky-col z-10 group-hover:bg-slate-800 transition-colors border-b border-slate-700/30 text-left">${name}</td>
                     ${timeline
-                      .map((step) => {
+                      .map((step, monthIdx) => {
                         const start = step.startingBalances[name] || 0;
                         const bal = step.balances[name];
                         const paid = step.payments[name];
+                        const planned = step.plannedPayments[name] || 0;
                         const interest = step.interests[name];
+                        const key = `${name}|${monthIdx}`;
+                        const ov = interactiveOverrides[key];
+                        const isPaidToggled = ov && ov.paid;
+                        const isActive =
+                          start > 0 || paid > 0 || interest > 0 || bal > 0;
                         const isZero =
                           bal <= 0 &&
-                          (timeline[timeline.indexOf(step) - 1]?.balances[
-                            name
-                          ] > 0 ||
-                            timeline.indexOf(step) === 0);
-                        const fmt = (n) =>
-                          n.toFixed(2).toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          });
+                          (timeline[monthIdx - 1]?.balances[name] > 0 ||
+                            monthIdx === 0);
+
+                        // Inactive cell (debt already fully paid in prior month)
+                        if (!isActive && bal <= 0 && !ov) {
+                          return `<td class="p-3 text-center border-l border-slate-700/30 border-b border-slate-700/30 text-slate-600">—</td>`;
+                        }
+
+                        const showCheckbox = isActive;
+                        const escapedName = esc(name);
+
                         return `
-                            <td class="p-3 text-center border-l border-slate-700/30 border-b border-slate-700/30 ${isZero ? "bg-emerald-900/20" : ""}">
+                            <td class="p-3 text-center border-l border-slate-700/30 border-b border-slate-700/30 cell-wrapper ${isPaidToggled ? "cell-paid" : ""} ${isZero ? "bg-emerald-900/20" : ""}">
+                                ${showCheckbox ? `<input type="checkbox" class="cell-checkbox" ${isPaidToggled ? "checked" : ""} onchange="togglePaid('${escapedName}', ${monthIdx}, this.checked)" title="Mark as paid">` : ""}
                                 <div class="${start > 0 && start !== bal ? "text-slate-500 text-[9px] mb-1" : "hidden"}">Start $${fmt(start)}</div>
                                 ${interest > 0 ? `<div class="text-[9px] text-rose-500/80 font-medium italic">Int. $${fmt(interest)}</div>` : ""}
-                                ${paid > 0 ? `<div class="text-[10px] text-emerald-400 font-bold mt-1">Pay $${fmt(paid)}</div>` : ""}
-                                <div class="${bal <= 0 ? "text-emerald-500 font-bold" : "text-slate-300"}">${bal <= 0 ? "PAID" : "$" + fmt(bal)}</div>
+                                ${isActive ? `<div class="text-[10px] ${paid > 0 ? "text-emerald-400" : "text-slate-500"} font-bold mt-1 cursor-pointer hover:underline" onclick="startEditPayment('${escapedName}', ${monthIdx}, ${paid || planned || 0}, this)" title="Click to edit payment amount">Pay $${fmt(paid || planned || 0)}</div>` : ""}
+                                <div class="${bal <= 0 ? "text-emerald-500 font-bold" : "text-slate-300"}">${bal <= 0 ? "PAID OFF!" : "$" + fmt(bal)}</div>
                             </td>
                         `;
                       })
@@ -659,6 +1234,108 @@
           )
           .join("");
       }
+
+      // ---------- Interactive Override Helpers ----------
+
+      function togglePaid(debtName, monthIdx, checked) {
+        const key = `${debtName}|${monthIdx}`;
+        if (checked) {
+          if (!interactiveOverrides[key])
+            interactiveOverrides[key] = { paid: false, amountOverride: null };
+          interactiveOverrides[key].paid = true;
+        } else {
+          if (interactiveOverrides[key]) {
+            interactiveOverrides[key].paid = false;
+            // Clean up entry if no override amount either
+            if (
+              interactiveOverrides[key].amountOverride == null ||
+              interactiveOverrides[key].amountOverride <= 0
+            ) {
+              delete interactiveOverrides[key];
+            }
+          }
+        }
+        saveOverrides();
+        applyOverridesAndRender();
+      }
+
+      function startEditPayment(debtName, monthIdx, currentValue, el) {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.className = "inline-edit";
+        input.value = currentValue.toFixed(2);
+        input.step = "0.01";
+        input.min = "0";
+
+        el.replaceWith(input);
+        input.focus();
+        input.select();
+
+        const save = () => {
+          const val = parseFloat(input.value);
+          const key = `${debtName}|${monthIdx}`;
+          if (val > 0) {
+            if (!interactiveOverrides[key])
+              interactiveOverrides[key] = { paid: true, amountOverride: null };
+            interactiveOverrides[key].amountOverride = val;
+            interactiveOverrides[key].paid = true; // Auto-mark paid
+          } else {
+            // Clear override amount
+            if (interactiveOverrides[key]) {
+              interactiveOverrides[key].amountOverride = null;
+              if (!interactiveOverrides[key].paid) {
+                delete interactiveOverrides[key];
+              }
+            }
+          }
+          saveOverrides();
+          applyOverridesAndRender();
+        };
+
+        let saved = false;
+        input.addEventListener("blur", () => {
+          if (!saved) {
+            saved = true;
+            save();
+          }
+        });
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            saved = true;
+            save();
+          }
+          if (e.key === "Escape") {
+            saved = true;
+            applyOverridesAndRender();
+          }
+        });
+      }
+
+      function saveOverrides() {
+        localStorage.setItem(
+          "debtpipe_overrides",
+          JSON.stringify(interactiveOverrides),
+        );
+      }
+
+      function applyOverridesAndRender() {
+        if (!lastResult || baselineTimeline.length === 0) return;
+        const activeTimeline = buildInteractiveTimeline();
+        renderTimelineTransposed(activeTimeline, lastResult.debtNames);
+      }
+
+      function resetOverrides() {
+        if (
+          Object.keys(interactiveOverrides).length === 0 ||
+          confirm("Reset all payment overrides?")
+        ) {
+          interactiveOverrides = {};
+          localStorage.removeItem("debtpipe_overrides");
+          applyOverridesAndRender();
+        }
+      }
+
+      // ---------- Chart ----------
 
       function updateChart(timeline) {
         const ctx = document.getElementById("payoffChart").getContext("2d");
@@ -701,6 +1378,8 @@
         });
       }
 
+      // ---------- PDF Export (reflects interactive state) ----------
+
       function exportToPDF() {
         if (!lastResult) return alert("Run simulation first.");
         const fmt = (n) =>
@@ -708,6 +1387,10 @@
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           });
+
+        // Use interactive timeline so PDF matches what's on screen
+        const pdfTimeline = buildInteractiveTimeline();
+        const hasOverrides = Object.keys(interactiveOverrides).length > 0;
 
         const html = `
                 <div style="font-family: Arial, sans-serif; color: #334155; padding: 15px; background: white; width: 950px;">
@@ -720,6 +1403,7 @@
                         <div style="text-align: right; font-size: 8pt; color: #64748b;">
                             <p style="margin: 0;">Plan Generated: ${new Date().toLocaleDateString()}</p>
                             <p style="margin: 1px 0 0 0;">Method: ${lastResult.method.toUpperCase()} | Extra: $${fmt(lastResult.extra)}/mo</p>
+                            ${hasOverrides ? `<p style="margin: 1px 0 0 0; color: #10b981; font-weight: bold;">Includes manual payment overrides</p>` : ""}
                         </div>
                     </div>
 
@@ -777,18 +1461,36 @@
                     <!-- Timeline -->
                     <div style="page-break-inside: avoid;">
                         <h2 style="font-size: 12pt; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; margin-bottom: 10px; color: #0f172a;">Full Payoff Timeline (First 6 Months)</h2>
-                        <p style="font-size: 8pt; color: #64748b; margin-bottom: 8px;">Shows per-month cash flow: Starting balance, Amount paid, Interest accrued, Remaining balance</p>
+                        <p style="font-size: 8pt; color: #64748b; margin-bottom: 8px;">Shows per-month cash flow: Starting balance, Amount paid, Interest accrued, Remaining balance${hasOverrides ? " · ✅ = confirmed paid" : ""}</p>
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; font-size: 6pt; table-layout: fixed;">
                                 <thead>
                                     <tr style="background: #f1f5f9; color: #475569;">
                                         <th style="padding: 3px; border: 1px solid #e2e8f0; width: 90px; text-align: left; font-weight: bold;">Debt Name</th>
-                                        ${lastResult.timeline
+                                        ${pdfTimeline
                                           .slice(0, 6)
-                                          .map(
-                                            (step) =>
-                                              `<th style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; min-width: 110px;">${step.date}</th>`,
-                                          )
+                                          .map((step, mIdx) => {
+                                            let unpaidSum = 0;
+                                            lastResult.debtNames.forEach(
+                                              (n) => {
+                                                const ov =
+                                                  interactiveOverrides[
+                                                    `${n}|${mIdx}`
+                                                  ];
+                                                const isPaid = ov && ov.paid;
+                                                if (!isPaid) {
+                                                  unpaidSum +=
+                                                    step.payments[n] || 0;
+                                                }
+                                              },
+                                            );
+                                            const mFlow = unpaidSum;
+                                            const showFlow =
+                                              Math.abs(
+                                                mFlow - monthlyBudgetCache,
+                                              ) >= 0.01;
+                                            return `<th style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; min-width: 110px;">${step.date}${showFlow ? `<div style="font-size:6pt;color:#3b82f6;font-weight:600;margin-top:1px;">Flow: $${fmt(mFlow)}</div>` : ""}</th>`;
+                                          })
                                           .join("")}
                                     </tr>
                                 </thead>
@@ -798,9 +1500,9 @@
                                         (name) => `
                                         <tr style="page-break-inside: avoid;">
                                             <td style="padding: 3px; border: 1px solid #e2e8f0; font-weight: bold; background: #f8fafc; color: #1e293b; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${name}</td>
-                                            ${lastResult.timeline
+                                            ${pdfTimeline
                                               .slice(0, 6)
-                                              .map((step) => {
+                                              .map((step, monthIdx) => {
                                                 const start =
                                                   step.startingBalances[name] ||
                                                   0;
@@ -809,27 +1511,25 @@
                                                   step.payments[name];
                                                 const interest =
                                                   step.interests[name];
-                                                const isPaid =
+                                                const key = `${name}|${monthIdx}`;
+                                                const ov =
+                                                  interactiveOverrides[key];
+                                                const isToggled = ov && ov.paid;
+                                                const isPaidOff =
                                                   bal <= 0 &&
-                                                  (lastResult.timeline[0] ===
-                                                    step ||
-                                                    lastResult.timeline[
-                                                      lastResult.timeline.indexOf(
-                                                        step,
-                                                      ) - 1
-                                                    ]?.balances[name] > 0);
-                                                const fmt = (n) =>
-                                                  n
-                                                    .toFixed(2)
-                                                    .toLocaleString(undefined, {
-                                                      minimumFractionDigits: 2,
-                                                      maximumFractionDigits: 2,
-                                                    });
-                                                return `<td style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; vertical-align: top; ${isPaid ? "background: #ecfdf5; color: #059669; font-weight: bold;" : "color: #64748b;"}">
-                                                    <div>${start > 0 && start !== bal ? `<span style="font-size:6pt;color:#94a3b8;">Start $${fmt(start)}</span><br>` : ""}
-                                                    ${interest > 0 ? `<span class="text-[9px] text-rose-500/80 font-medium italic">Int. $${fmt(interest)}</span><br>` : ""}
-                                                    ${paid > 0 ? `<span class="text-[10px] text-emerald-400 font-bold">Pay $${fmt(paid)}</span><br>` : ""}
-                                                    <span class="${bal <= 0 ? "text-emerald-500 font-bold" : ""}">${bal <= 0 ? "PAID" : "$" + fmt(bal)}</span>
+                                                  (monthIdx === 0 ||
+                                                    pdfTimeline[monthIdx - 1]
+                                                      ?.balances[name] > 0);
+                                                const cellBg = isToggled
+                                                  ? "background: rgba(5, 123, 150, 0.1);"
+                                                  : isPaidOff
+                                                    ? "background: #ecfdf5; color: #059669; font-weight: bold;"
+                                                    : "";
+                                                return `<td style="padding: 3px; border: 1px solid #e2e8f0; text-align: center; vertical-align: top; ${cellBg} color: #64748b;">
+                                                    <div>${isToggled ? `<span style="font-size:7pt;">✅</span><br>` : ""}${start > 0 && start !== bal ? `<span style="font-size:6pt;color:#94a3b8;">Start $${fmt(start)}</span><br>` : ""}
+                                                    ${interest > 0 ? `<span style="font-size:6pt;color:#e11d48;font-style:italic;">Int. $${fmt(interest)}</span><br>` : ""}
+                                                    ${paid > 0 ? `<span style="font-size:7pt;color:#059669;font-weight:bold;">Pay $${fmt(paid)}</span><br>` : ""}
+                                                    <span style="${bal <= 0 ? "color:#059669;font-weight:bold;" : ""}">${bal <= 0 ? "PAID OFF!" : "$" + fmt(bal)}</span>
                                                 </td>`;
                                               })
                                               .join("")}
