@@ -865,9 +865,10 @@
             total: 0,
           };
 
-          // Capture starting balances (before interest/payments this month)
+          // Capture starting balances and planned payments (baseline before interactive changes)
           currentDebts.forEach((d) => {
             snapshot.startingBalances[d.name] = d.balance;
+            snapshot.plannedPayments[d.name] = d.balance > 0 ? d.minPayment : 0;
           });
 
           currentDebts.forEach((d) => {
