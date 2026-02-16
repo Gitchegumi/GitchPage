@@ -83,25 +83,7 @@
         <div class="hidden sm:block text-sm text-slate-400 font-medium">
           Unlimited Debt Payoff Simulator
         </div>
-        <div class="flex items-center gap-3">
-          <label
-            class="flex items-center gap-2 text-sm text-slate-300 cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              id="interactiveMode"
-              class="w-4 h-4 accent-emerald-500"
-            />
-            <span>Interactive Bill Tracking</span>
-          </label>
-          <button
-            onclick="downloadJSON()"
-            class="hidden bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold py-2 px-3 rounded"
-            title="Export Interactive State (JSON)"
-          >
-            JSON Export
-          </button>
-        </div>
+        <!-- Interactive mode always on -->
       </header>
 
       <!-- Bill Edit Modal -->
@@ -463,7 +445,7 @@
     <script>
       let chartInstance = null;
       let lastResult = null; // Globally accessible for PDF
-      let interactiveMode = false;
+      let interactiveMode = true;
       let debtBills = [];
       let debtCustomPayments = {};
       let debtPaymentsPaid = {};
@@ -503,13 +485,7 @@
             toggleInteractiveMode(e.target.checked);
           });
         }
-        if (
-          Object.keys(debtCustomPayments).length > 0 ||
-          Object.keys(debtPaymentsPaid).length > 0
-        ) {
-          if (toggle) toggle.checked = true;
-          toggleInteractiveMode(true);
-        }
+        // Interactive mode always on by default
       };
 
       // Interactive Bill Tracking
@@ -529,10 +505,7 @@
         interactiveMode = on;
         const toggle = document.getElementById("interactiveMode");
         if (toggle) toggle.checked = on;
-        const jsonBtn = document.querySelector(
-          'button[onclick="downloadJSON()"]',
-        );
-        if (jsonBtn) jsonBtn.classList.toggle("hidden", !on);
+        // JSON export button removed - interactive by default
         let note = document.getElementById("interactiveNote");
         if (!note && on) {
           note = document.createElement("div");
