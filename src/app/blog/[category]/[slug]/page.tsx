@@ -20,11 +20,14 @@ export async function generateMetadata({ params }: Props) {
     return { title: "Gitchegumi Media | Not Found" };
   }
 
-  const { title, description, featureImage, author, date } = post;
+  const { title, description, featureImage, author, date, keywords, tags } =
+    post;
 
   return {
     title: `${title} | Blog | Gitchegumi Media`,
     description,
+    tags: post.tags ?? [],
+    keywords: post.keywords ?? [],
     openGraph: {
       title,
       description,
@@ -35,6 +38,7 @@ export async function generateMetadata({ params }: Props) {
           url: featureImage,
           width: 1200,
           height: 630,
+          type: "image/png",
         },
       ],
       locale: "en_US",

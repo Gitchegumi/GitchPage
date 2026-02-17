@@ -1,40 +1,105 @@
 export const metadata = {
-  title: "Devlog: Unified CLI & CTI Restoration",
-  slug: "quantpipe-v050-refactor",
+  title: "QuantPipe v0.5.0 Devlog: Python Forex Backtesting Framework Refactor and Prop Firm Simulator Restoration",
+  slug: "python-forex-backtesting-framework-quantpipe-v050-devlog",
   date: "2026-02-01",
   author: "Mathew 'Gitchegumi' Lindholm",
-  description: "A look at the milestones in QuantPipe v0.5.0, focusing on CLI unification and restoring prop-firm logic.",
+  description:
+    "Algorithmic trading devlog documenting structural refactors to the QuantPipe Python forex backtesting framework, including unified CLI workflows, restored City Traders Imperium prop firm simulation logic, and initial CUDA GPU acceleration support.",
   category: "tech",
-  tags: ["QuantPipe", "Python", "Trading", "Devlog"],
+  tags: [
+    "Python forex backtesting framework",
+    "prop firm challenge simulator Python",
+    "algorithmic trading devlog",
+    "QuantPipe",
+    "forex backtesting",
+    "algorithmic trading",
+    "prop firm trading",
+    "City Traders Imperium",
+    "Python trading system",
+    "trading infrastructure"
+  ],
+  keywords: [
+    "Python forex backtesting framework",
+    "prop firm simulator Python",
+    "algorithmic trading devlog",
+    "forex backtesting Python",
+    "prop firm challenge simulator",
+    "Python trading bot framework",
+    "forex strategy backtesting",
+    "algorithmic trading infrastructure",
+    "QuantPipe trading framework",
+    "simulate prop firm challenge Python",
+    "forex trading system Python",
+    "CUDA trading acceleration Python"
+  ],
   featureImage: "/images/blog/quantpipe-refactor.png",
 };
 
-# Devlog: Unified CLI & CTI Restoration
+This release focused on fixing structural issues inside QuantPipe, the Python forex backtesting framework I've been building to simulate real prop firm evaluation conditions.
 
-Welcome to the first devlog for [QuantPipe](https://github.com/Gitchegumi/quantpipe), an open-source framework I am building for automated FOREX trading and backtesting. While the project has been under active development for some time, today's v0.5.0 release marks a significant milestone in stabilizing the core infrastructure and developer experience.
+As the system grew beyond a few scripts and into a proper trading infrastructure, some of the original shortcuts started to get in the way. Things worked, but they didn't scale well. Workflows weren't unified, automation was harder than it should be, and parts of the prop firm challenge simulator had fallen out during earlier refactors.
 
-As the sole developer (with a swarm of AI agents as my junior engineers), my goal is to build a tool that bridges the gap between retail platforms and institutional-grade backtesting. This update focused on two primary pillars: simplifying the developer experience through CLI unification and restoring critical evaluation logic for prop-firm challenges.
+v0.5.0 is where I started correcting that.
 
-## Unifying the Command Line
+## Moving Toward a Real Python Forex Backtesting Framework
 
-Previously, core tasks like dataset building and strategy scaffolding relied on separate standalone scripts. This created a fragmented workflow. In v0.5.0, we migrated these into the unified `quantpipe` entry point. Users can now perform the entire workflow—from ingestion to execution—under one tool:
+Early versions of QuantPipe were functional, but not cohesive. Core tasks like ingesting price data, creating strategies, and running backtests existed as separate scripts. That made iteration slower and increased the chance of inconsistent results.
 
-- `poetry run quantpipe ingest`: Standardizes raw data normalization.
-- `poetry run quantpipe scaffold`: Generates new strategy templates.
-- `poetry run quantpipe backtest`: Executes the core simulation.
+Everything now runs through a single CLI interface:
 
-## CTI Logic Restoration
+- `poetry run quantpipe ingest`  
+  Converts raw forex price data into QuantPipe's internal format.
 
-Accuracy is paramount in trading infrastructure. During the recent refactor, the complex logic for tracking City Traders Imperium (CTI) challenge progression was temporarily omitted. v0.5.0 restores this Feature 027 logic, ensuring the engine correctly tracks:
+- `poetry run quantpipe scaffold`  
+  Generates a properly structured Python strategy template.
 
-- **Attempt "Lives"**: Monitoring drawdown limits and promotion targets.
-- **Scaling Plans**: Simulating the transition from challenge to funded accounts.
-- **Payout Calculations**: Estimating net profit shares based on CTI rules.
+- `poetry run quantpipe backtest`  
+  Runs the full simulation engine against historical data.
 
-## The CUDA Foundation
+This doesn't change strategy logic, but it makes the execution path consistent. That was a requirement before automation could work reliably.
 
-To support the next phase of high-throughput analysis, I've also integrated the foundation for CUDA-based acceleration. Using `cupy`, I've implemented an optional GPU-accelerated path for indicator calculations and signal scanning, which is expected to provide a significant speedup for multi-million candle datasets.
+This refactor moves QuantPipe closer to being a true Python forex backtesting framework instead of a loose collection of tools.
 
-***
+## Restoring the Prop Firm Challenge Simulator
 
-*Stay tuned for further updates as I move into Issue #8 and portfolio-level risk management.*
+QuantPipe exists primarily to simulate prop firm evaluation environments, specifically [City Traders Imperium (CTI)](https://citytradersimperium.com/).
+
+During earlier refactors, portions of the prop firm simulator logic were temporarily removed while restructuring the engine. This release restores that functionality completely.
+
+The simulator now properly models:
+
+- Maximum drawdown enforcement  
+- Account failure and termination conditions  
+- Challenge progression and promotion thresholds  
+- Profit tracking and payout modeling
+- Challenge buyback strategy and logic  
+
+This was necessary because the simulator needs to behave the same way the prop firm does. If a strategy passes in QuantPipe but fails under actual prop firm rules, the simulation isn't useful.
+
+## GPU Acceleration Investigation
+
+QuantPipe currently uses an 8.6 million candle test dataset, which represents roughly 80% of the total historical data for EURUSD. This dataset is used for development and performance testing of the backtesting engine.
+
+As datasets grew into the multi-million candle range, performance became a real concern. Earlier versions of QuantPipe relied on Pandas for data preparation, and backtests against this dataset could take over 10 hours to complete.
+
+That bottleneck was eliminated by switching to Polars.
+
+Polars' vectorized execution reduced the same backtest runtime from 10+ hours to roughly 1.5 minutes. At that point, data preparation and indicator computation were no longer the limiting factors.
+
+Furthermore, adding ranges for indicators, such as EMA 10–40 with a step of 5, adds no meaningful time to a single-sweep backtest.
+
+GPU acceleration using `cupy` was explored, but it wasn't necessary once Polars was in place. The CPU execution path is already fast enough to run full-dataset backtests interactively.
+
+GPU acceleration may still be useful later, but it isn't needed for normal backtesting.
+
+## What Comes Next
+
+The next release will focus on the visualization system.
+
+v0.6.0 will introduce true candle-by-candle replay across the full 8.6 million candle test dataset. The replay engine will render entries, exits, stops, and indicator state at each candle.
+
+This provides a direct view into strategy execution, rather than relying only on summary output.
+
+Being able to see strategies execute on the chart makes it much easier to understand how QuantPipe is interpreting the strategy logic.
+
+The same system will also support forward testing in a post-v0.6.0 release, using the same execution and rendering pipeline with live market data.
