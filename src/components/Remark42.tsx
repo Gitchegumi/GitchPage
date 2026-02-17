@@ -12,6 +12,7 @@ export default function Remark42({ slug, title, category }: Remark42Props) {
   const pageUrl = `https://gitchegumi.com/blog/${category}/${slug}`;
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).remark_config = {
       host: "https://comments.gitchegumi.com",
       site_id: "remark",
