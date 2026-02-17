@@ -26,8 +26,8 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: `${title} | Blog | Gitchegumi Media`,
     description,
-    tags: post.tags ?? [],
-    keywords: post.keywords ?? [],
+    tags: tags ?? [],
+    keywords: keywords ?? [],
     openGraph: {
       title,
       description,
