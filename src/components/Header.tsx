@@ -221,7 +221,7 @@ export default function Header() {
                     <div className="z-50 p-4 w-60 rounded-lg bg-brand-dark font-oswald text-brand-orange md:w-[500px]">
                       <ul className="grid gap-6">
                         <ListItem
-                          href="/debtpipe"
+                          href="/tools/debtpipe"
                           title="DebtPipe"
                           className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
                         >
