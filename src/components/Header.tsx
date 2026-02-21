@@ -226,7 +226,18 @@ export default function Header() {
                           className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
                         >
                           <span className="hidden md:block">
-                            Debt management tool - visualize and plan your debt payoff.
+                            Debt management tool - visualize and plan your debt
+                            payoff.
+                          </span>
+                        </ListItem>
+                        <ListItem
+                          href="/budget"
+                          title="Budget Tool"
+                          className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
+                        >
+                          <span className="hidden md:block">
+                            Monthly budgeting - track income, expenses, and cash
+                            flow.
                           </span>
                         </ListItem>
                       </ul>
