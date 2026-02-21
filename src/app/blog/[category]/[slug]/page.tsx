@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getAllPosts } from "@/lib/getAllPosts";
 import ProseLayout from "@/components/ProseLayout";
-import Comments from "@/components/blog/Comments";
+import Remark42 from "@/components/Remark42";
 import type { PostMeta } from "@/lib/types";
 
 type Props = {
@@ -20,11 +20,14 @@ export async function generateMetadata({ params }: Props) {
     return { title: "Gitchegumi Media | Not Found" };
   }
 
-  const { title, description, featureImage, author, date } = post;
+  const { title, description, featureImage, author, date, keywords, tags } =
+    post;
 
   return {
     title: `${title} | Blog | Gitchegumi Media`,
     description,
+    tags: tags ?? [],
+    keywords: keywords ?? [],
     openGraph: {
       title,
       description,
@@ -35,6 +38,7 @@ export async function generateMetadata({ params }: Props) {
           url: featureImage,
           width: 1200,
           height: 630,
+          type: "image/png",
         },
       ],
       locale: "en_US",
@@ -57,7 +61,7 @@ export default async function BlogPostPage({ params }: Props) {
   let metadata: PostMeta;
 
   try {
-    const mod = await import(`@/app/blog/${category}/${slug}.mdx`);
+    const mod = await import(`../../${category}/${slug}.mdx`);
     Post = mod.default;
     metadata = mod.metadata;
   } catch (error) {
@@ -91,12 +95,8 @@ export default async function BlogPostPage({ params }: Props) {
           <Post />
         </article>
         <hr className="border-muted" />
-        
-        <Comments 
-          slug={slug} 
-          title={metadata.title} 
-          category={category} 
-        />
+
+        <Remark42 slug={slug} title={metadata.title} category={category} />
       </ProseLayout>
     </>
   );

@@ -6,5 +6,6 @@ export type PostMeta = {
   description?: string;
   category?: string;
   tags?: string[];
+  keywords?: string[];
   featureImage?: string;
 };
