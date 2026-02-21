@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import { IncomeSource, ExpenseCategory, BudgetEntry } from "./types";
 import IncomeSection from "./IncomeSection";
@@ -50,7 +51,7 @@ export default function BudgetTool() {
     setBudget((prev) => ({
       ...prev,
       incomes: prev.incomes.map((inc) =>
-        inc.id === id ? { ...inc, ...updates } : inc
+        inc.id === id ? { ...inc, ...updates } : inc,
       ),
     }));
   };
@@ -69,11 +70,14 @@ export default function BudgetTool() {
     }));
   };
 
-  const updateExpenseCategory = (id: string, updates: Partial<ExpenseCategory>) => {
+  const updateExpenseCategory = (
+    id: string,
+    updates: Partial<ExpenseCategory>,
+  ) => {
     setBudget((prev) => ({
       ...prev,
       expenses: prev.expenses.map((cat) =>
-        cat.id === id ? { ...cat, ...updates } : cat
+        cat.id === id ? { ...cat, ...updates } : cat,
       ),
     }));
   };
@@ -102,18 +106,15 @@ export default function BudgetTool() {
 
   const totalIncome = budget.incomes.reduce(
     (sum, inc) => sum + inc.monthlyAmount,
-    0
+    0,
   );
 
   const totalBudgeted = budget.expenses.reduce(
     (sum, cat) => sum + cat.budgeted,
-    0
+    0,
   );
 
-  const totalActual = budget.expenses.reduce(
-    (sum, cat) => sum + cat.actual,
-    0
-  );
+  const totalActual = budget.expenses.reduce((sum, cat) => sum + cat.actual, 0);
 
   return (
     <div className="space-y-6">
