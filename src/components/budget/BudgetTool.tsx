@@ -4,7 +4,7 @@ import { IncomeSource, ExpenseCategory, BudgetEntry } from "./types";
 import IncomeSection from "./IncomeSection";
 import ExpenseSection from "./ExpenseSection";
 import SummaryCards from "./SummaryCards";
-import { exportToCSV, importFromCSV } from "./utils/csv";
+import { exportToCSV, importFromCSV, importFromExcel, downloadTemplate } from "./utils/csv";
 
 const STORAGE_KEY = "gitchpage-budget-data";
 const CURRENT_MONTH = new Date().toISOString().slice(0, 7); // YYYY-MM
@@ -93,15 +93,34 @@ export default function BudgetTool() {
     exportToCSV(budget);
   };
 
-  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDownloadTemplate = () => {
+    downloadTemplate();
+  };
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      importFromCSV(file).then((data) => {
-        if (data) {
-          setBudget(data);
-        }
-      });
+    if (!file) return;
+
+    let data: BudgetEntry | null = null;
+    if (file.name.endsWith(".csv") || file.type === "text/csv") {
+      data = await importFromCSV(file);
+    } else if (
+      file.name.endsWith(".xlsx") ||
+      file.name.endsWith(".xls") ||
+      file.type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ) {
+      data = await importFromExcel(file);
     }
+
+    if (data) {
+      setBudget(data);
+    } else {
+      alert("Failed to import file. Please check the format.");
+    }
+
+    // Reset input
+    e.target.value = "";
   };
 
   const totalIncome = budget.incomes.reduce(
@@ -124,6 +143,7 @@ export default function BudgetTool() {
         totalActual={totalActual}
         onExport={handleExport}
         onImport={handleImport}
+        onDownloadTemplate={handleDownloadTemplate}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

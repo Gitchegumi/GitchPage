@@ -6,6 +6,7 @@ interface Props {
   totalActual: number;
   onExport: () => void;
   onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onDownloadTemplate: () => void;
 }
 
 export default function SummaryCards({
@@ -14,6 +15,7 @@ export default function SummaryCards({
   totalActual,
   onExport,
   onImport,
+  onDownloadTemplate,
 }: Props) {
   const savings = totalIncome - totalActual;
   const budgetStatus =
@@ -57,11 +59,26 @@ export default function SummaryCards({
         >
           Export CSV
         </button>
+        <button
+          onClick={onDownloadTemplate}
+          className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition"
+        >
+          Download Template
+        </button>
         <label className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg cursor-pointer transition">
           Import CSV
           <input
             type="file"
             accept=".csv"
+            onChange={onImport}
+            className="hidden"
+          />
+        </label>
+        <label className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg cursor-pointer transition">
+          Import Excel
+          <input
+            type="file"
+            accept=".xlsx,.xls"
             onChange={onImport}
             className="hidden"
           />
