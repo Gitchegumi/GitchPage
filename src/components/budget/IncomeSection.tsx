@@ -1,184 +1,319 @@
 "use client";
 
 import { useState } from "react";
-import { IncomeSource, Frequency } from "./types";
-
-const FREQUENCY_OPTIONS: Frequency[] = [
-  "monthly",
-  "biweekly",
-  "weekly",
-  "irregular",
-];
-
-const CATEGORIES = [
-  "Salary",
-  "Freelance",
-  "Investments",
-  "Rental",
-  "Side Hustle",
-  "Other",
-];
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
+  IncomeItem,
+  IncomeFrequency,
+  FREQUENCY_LABELS,
+  computeMonthlyAmount,
+} from "./types";
 
 interface Props {
-  incomes: IncomeSource[];
-  onAdd: (income: Omit<IncomeSource, "id">) => void;
-  onUpdate: (id: string, updates: Partial<IncomeSource>) => void;
+  incomes: IncomeItem[];
+  weeksInMonth: number;
+  onChange: (incomes: IncomeItem[]) => void;
+}
+
+function fmt(n: number): string {
+  return n.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function SortableRow({
+  item,
+  weeksInMonth,
+  onUpdate,
+  onRemove,
+}: {
+  item: IncomeItem;
+  weeksInMonth: number;
+  onUpdate: (id: string, updates: Partial<IncomeItem>) => void;
   onRemove: (id: string) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const amounts = item.amounts ?? [0];
+
+  const handleFrequencyChange = (freq: IncomeFrequency) => {
+    const newAmounts =
+      freq === "1st-and-15th"
+        ? [amounts[0] || 0, amounts[1] || 0]
+        : [amounts[0] || 0];
+    const monthly = computeMonthlyAmount(freq, newAmounts, weeksInMonth);
+    // Clear payDate if not monthly
+    const payDate = freq === "monthly" ? item.payDate : null;
+    onUpdate(item.id, {
+      frequency: freq,
+      amounts: newAmounts,
+      monthlyAmount: monthly,
+      payDate,
+    });
+  };
+
+  const handleAmountChange = (index: number, value: string) => {
+    const newAmounts = [...amounts];
+    newAmounts[index] = parseFloat(value) || 0;
+    const monthly = computeMonthlyAmount(
+      item.frequency,
+      newAmounts,
+      weeksInMonth,
+    );
+    onUpdate(item.id, { amounts: newAmounts, monthlyAmount: monthly });
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-2 p-3 bg-gray-900/50 rounded-lg border border-gray-700 group hover:border-blue-500/50 transition"
+    >
+      {/* Drag handle */}
+      <button
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing text-gray-500 hover:text-gray-300 p-1 touch-none"
+        title="Drag to reorder"
+      >
+        ☰
+      </button>
+
+      {/* Name */}
+      <input
+        type="text"
+        value={item.name}
+        onChange={(e) => onUpdate(item.id, { name: e.target.value })}
+        placeholder="Income name"
+        className="flex-1 min-w-0 px-2 py-1 bg-transparent border border-transparent hover:border-gray-600 focus:border-blue-500 rounded text-sm text-white focus:outline-none transition"
+      />
+
+      {/* Frequency */}
+      <select
+        value={item.frequency}
+        onChange={(e) =>
+          handleFrequencyChange(e.target.value as IncomeFrequency)
+        }
+        className="px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-gray-300 focus:outline-none focus:border-blue-500"
+      >
+        {(Object.keys(FREQUENCY_LABELS) as IncomeFrequency[]).map((freq) => (
+          <option key={freq} value={freq}>
+            {FREQUENCY_LABELS[freq]}
+          </option>
+        ))}
+      </select>
+
+      {/* Pay Date — only for monthly income */}
+      {item.frequency === "monthly" && (
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] text-gray-500 whitespace-nowrap">
+            Pay day
+          </span>
+          <input
+            type="number"
+            min="1"
+            max="31"
+            value={item.payDate ?? ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              onUpdate(item.id, {
+                payDate:
+                  val === ""
+                    ? null
+                    : Math.min(31, Math.max(1, parseInt(val) || 1)),
+              });
+            }}
+            placeholder="—"
+            className="w-12 px-1 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white text-center focus:outline-none focus:border-blue-500"
+          />
+        </div>
+      )}
+
+      {/* Amount(s) */}
+      <div className="flex items-center gap-1">
+        {item.frequency === "1st-and-15th" ? (
+          <div className="flex flex-col gap-1">
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={amounts[0] || ""}
+              onChange={(e) => handleAmountChange(0, e.target.value)}
+              placeholder="1st"
+              className="w-24 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white text-right focus:outline-none focus:border-blue-500"
+            />
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={amounts[1] || ""}
+              onChange={(e) => handleAmountChange(1, e.target.value)}
+              placeholder="15th"
+              className="w-24 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white text-right focus:outline-none focus:border-blue-500"
+            />
+          </div>
+        ) : (
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={amounts[0] || ""}
+            onChange={(e) => handleAmountChange(0, e.target.value)}
+            placeholder="Amount"
+            className="w-28 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white text-right focus:outline-none focus:border-blue-500"
+          />
+        )}
+      </div>
+
+      {/* Monthly total */}
+      <div className="w-28 text-right text-sm font-semibold text-green-400 tabular-nums">
+        ${fmt(item.monthlyAmount)}
+        <div className="text-[10px] text-gray-500 font-normal">/ month</div>
+      </div>
+
+      {/* Delete */}
+      <button
+        onClick={() => onRemove(item.id)}
+        className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition p-1"
+        title="Remove"
+      >
+        ✕
+      </button>
+    </div>
+  );
 }
 
 export default function IncomeSection({
   incomes,
-  onAdd,
-  onUpdate,
-  onRemove,
+  weeksInMonth,
+  onChange,
 }: Props) {
-  const [showForm, setShowForm] = useState(false);
-  const [newIncome, setNewIncome] = useState({
-    name: "",
-    monthlyAmount: 0,
-    frequency: "monthly" as Frequency,
-    category: "Salary",
-  });
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newIncome.name.trim() && newIncome.monthlyAmount > 0) {
-      onAdd(newIncome);
-      setNewIncome({
-        name: "",
-        monthlyAmount: 0,
-        frequency: "monthly",
-        category: "Salary",
-      });
-      setShowForm(false);
+  const handleUpdate = (id: string, updates: Partial<IncomeItem>) => {
+    onChange(
+      incomes.map((item) => (item.id === id ? { ...item, ...updates } : item)),
+    );
+  };
+
+  const handleRemove = (id: string) => {
+    onChange(incomes.filter((item) => item.id !== id));
+  };
+
+  const handleAdd = () => {
+    const newItem: IncomeItem = {
+      id: crypto.randomUUID(),
+      name: "",
+      frequency: "monthly",
+      amounts: [0],
+      monthlyAmount: 0,
+      payDate: 1,
+    };
+    onChange([newItem, ...incomes]);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = incomes.findIndex((i) => i.id === active.id);
+      const newIndex = incomes.findIndex((i) => i.id === over.id);
+      onChange(arrayMove(incomes, oldIndex, newIndex));
     }
   };
+
+  const total = incomes.reduce((sum, i) => sum + i.monthlyAmount, 0);
 
   return (
     <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold text-blue-300">Income Streams</h2>
         <button
-          onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="flex items-center gap-2 text-2xl font-semibold text-blue-300 hover:text-blue-200 transition"
         >
-          {showForm ? "Cancel" : "Add Income"}
+          <span
+            className={`text-sm transition-transform ${isCollapsed ? "" : "rotate-90"}`}
+          >
+            ▶
+          </span>
+          Income
+          <span className="text-sm font-normal text-gray-400 ml-2">
+            (${fmt(total)}/mo)
+          </span>
+        </button>
+        <button
+          onClick={handleAdd}
+          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition"
+        >
+          + Add
         </button>
       </div>
 
-      {showForm && (
-        <form onSubmit={handleSubmit} className="space-y-4 mb-6 p-4 bg-gray-900/50 rounded-lg">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Name</label>
-            <input
-              type="text"
-              value={newIncome.name}
-              onChange={(e) =>
-                setNewIncome({ ...newIncome, name: e.target.value })
-              }
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500"
-              placeholder="e.g., Salary, Freelance Client X"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">Monthly Amount ($)</label>
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={newIncome.monthlyAmount || ""}
-                onChange={(e) =>
-                  setNewIncome({
-                    ...newIncome,
-                    monthlyAmount: parseFloat(e.target.value) || 0,
-                  })
-                }
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-400 mb-1">Frequency</label>
-              <select
-                value={newIncome.frequency}
-                onChange={(e) =>
-                  setNewIncome({
-                    ...newIncome,
-                    frequency: e.target.value as Frequency,
-                  })
-                }
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500"
-              >
-                {FREQUENCY_OPTIONS.map((freq) => (
-                  <option key={freq} value={freq}>
-                    {freq.charAt(0).toUpperCase() + freq.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Category</label>
-            <select
-              value={newIncome.category}
-              onChange={(e) =>
-                setNewIncome({ ...newIncome, category: e.target.value })
-              }
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500"
-            >
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
+      {!isCollapsed && (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={incomes.map((i) => i.id)}
+            strategy={verticalListSortingStrategy}
           >
-            Add Income Stream
-          </button>
-        </form>
-      )}
-
-      <div className="space-y-3">
-        {incomes.length === 0 ? (
-          <p className="text-gray-500 italic">No income streams added yet.</p>
-        ) : (
-          incomes.map((income) => (
-            <div
-              key={income.id}
-              className="p-4 bg-gray-900/50 rounded-lg border border-gray-700 flex justify-between items-center group hover:border-blue-500/50 transition"
-            >
-              <div>
-                <div className="font-medium text-white">{income.name}</div>
-                <div className="text-sm text-gray-400">
-                  {income.category} • {income.frequency}
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-lg font-semibold text-green-400">
-                  ${income.monthlyAmount.toLocaleString()}
-                </span>
-                <button
-                  onClick={() => onRemove(income.id)}
-                  className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition"
-                  title="Remove"
-                >
-                  ✕
-                </button>
-              </div>
+            <div className="space-y-2">
+              {incomes.length === 0 ? (
+                <p className="text-gray-500 italic text-sm">
+                  No income items yet. Click + Add to start.
+                </p>
+              ) : (
+                incomes.map((item) => (
+                  <SortableRow
+                    key={item.id}
+                    item={item}
+                    weeksInMonth={weeksInMonth}
+                    onUpdate={handleUpdate}
+                    onRemove={handleRemove}
+                  />
+                ))
+              )}
             </div>
-          ))
-        )}
-      </div>
+          </SortableContext>
+        </DndContext>
+      )}
     </div>
   );
 }

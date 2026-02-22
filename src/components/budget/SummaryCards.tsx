@@ -1,88 +1,143 @@
 "use client";
 
+interface HalfMonth {
+  income: number;
+  bills: number;
+  debts: number;
+}
+
 interface Props {
   totalIncome: number;
-  totalBudgeted: number;
-  totalActual: number;
-  onExport: () => void;
-  onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onDownloadTemplate: () => void;
+  totalBills: number;
+  totalDebtPayments: number;
+  totalDebtBalance: number;
+  firstHalf: HalfMonth;
+  secondHalf: HalfMonth;
+}
+
+function fmt(n: number): string {
+  return n.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }
 
 export default function SummaryCards({
   totalIncome,
-  totalBudgeted,
-  totalActual,
-  onExport,
-  onImport,
-  onDownloadTemplate,
+  totalBills,
+  totalDebtPayments,
+  totalDebtBalance,
+  firstHalf,
+  secondHalf,
 }: Props) {
-  const savings = totalIncome - totalActual;
-  const budgetStatus =
-    totalActual <= totalBudgeted ? "text-green-400" : "text-red-400";
-  const savingsStatus = savings >= 0 ? "text-green-400" : "text-red-400";
+  const expendable = totalIncome - totalBills - totalDebtPayments;
+  const firstExpendable = firstHalf.income - firstHalf.bills - firstHalf.debts;
+  const secondExpendable =
+    secondHalf.income - secondHalf.bills - secondHalf.debts;
+
+  const cards = [
+    {
+      label: "Total Income",
+      monthly: totalIncome,
+      first: firstHalf.income,
+      second: secondHalf.income,
+      color: "text-green-400",
+      border: "border-green-500/30",
+    },
+    {
+      label: "Total Bills",
+      monthly: totalBills,
+      first: firstHalf.bills,
+      second: secondHalf.bills,
+      color: "text-orange-400",
+      border: "border-orange-500/30",
+    },
+    {
+      label: "Debt Payments",
+      monthly: totalDebtPayments,
+      first: firstHalf.debts,
+      second: secondHalf.debts,
+      color: "text-red-400",
+      border: "border-red-500/30",
+    },
+    {
+      label: "Expendable",
+      monthly: expendable,
+      first: firstExpendable,
+      second: secondExpendable,
+      color: expendable >= 0 ? "text-emerald-400" : "text-red-400",
+      border: expendable >= 0 ? "border-emerald-500/30" : "border-red-500/30",
+    },
+    {
+      label: "Debt Balance",
+      monthly: totalDebtBalance,
+      first: null,
+      second: null,
+      color: "text-yellow-400",
+      border: "border-yellow-500/30",
+    },
+  ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-        <div className="text-sm text-gray-400">Total Income</div>
-        <div className="text-2xl font-bold text-green-400">
-          ${totalIncome.toLocaleString()}
-        </div>
+    <div className="space-y-4">
+      {/* Monthly totals */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        {cards.map((card) => (
+          <div
+            key={card.label}
+            className={`bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border ${card.border}`}
+          >
+            <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">
+              {card.label}
+            </div>
+            <div className={`text-2xl font-bold ${card.color}`}>
+              ${fmt(card.monthly)}
+            </div>
+          </div>
+        ))}
       </div>
 
-      <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-        <div className="text-sm text-gray-400">Budgeted Expenses</div>
-        <div className="text-2xl font-bold text-blue-400">
-          ${totalBudgeted.toLocaleString()}
-        </div>
-      </div>
-
-      <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-        <div className="text-sm text-gray-400">Actual Spending</div>
-        <div className={`text-2xl font-bold ${budgetStatus}`}>
-          ${totalActual.toLocaleString()}
-        </div>
-      </div>
-
-      <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-        <div className="text-sm text-gray-400">Net Savings</div>
-        <div className={`text-2xl font-bold ${savingsStatus}`}>
-          ${savings.toLocaleString()}
-        </div>
-      </div>
-
-      <div className="col-span-2 md:col-span-4 flex gap-4 flex-wrap">
-        <button
-          onClick={onExport}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition"
-        >
-          Export CSV
-        </button>
-        <button
-          onClick={onDownloadTemplate}
-          className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition"
-        >
-          Download Template
-        </button>
-        <label className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg cursor-pointer transition">
-          Import CSV
-          <input
-            type="file"
-            accept=".csv"
-            onChange={onImport}
-            className="hidden"
-          />
-        </label>
-        <label className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg cursor-pointer transition">
-          Import Excel
-          <input
-            type="file"
-            accept=".xlsx,.xls"
-            onChange={onImport}
-            className="hidden"
-          />
-        </label>
+      {/* Half-month breakdown */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {[
+          { label: "1st – 14th", data: firstHalf, exp: firstExpendable },
+          {
+            label: "15th – End of Month",
+            data: secondHalf,
+            exp: secondExpendable,
+          },
+        ].map((half) => (
+          <div
+            key={half.label}
+            className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50"
+          >
+            <div className="text-sm font-semibold text-gray-300 mb-3">
+              {half.label}
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              <span className="text-gray-400">Income</span>
+              <span className="text-right text-green-400 font-medium">
+                ${fmt(half.data.income)}
+              </span>
+              <span className="text-gray-400">Bills</span>
+              <span className="text-right text-orange-400 font-medium">
+                ${fmt(half.data.bills)}
+              </span>
+              <span className="text-gray-400">Debts</span>
+              <span className="text-right text-red-400 font-medium">
+                ${fmt(half.data.debts)}
+              </span>
+              <span className="text-gray-400 font-semibold border-t border-gray-700 pt-1 mt-1">
+                Expendable
+              </span>
+              <span
+                className={`text-right font-bold border-t border-gray-700 pt-1 mt-1 ${half.exp >= 0 ? "text-emerald-400" : "text-red-400"}`}
+              >
+                ${fmt(half.exp)}
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
