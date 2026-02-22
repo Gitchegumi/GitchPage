@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import KoFiWidget from "./ui/KoFiWidget";
 
 export default function Footer() {
   return (
@@ -14,6 +15,11 @@ export default function Footer() {
                 <li>
                   <Link href="/" className="hover:underline">
                     Home
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/blog" className="hover:underline">
+                    Blog
                   </Link>
                 </li>
                 <li>
@@ -41,6 +47,9 @@ export default function Footer() {
                   </Link>
                 </li>
               </ul>
+              <div className="mt-4">
+                <KoFiWidget />
+              </div>
             </div>
             <div>
               <h5 className="mb-4 text-lg font-bold">Social Media</h5>
