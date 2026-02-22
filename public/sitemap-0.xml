@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>https://www.gitchegumi.com/blog</loc><lastmod>2026-02-22T01:54:05.937Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/debtpipe</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/portfolio</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/voice-over</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/tools/debtpipe</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/budget</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/blog/faith/building-hope-one-nugget-at-a-time</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/blog/life/from-lake-superior-to-azeroth</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/blog/life/still-figuring-it-out</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/blog/opinion/overreliance-on-ai</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/blog/tech/debtpipe-release</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/blog/tech/devlog-1-violence-of-action</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/blog/tech/devlog-2-violence-of-action</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/blog/tech/quantpipe-v050-refactor</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://www.gitchegumi.com/blog/tech/why-i-switched-to-neovim</loc><lastmod>2026-02-22T01:54:05.939Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/blog</loc><lastmod>2026-02-22T17:05:53.886Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/blog/faith/building-hope-one-nugget-at-a-time</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/blog/life/from-lake-superior-to-azeroth</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/blog/life/still-figuring-it-out</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/blog/opinion/overreliance-on-ai</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/blog/tech/debtpipe-release</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/blog/tech/devlog-1-violence-of-action</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/blog/tech/devlog-2-violence-of-action</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/blog/tech/quantpipe-v050-refactor</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/blog/tech/why-i-switched-to-neovim</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/debtpipe</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/portfolio</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/tools/debtpipe</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/voice-over</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.gitchegumi.com/budget</loc><lastmod>2026-02-22T17:05:53.887Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
 </urlset>
