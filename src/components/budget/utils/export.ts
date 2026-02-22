@@ -10,15 +10,6 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import Papa from "papaparse";
 
-// Dynamically import xlsx to avoid bundling it unless needed
-let xlsxModule: any = null;
-async function getXLSX() {
-  if (!xlsxModule) {
-    xlsxModule = await import("xlsx");
-  }
-  return xlsxModule;
-}
-
 /**
  * Format number as currency
  */
@@ -81,48 +72,82 @@ export function exportToCSV(data: BudgetData) {
  * Export budget data as Excel
  */
 export async function exportToExcel(data: BudgetData) {
-  const XLSX = await getXLSX();
-  const wb = XLSX.utils.book_new();
+  // Lazy load ExcelJS only when this function is called (client-side only)
+  const ExcelJS = (await import("exceljs")).default;
+  const wb = new ExcelJS.Workbook();
 
   // Income Sheet
-  const incomeWS = XLSX.utils.json_to_sheet(
-    data.incomes.map((inc) => ({
-      Name: inc.name,
-      Frequency: inc.frequency,
-      Amounts: inc.amounts.join(", "),
-      "Monthly Amount": inc.monthlyAmount,
-      "Pay Day": inc.payDate,
-    })),
-  );
-  XLSX.utils.book_append_sheet(wb, incomeWS, "Income");
+  const incomeWS = wb.addWorksheet("Income");
+  incomeWS.columns = [
+    { header: "Name", key: "name", width: 30 },
+    { header: "Frequency", key: "frequency", width: 15 },
+    { header: "Amounts", key: "amounts", width: 20 },
+    { header: "Monthly Amount", key: "monthlyAmount", width: 15, style: { numFmt: "$#,##0.00" } },
+    { header: "Pay Day", key: "payDate", width: 10 },
+  ];
+  data.incomes.forEach((inc) => {
+    incomeWS.addRow({
+      name: inc.name,
+      frequency: inc.frequency,
+      amounts: inc.amounts.join(", "),
+      monthlyAmount: inc.monthlyAmount,
+      payDate: inc.payDate ?? "",
+    });
+  });
 
   // Debts Sheet
-  const debtsWS = XLSX.utils.json_to_sheet(
-    data.debts.map((d) => ({
-      Name: d.name,
-      Category: d.category,
-      "Monthly Payment": d.monthlyAmount,
-      Balance: d.balance,
-      "Limit (CC)": d.availableCredit,
-      "Due Day": d.dueBy,
-      Paid: d.paid ? "Yes" : "No",
-    })),
-  );
-  XLSX.utils.book_append_sheet(wb, debtsWS, "Debts");
+  const debtsWS = wb.addWorksheet("Debts");
+  debtsWS.columns = [
+    { header: "Name", key: "name", width: 30 },
+    { header: "Category", key: "category", width: 15 },
+    { header: "Monthly Payment", key: "monthlyAmount", width: 15, style: { numFmt: "$#,##0.00" } },
+    { header: "Balance", key: "balance", width: 15, style: { numFmt: "$#,##0.00" } },
+    { header: "Limit (CC)", key: "availableCredit", width: 15, style: { numFmt: "$#,##0.00" } },
+    { header: "Due Day", key: "dueBy", width: 10 },
+    { header: "Paid", key: "paid", width: 8 },
+  ];
+  data.debts.forEach((d) => {
+    debtsWS.addRow({
+      name: d.name,
+      category: d.category,
+      monthlyAmount: d.monthlyAmount,
+      balance: d.balance ?? "",
+      availableCredit: d.availableCredit ?? "",
+      dueBy: d.dueBy ?? "",
+      paid: d.paid ? "Yes" : "No",
+    });
+  });
 
   // Bills Sheet
-  const billsWS = XLSX.utils.json_to_sheet(
-    data.bills.map((b) => ({
-      Name: b.name,
-      Category: b.category,
-      Amount: b.monthlyAmount,
-      "Due Day": b.dueBy,
-      Paid: b.paid ? "Yes" : "No",
-    })),
-  );
-  XLSX.utils.book_append_sheet(wb, billsWS, "Bills");
+  const billsWS = wb.addWorksheet("Bills");
+  billsWS.columns = [
+    { header: "Name", key: "name", width: 30 },
+    { header: "Category", key: "category", width: 15 },
+    { header: "Amount", key: "monthlyAmount", width: 15, style: { numFmt: "$#,##0.00" } },
+    { header: "Due Day", key: "dueBy", width: 10 },
+    { header: "Paid", key: "paid", width: 8 },
+  ];
+  data.bills.forEach((b) => {
+    billsWS.addRow({
+      name: b.name,
+      category: b.category,
+      monthlyAmount: b.monthlyAmount,
+      dueBy: b.dueBy ?? "",
+      paid: b.paid ? "Yes" : "No",
+    });
+  });
 
-  XLSX.writeFile(wb, `budget_${data.month}.xlsx`);
+  // Generate and download
+  const buffer = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type:
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `budget_${data.month}.xlsx`);
+  link.click();
 }
 
 /**
