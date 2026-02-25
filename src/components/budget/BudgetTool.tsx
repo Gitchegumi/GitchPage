@@ -11,6 +11,7 @@ import {
   allocateIncomeToHalves,
   allocateExpensesToHalves,
   type IncomeFrequency,
+  DEBTPIPE_TO_BUDGET_KEY,
 } from "./types";
 import IncomeSection from "./IncomeSection";
 import DebtSection from "./DebtSection";
@@ -85,16 +86,19 @@ export default function BudgetTool() {
             payDate: (raw.payDate as number | null) ?? null,
           } as IncomeItem;
         });
-        // Normalize debts (add dueBy if missing)
-        parsed.debts = parsed.debts.map((d) => ({
-          ...d,
-          dueBy: d.dueBy ?? null,
-          availableCredit:
-            ((d as unknown as Record<string, unknown>).availableCredit as
-              | number
-              | null) ?? null,
-          paid: (d as unknown as Record<string, unknown>).paid === true,
-        }));
+        // Normalize debts (add dueBy, interestRate if missing)
+        parsed.debts = parsed.debts.map((d) => {
+          const raw = d as unknown as Record<string, unknown>;
+          const rawRate = raw.interestRate as number | null;
+          return {
+            ...d,
+            dueBy: d.dueBy ?? null,
+            interestRate:
+              rawRate != null ? parseFloat(rawRate.toFixed(4)) : null,
+            availableCredit: (raw.availableCredit as number | null) ?? null,
+            paid: raw.paid === true,
+          };
+        });
         // Normalize bills (add dueBy, paid, remove old fields if present)
         parsed.bills = parsed.bills.map((b) => {
           const raw = b as unknown as Record<string, unknown>;
@@ -112,6 +116,64 @@ export default function BudgetTool() {
     } catch {
       // Corrupted data — stick with defaults
     }
+
+    // Auto-import any pending DebtPipe snowball data (written by DebtPipe before opening this tab)
+    try {
+      const pendingRaw = localStorage.getItem(DEBTPIPE_TO_BUDGET_KEY);
+      if (pendingRaw) {
+        const entries = JSON.parse(pendingRaw) as Array<{
+          name: string;
+          minPayment: number;
+          balance?: number;
+          interestRate?: number;
+          dueDay?: number;
+          creditLimit?: number;
+        }>;
+        if (Array.isArray(entries) && entries.length > 0) {
+          setBudget((prev) => {
+            let matched = 0;
+            const updatedDebts = prev.debts.map((d) => {
+              const entry = entries.find(
+                (e) => e.name.toLowerCase() === d.name.toLowerCase(),
+              );
+              if (entry) {
+                matched++;
+                return { ...d, monthlyAmount: entry.minPayment };
+              }
+              return d;
+            });
+            const existingNames = new Set(
+              prev.debts.map((d) => d.name.toLowerCase()),
+            );
+            const newItems: DebtItem[] = entries
+              .filter((e) => !existingNames.has(e.name.toLowerCase()))
+              .map((e) => {
+                const hasCreditLimit = (e.creditLimit ?? 0) > 0;
+                return {
+                  id: crypto.randomUUID(),
+                  name: e.name,
+                  category: hasCreditLimit ? "Credit Card" : "",
+                  monthlyAmount: e.minPayment,
+                  balance: e.balance ?? null,
+                  interestRate:
+                    e.interestRate != null
+                      ? parseFloat(e.interestRate.toFixed(4))
+                      : null,
+                  dueBy: e.dueDay ?? null,
+                  availableCredit: hasCreditLimit ? e.creditLimit! : null,
+                  paid: false,
+                };
+              });
+            void matched; // used for future status messaging
+            return { ...prev, debts: [...updatedDebts, ...newItems] };
+          });
+          localStorage.removeItem(DEBTPIPE_TO_BUDGET_KEY);
+        }
+      }
+    } catch {
+      // Ignore pending import errors
+    }
+
     setHydrated(true);
   }, []);
 

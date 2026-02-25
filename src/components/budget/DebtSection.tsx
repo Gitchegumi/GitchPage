@@ -18,7 +18,11 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { DebtItem, DEFAULT_DEBT_CATEGORIES } from "./types";
+import {
+  DebtItem,
+  DEFAULT_DEBT_CATEGORIES,
+  BUDGET_TO_DEBTPIPE_KEY,
+} from "./types";
 
 interface Props {
   debts: DebtItem[];
@@ -87,9 +91,12 @@ function SortableRow({
   const creditLimit = item.availableCredit ?? 0;
   const balance = item.balance ?? 0;
   const thirtyPctLevel = creditLimit * 0.3;
+  const fiftyPctLevel = creditLimit * 0.5;
   const utilizationPct = creditLimit > 0 ? (balance / creditLimit) * 100 : 0;
-  const paydownTo30 = balance > thirtyPctLevel ? balance - thirtyPctLevel : 0;
+  const isOver50 = creditLimit > 0 && balance > fiftyPctLevel;
   const isOver30 = creditLimit > 0 && balance > thirtyPctLevel;
+  const paydownTo50 = balance > fiftyPctLevel ? balance - fiftyPctLevel : 0;
+  const paydownTo30 = balance > thirtyPctLevel ? balance - thirtyPctLevel : 0;
 
   return (
     <div
@@ -203,6 +210,36 @@ function SortableRow({
           />
         </div>
 
+        {/* Interest Rate (APR %) */}
+        <div className="flex items-center">
+          <span className="text-[10px] text-gray-500 mr-1 whitespace-nowrap">
+            APR%
+          </span>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            value={item.interestRate ?? ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === "") {
+                onUpdate(item.id, { interestRate: null });
+              } else {
+                let rate = parseFloat(val);
+                if (!isNaN(rate)) {
+                  // Auto-convert decimal entry (e.g. 0.2624 → 26.24)
+                  if (rate > 0 && rate < 1) rate = rate * 100;
+                  rate = parseFloat(rate.toFixed(4));
+                }
+                onUpdate(item.id, { interestRate: isNaN(rate) ? 0 : rate });
+              }
+            }}
+            placeholder="—"
+            className="w-16 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white text-right focus:outline-none focus:border-red-500"
+          />
+        </div>
+
         {/* Available Credit — only for Credit Card */}
         {isCreditCard && (
           <div className="flex items-center">
@@ -259,7 +296,6 @@ function SortableRow({
         </button>
       </div>
 
-      {/* Credit Card Utilization Bar — shown below the main row */}
       {isCreditCard && creditLimit > 0 && (
         <div className="px-3 pb-3 pt-0">
           <div className="bg-gray-800 rounded-lg p-3 border border-gray-700/50">
@@ -268,46 +304,62 @@ function SortableRow({
                 Utilization:{" "}
                 <span
                   className={
-                    isOver30
+                    isOver50
                       ? "text-red-400 font-semibold"
-                      : "text-green-400 font-semibold"
+                      : isOver30
+                        ? "text-yellow-400 font-semibold"
+                        : "text-green-400 font-semibold"
                   }
                 >
                   {utilizationPct.toFixed(1)}%
                 </span>
               </span>
               <span className="text-gray-500">
-                30% target: ${fmt(thirtyPctLevel)}
+                30%: ${fmt(thirtyPctLevel)} &nbsp;·&nbsp; 50%: $
+                {fmt(fiftyPctLevel)}
               </span>
             </div>
             {/* Progress bar */}
             <div className="relative w-full h-3 bg-gray-700 rounded-full overflow-hidden">
               {/* 30% marker */}
               <div
-                className="absolute top-0 bottom-0 w-0.5 bg-yellow-400 z-10"
+                className="absolute top-0 bottom-0 w-0.5 bg-green-400/70 z-10"
                 style={{ left: "30%" }}
                 title="30% threshold"
+              />
+              {/* 50% marker */}
+              <div
+                className="absolute top-0 bottom-0 w-0.5 bg-yellow-400 z-10 shadow-[0_0_4px_rgba(250,204,21,0.8)]"
+                style={{ left: "50%" }}
+                title="50% threshold"
               />
               {/* Usage bar */}
               <div
                 className={`h-full rounded-full transition-all duration-300 ${
-                  isOver30
-                    ? "bg-gradient-to-r from-red-500 to-red-400"
-                    : "bg-gradient-to-r from-green-500 to-emerald-400"
+                  isOver50
+                    ? "bg-gradient-to-r from-red-600 to-red-400"
+                    : isOver30
+                      ? "bg-gradient-to-r from-yellow-500 to-amber-400"
+                      : "bg-gradient-to-r from-green-500 to-emerald-400"
                 }`}
                 style={{ width: `${Math.min(utilizationPct, 100)}%` }}
               />
             </div>
-            {/* Pay-down hint */}
-            {isOver30 && (
-              <div className="mt-2 text-xs text-amber-400">
-                💡 Pay <span className="font-bold">${fmt(paydownTo30)}</span> to
-                reach 30% utilization
-              </div>
-            )}
-            {!isOver30 && balance > 0 && (
-              <div className="mt-2 text-xs text-green-400">
-                ✓ Below 30% — good for home buying readiness
+            {/* Pay-down targets — always shown when there's a balance */}
+            {balance > 0 && (
+              <div className="mt-2 space-y-1 text-xs">
+                <div className={isOver50 ? "text-red-400" : "text-gray-500"}>
+                  {isOver50 ? "⚠" : "·"}{" "}
+                  <span className="font-bold">${fmt(paydownTo50)}</span> to get
+                  under 50%
+                  {!isOver50 && " — already there ✓"}
+                </div>
+                <div className={isOver30 ? "text-amber-400" : "text-gray-500"}>
+                  {isOver30 ? "💡" : "·"}{" "}
+                  <span className="font-bold">${fmt(paydownTo30)}</span> to get
+                  under 30%
+                  {!isOver30 && " — already there ✓"}
+                </div>
               </div>
             )}
           </div>
@@ -324,6 +376,33 @@ export default function DebtSection({
   onAddCategory,
 }: Props) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [bridgeStatus, setBridgeStatus] = useState<string | null>(null);
+
+  const showStatus = (msg: string) => {
+    setBridgeStatus(msg);
+    setTimeout(() => setBridgeStatus(null), 3000);
+  };
+
+  const handleSendToDebtPipe = () => {
+    if (debts.length === 0) {
+      showStatus("⚠ No debts to send.");
+      return;
+    }
+    const csv = debts
+      .map((d) =>
+        [
+          d.name || "Unnamed",
+          d.balance ?? 0,
+          d.interestRate != null ? parseFloat(d.interestRate.toFixed(4)) : 0,
+          d.monthlyAmount,
+          d.dueBy ?? 1,
+          d.availableCredit ?? "",
+        ].join(", "),
+      )
+      .join("\n");
+    localStorage.setItem(BUDGET_TO_DEBTPIPE_KEY, csv);
+    window.open("/debtpipe/", "_blank");
+  };
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, {
@@ -353,6 +432,7 @@ export default function DebtSection({
       category: "",
       monthlyAmount: 0,
       balance: null,
+      interestRate: null,
       dueBy: null,
       availableCredit: null,
       paid: false,
@@ -403,7 +483,14 @@ export default function DebtSection({
             </span>
           )}
         </button>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={handleSendToDebtPipe}
+            className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 rounded-lg text-xs font-medium transition"
+            title="Send debt list to DebtPipe and open it"
+          >
+            Send to DebtPipe ↗
+          </button>
           <button
             onClick={() => {
               const sorted = [...debts].sort(
@@ -424,6 +511,13 @@ export default function DebtSection({
           </button>
         </div>
       </div>
+
+      {/* Bridge status message */}
+      {bridgeStatus && (
+        <div className="text-xs text-emerald-400 px-1 -mt-2 mb-1 transition-opacity">
+          {bridgeStatus}
+        </div>
+      )}
 
       {!isCollapsed && (
         <DndContext
