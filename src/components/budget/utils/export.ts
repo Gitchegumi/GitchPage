@@ -24,12 +24,16 @@ function fmt(n: number): string {
  * Export budget data as CSV
  */
 export function exportToCSV(data: BudgetData) {
+  // All rows share the same column schema so Papa.unparse always emits a full header row.
+  // N/A fields are left as empty strings.
   const incomes = data.incomes.map((inc) => ({
     Type: "Income",
     Name: inc.name,
+    Category: "",
     Frequency: inc.frequency,
     Amounts: inc.amounts.join(";"),
     Monthly: inc.monthlyAmount,
+    InterestRate: "",
     PayDay: inc.payDate ?? "",
     Paid: "",
     Balance: "",
@@ -40,7 +44,11 @@ export function exportToCSV(data: BudgetData) {
     Type: "Debt",
     Name: d.name,
     Category: d.category,
+    Frequency: "",
+    Amounts: "",
     Monthly: d.monthlyAmount,
+    InterestRate:
+      d.interestRate != null ? parseFloat(d.interestRate.toFixed(4)) : "",
     PayDay: d.dueBy ?? "",
     Paid: d.paid ? "Yes" : "No",
     Balance: d.balance ?? "",
@@ -51,7 +59,10 @@ export function exportToCSV(data: BudgetData) {
     Type: "Bill",
     Name: b.name,
     Category: b.category,
+    Frequency: "",
+    Amounts: "",
     Monthly: b.monthlyAmount,
+    InterestRate: "",
     PayDay: b.dueBy ?? "",
     Paid: b.paid ? "Yes" : "No",
     Balance: "",
@@ -82,7 +93,12 @@ export async function exportToExcel(data: BudgetData) {
     { header: "Name", key: "name", width: 30 },
     { header: "Frequency", key: "frequency", width: 15 },
     { header: "Amounts", key: "amounts", width: 20 },
-    { header: "Monthly Amount", key: "monthlyAmount", width: 15, style: { numFmt: "$#,##0.00" } },
+    {
+      header: "Monthly Amount",
+      key: "monthlyAmount",
+      width: 15,
+      style: { numFmt: "$#,##0.00" },
+    },
     { header: "Pay Day", key: "payDate", width: 10 },
   ];
   data.incomes.forEach((inc) => {
@@ -100,9 +116,25 @@ export async function exportToExcel(data: BudgetData) {
   debtsWS.columns = [
     { header: "Name", key: "name", width: 30 },
     { header: "Category", key: "category", width: 15 },
-    { header: "Monthly Payment", key: "monthlyAmount", width: 15, style: { numFmt: "$#,##0.00" } },
-    { header: "Balance", key: "balance", width: 15, style: { numFmt: "$#,##0.00" } },
-    { header: "Limit (CC)", key: "availableCredit", width: 15, style: { numFmt: "$#,##0.00" } },
+    {
+      header: "Monthly Payment",
+      key: "monthlyAmount",
+      width: 15,
+      style: { numFmt: "$#,##0.00" },
+    },
+    {
+      header: "Balance",
+      key: "balance",
+      width: 15,
+      style: { numFmt: "$#,##0.00" },
+    },
+    { header: "Interest Rate (%)", key: "interestRate", width: 15 },
+    {
+      header: "Limit (CC)",
+      key: "availableCredit",
+      width: 15,
+      style: { numFmt: "$#,##0.00" },
+    },
     { header: "Due Day", key: "dueBy", width: 10 },
     { header: "Paid", key: "paid", width: 8 },
   ];
@@ -112,6 +144,7 @@ export async function exportToExcel(data: BudgetData) {
       category: d.category,
       monthlyAmount: d.monthlyAmount,
       balance: d.balance ?? "",
+      interestRate: d.interestRate ?? "",
       availableCredit: d.availableCredit ?? "",
       dueBy: d.dueBy ?? "",
       paid: d.paid ? "Yes" : "No",
@@ -123,7 +156,12 @@ export async function exportToExcel(data: BudgetData) {
   billsWS.columns = [
     { header: "Name", key: "name", width: 30 },
     { header: "Category", key: "category", width: 15 },
-    { header: "Amount", key: "monthlyAmount", width: 15, style: { numFmt: "$#,##0.00" } },
+    {
+      header: "Amount",
+      key: "monthlyAmount",
+      width: 15,
+      style: { numFmt: "$#,##0.00" },
+    },
     { header: "Due Day", key: "dueBy", width: 10 },
     { header: "Paid", key: "paid", width: 8 },
   ];
@@ -140,8 +178,7 @@ export async function exportToExcel(data: BudgetData) {
   // Generate and download
   const buffer = await wb.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
-    type:
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -493,6 +530,7 @@ export function importFromCSV(
             name: row.Name || "Unnamed Debt",
             category: row.Category || "Other",
             monthlyAmount: parseFloat(row.Monthly) || 0,
+            interestRate: parseFloat(row.InterestRate) || null,
             dueBy: parseInt(row.PayDay) || null,
             paid: row.Paid === "Yes",
             balance: parseFloat(row.Balance) || null,

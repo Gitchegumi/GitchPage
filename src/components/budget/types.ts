@@ -1,3 +1,7 @@
+/** localStorage bridge keys shared between Budget Tool and DebtPipe */
+export const BUDGET_TO_DEBTPIPE_KEY = "gitchpage-budget-to-debtpipe";
+export const DEBTPIPE_TO_BUDGET_KEY = "gitchpage-debtpipe-to-budget";
+
 export type IncomeFrequency =
   | "monthly"
   | "biweekly"
@@ -22,6 +26,8 @@ export interface DebtItem {
   category: string;
   monthlyAmount: number;
   balance: number | null;
+  /** Annual interest rate as a percentage (e.g. 19.99 for 19.99% APR) */
+  interestRate: number | null;
   /** Day of month payment is due (1-31) */
   dueBy: number | null;
   /** Credit limit (only for Credit Card category) */

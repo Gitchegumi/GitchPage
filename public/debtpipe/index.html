@@ -95,8 +95,10 @@
           </div>
           <h1 class="text-3xl font-bold tracking-tight text-white">DebtPipe</h1>
         </div>
-        <div class="hidden sm:block text-sm text-slate-400 font-medium">
-          Unlimited Debt Payoff Simulator
+        <div class="flex items-center gap-3">
+          <div class="hidden sm:block text-sm text-slate-400 font-medium">
+            Unlimited Debt Payoff Simulator
+          </div>
         </div>
       </header>
 
@@ -189,6 +191,22 @@
                   ></i>
                 </button>
               </div>
+
+              <!-- Budget Tool Bridge -->
+              <div class="flex gap-2">
+                <button
+                  onclick="sendSnowballToBudget()"
+                  class="flex-1 bg-emerald-900/40 hover:bg-emerald-800/60 border border-emerald-700/50 rounded-lg p-2.5 flex items-center justify-center gap-2 transition-all group text-xs font-bold text-emerald-300"
+                  title="Send snowball results to Budget Tool and open it"
+                >
+                  <i data-lucide="arrow-up-from-line" class="w-4 h-4"></i>
+                  Send to Budget Tool ↗
+                </button>
+              </div>
+              <div
+                id="budget-bridge-status"
+                class="text-xs text-emerald-400 min-h-[1rem]"
+              ></div>
               <input
                 type="file"
                 id="csvInput"
@@ -204,14 +222,14 @@
                     >Manual Entry Format</label
                   >
                   <span class="text-[9px] text-slate-600 italic"
-                    >Name, Bal, Rate, Min, [Day]</span
+                    >Name, Bal, Rate, Min, [Day], [Limit]</span
                   >
                 </div>
                 <textarea
                   id="debtData"
                   rows="10"
                   class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 font-mono text-xs focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-white"
-                  placeholder="Name, Balance, Rate, Min, [DueDay]"
+                  placeholder="Name, Balance, Rate, Min, [DueDay], [Limit]"
                 ></textarea>
               </div>
 
@@ -222,16 +240,73 @@
                 >
                   <i data-lucide="play" class="w-4 h-4 fill-current"></i> Run
                 </button>
-                <button
-                  onclick="exportToPDF()"
-                  class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2"
-                  title="Export Plan to PDF"
-                >
-                  <i
-                    data-lucide="file-text"
-                    class="w-4 h-4 text-emerald-400"
-                  ></i>
-                </button>
+                <!-- Export dropdown -->
+                <div class="relative" id="exportMenuWrap">
+                  <button
+                    onclick="
+                      document
+                        .getElementById('exportMenu')
+                        .classList.toggle('hidden')
+                    "
+                    class="bg-slate-800 hover:bg-slate-600 text-white font-bold p-4 rounded-xl transition-all flex items-center justify-center gap-2"
+                    title="Export"
+                  >
+                    <i
+                      data-lucide="download"
+                      class="w-4 h-4 text-emerald-400"
+                    ></i>
+                  </button>
+                  <div
+                    id="exportMenu"
+                    class="hidden absolute right-0 bottom-full mb-2 w-52 bg-slate-800 border border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden text-xs"
+                  >
+                    <button
+                      onclick="
+                        exportToPDF();
+                        document
+                          .getElementById('exportMenu')
+                          .classList.add('hidden');
+                      "
+                      class="w-full flex items-center gap-2 px-4 py-3 hover:bg-slate-700 text-slate-300 transition text-left"
+                    >
+                      <i
+                        data-lucide="file-text"
+                        class="w-3.5 h-3.5 text-emerald-400"
+                      ></i>
+                      Export as PDF
+                    </button>
+                    <button
+                      onclick="
+                        exportInputCSV();
+                        document
+                          .getElementById('exportMenu')
+                          .classList.add('hidden');
+                      "
+                      class="w-full flex items-center gap-2 px-4 py-3 hover:bg-slate-700 text-slate-300 transition text-left"
+                    >
+                      <i
+                        data-lucide="download"
+                        class="w-3.5 h-3.5 text-blue-400"
+                      ></i>
+                      Debt Data (CSV)
+                    </button>
+                    <button
+                      onclick="
+                        exportResultsCSV();
+                        document
+                          .getElementById('exportMenu')
+                          .classList.add('hidden');
+                      "
+                      class="w-full flex items-center gap-2 px-4 py-3 hover:bg-slate-700 text-slate-300 transition text-left"
+                    >
+                      <i
+                        data-lucide="table-2"
+                        class="w-3.5 h-3.5 text-purple-400"
+                      ></i>
+                      Payoff Schedule (CSV)
+                    </button>
+                  </div>
+                </div>
                 <button
                   onclick="clearData()"
                   class="bg-slate-800 hover:bg-rose-900/30 text-slate-500 hover:text-rose-400 p-3 rounded-xl transition-all border border-slate-700 text-white"
@@ -382,6 +457,81 @@
       let parsedDebtsCache = [];
       let monthlyBudgetCache = 0;
 
+      // Close data menu when clicking outside
+      document.addEventListener("click", (e) => {
+        const wrap = document.getElementById("exportMenuWrap");
+        if (wrap && !wrap.contains(e.target)) {
+          document.getElementById("exportMenu")?.classList.add("hidden");
+        }
+      });
+
+      function exportInputCSV() {
+        const raw = document.getElementById("debtData").value.trim();
+        if (!raw) {
+          alert("No debt data to export.");
+          return;
+        }
+        const header =
+          "Name,Balance,InterestRate,MinPayment,DueDay,CreditLimit\n";
+        const lines = raw.split("\n").map((line) => {
+          // Normalise to 6 columns
+          const parts = line.split(",").map((s) => s.trim());
+          while (parts.length < 6) parts.push("");
+          return parts
+            .slice(0, 6)
+            .map((p) => (p.includes(",") ? `"${p}"` : p))
+            .join(",");
+        });
+        const csv = header + lines.join("\n");
+        triggerDownload(csv, "debtpipe_debts.csv");
+      }
+
+      function exportResultsCSV() {
+        if (!lastResult || !parsedDebtsCache || parsedDebtsCache.length === 0) {
+          alert("Run the simulation first.");
+          return;
+        }
+        const timeline = buildInteractiveTimeline();
+        const names = lastResult.debtNames;
+        // Header row
+        const headers = [
+          "Month",
+          "Date",
+          "Total Balance",
+          ...names.flatMap((n) => [
+            `${n} Balance`,
+            `${n} Payment`,
+            `${n} Interest`,
+          ]),
+        ];
+        const rows = timeline.map((step) => [
+          step.month,
+          step.date,
+          step.total.toFixed(2),
+          ...names.flatMap((n) => [
+            (step.balances[n] ?? 0).toFixed(2),
+            (step.payments[n] ?? 0).toFixed(2),
+            (step.interests[n] ?? 0).toFixed(2),
+          ]),
+        ]);
+        const csv = [headers, ...rows]
+          .map((r) =>
+            r.map((c) => (String(c).includes(",") ? `"${c}"` : c)).join(","),
+          )
+          .join("\n");
+        triggerDownload(csv, "debtpipe_schedule.csv");
+      }
+
+      function triggerDownload(content, filename) {
+        const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
       window.onload = () => {
         const now = new Date();
         document.getElementById("startDate").value = now
@@ -404,6 +554,13 @@
           } catch (e) {
             interactiveOverrides = {};
           }
+        }
+
+        // Auto-import pending Budget Tool data (written before opening this tab)
+        const pendingBudgetData = localStorage.getItem(BUDGET_TO_DEBTPIPE_KEY);
+        if (pendingBudgetData && pendingBudgetData.trim()) {
+          document.getElementById("debtData").value = pendingBudgetData;
+          localStorage.removeItem(BUDGET_TO_DEBTPIPE_KEY);
         }
 
         lucide.createIcons();
@@ -462,11 +619,58 @@
         }
       }
 
+      const BUDGET_TO_DEBTPIPE_KEY = "gitchpage-budget-to-debtpipe";
+      const DEBTPIPE_TO_BUDGET_KEY = "gitchpage-debtpipe-to-budget";
+
+      function showBridgeStatus(msg, isError) {
+        const el = document.getElementById("budget-bridge-status");
+        if (!el) return;
+        el.textContent = msg;
+        el.style.color = isError ? "#f87171" : "#34d399";
+        setTimeout(() => {
+          el.textContent = "";
+        }, 4000);
+      }
+
+      function importFromBudget() {
+        const csv = localStorage.getItem(BUDGET_TO_DEBTPIPE_KEY);
+        if (!csv || !csv.trim()) {
+          showBridgeStatus(
+            "⚠ No Budget Tool data found. Send it from the Budget first.",
+            true,
+          );
+          return;
+        }
+        document.getElementById("debtData").value = csv;
+        showBridgeStatus(
+          "✓ Imported from Budget Tool! Running simulation...",
+          false,
+        );
+        runSimulation();
+      }
+
+      function sendSnowballToBudget() {
+        if (!parsedDebtsCache || parsedDebtsCache.length === 0) {
+          showBridgeStatus("⚠ Run the simulation first.", true);
+          return;
+        }
+        const payload = parsedDebtsCache.map((d) => ({
+          name: d.name,
+          minPayment: d.minPayment,
+          balance: d.balance,
+          interestRate: d.interestRate,
+          dueDay: d.dueDay,
+          creditLimit: d.creditLimit || 0,
+        }));
+        localStorage.setItem(DEBTPIPE_TO_BUDGET_KEY, JSON.stringify(payload));
+        window.open("/budget", "_blank");
+      }
+
       function downloadTemplate() {
         const headers =
-          "Name, Balance, Interest Rate (Decimal), Min Payment, Due Day (Optional)\n";
+          "Name, Balance, Interest Rate (Decimal), Min Payment, Due Day (Optional), Credit Limit (Optional CC)\n";
         const example =
-          "Credit Card A, 5000, 0.1899, 150, 15\nPersonal Loan, 12000, 0.085, 350, 1\nCar Loan, 8000, 0.05, 250, 28";
+          "Credit Card A, 5000, 0.1899, 150, 15, 10000\nPersonal Loan, 12000, 0.085, 350, 1\nCar Loan, 8000, 0.05, 250, 28";
         const blob = new Blob([headers + example], { type: "text/csv" });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -499,13 +703,16 @@
           .map((line) => {
             const parts = line.split(",").map((s) => s.trim());
             let rate = parseFloat(parts[2]);
-            if (rate < 1 && rate > 0) rate = rate * 100;
+            if (rate < 1 && rate > 0)
+              rate = parseFloat((rate * 100).toFixed(4));
+            else rate = parseFloat(rate.toFixed(4));
             return {
               name: parts[0],
               balance: parseFloat(parts[1]),
               interestRate: rate || 0,
               minPayment: parseFloat(parts[3]),
               dueDay: parseInt(parts[4]) || 1,
+              creditLimit: parseFloat(parts[5]) || 0,
             };
           })
           .filter((d) => !isNaN(d.balance) && !isNaN(d.minPayment));
