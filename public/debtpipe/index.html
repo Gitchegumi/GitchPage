@@ -763,6 +763,7 @@
             startingBalances: {},
             plannedPayments: {},
             total: 0,
+            snowball: 0,
           };
 
           // Capture starting balances
@@ -789,6 +790,9 @@
             }
             snapshot.payments[d.name] = paid;
           });
+
+          // Snowball = extra budget remaining after all minimums
+          snapshot.snowball = budget;
 
           for (let d of currentDebts) {
             if (d.balance > 0 && budget > 0) {
@@ -918,6 +922,7 @@
             startingBalances: {},
             plannedPayments: {},
             total: 0,
+            snowball: 0,
           };
 
           // Starting balances
@@ -946,6 +951,9 @@
             }
             snapshot.payments[d.name] = paid;
           });
+
+          // Snowball = extra budget remaining after all minimums
+          snapshot.snowball = budget;
 
           // Snowball extra (normal rules, unaffected by overrides)
           for (let d of currentDebts) {
@@ -1030,6 +1038,7 @@
           });
 
         // Header row with optional month-specific flow
+        const baseExtra = lastResult ? lastResult.extra : 0;
         const headerRow =
           `<tr><th class="p-3 bg-slate-800 sticky-col z-30 min-w-[150px] border-b border-slate-600">Debt Name</th>` +
           timeline
@@ -1046,7 +1055,16 @@
               });
               const monthFlow = unpaidSum;
               const showFlow = Math.abs(monthFlow - baseFlow) >= 0.01;
-              return `<th class="p-3 text-center border-l border-slate-700/50 min-w-[130px] border-b border-slate-600">${step.date}${showFlow ? `<div class="month-flow">Flow: $${fmt(monthFlow)}</div>` : ""}</th>`;
+              const snowball =
+                step.snowball != null ? step.snowball : baseExtra;
+              const snowballGrew = snowball > baseExtra + 0.01;
+              return `<th class="p-3 text-center border-l border-slate-700/50 min-w-[130px] border-b border-slate-600">
+                <div class="inline-flex items-center gap-1 justify-center mb-1">
+                  <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${snowballGrew ? "bg-emerald-900/60 text-emerald-300" : "bg-slate-700/60 text-slate-400"}" title="Snowball value this month">❄ $${fmt(snowball)}</span>
+                </div>
+                <div>${step.date}</div>
+                ${showFlow ? `<div class="month-flow">Flow: $${fmt(monthFlow)}</div>` : ""}
+              </th>`;
             })
             .join("") +
           `</tr>`;
