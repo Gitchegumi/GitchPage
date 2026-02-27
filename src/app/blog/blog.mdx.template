@@ -5,10 +5,9 @@ export const metadata = {
   author: "Mathew 'Gitchegumi' Lindholm",
   description: "<Your description here>",
   category: "faith, life, opinion, tech",
-  tags: ["Tag One", "Tag Two", "Tag Three"],
+  tags: ["Tag One", "Tag Two", "Tag Three", ...],
+	keywords: ["Keyword One", "Keyword Two", "Keyword Three", ...],
   featureImage: "images/blog/<image>.png",
 };
 
-# This is a blog post template
-
-This is a template for creating new blog posts in the Next.js site. Replace the placeholders with your content.
+This is a template for creating new blog posts in the Next.js site. Replace the placeholders with your content. The metadata title will be placed at the top of the page, so do not place a # level header at the top.
