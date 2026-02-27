@@ -31,6 +31,9 @@ const BentoBlogCard = ({ post, className }: BentoBlogCardProps) => {
           ) : (
             <div className="h-full w-full bg-gray-800" />
           )}
+          <span className="absolute bottom-2 left-2 text-xs text-neutral-300 bg-black/50 px-2 py-0.5 rounded">
+            {post.date}
+          </span>
         </MagicCard>
       }
       Icon={EmptyIcon}
