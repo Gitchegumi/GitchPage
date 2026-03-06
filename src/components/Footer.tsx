@@ -39,6 +39,11 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/tools" className="hover:underline">
+                    Tools
+                  </Link>
+                </li>
+                <li>
                   <Link
                     href="https://store.gitchegumi.com"
                     className="hover:underline"
