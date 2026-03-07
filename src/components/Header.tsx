@@ -214,35 +214,20 @@ export default function Header() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent hover:underline hover:bg-transparent focus:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">
-                    Tools
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="md:-translate-x-1/2">
-                    <div className="z-50 p-4 w-60 rounded-lg bg-brand-dark font-oswald text-brand-orange md:w-[500px]">
-                      <ul className="grid gap-6">
-                        <ListItem
-                          href="/tools/debtpipe"
-                          title="DebtPipe"
-                          className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                        >
-                          <span className="hidden md:block">
-                            Debt management tool - visualize and plan your debt
-                            payoff.
-                          </span>
-                        </ListItem>
-                        <ListItem
-                          href="/budget"
-                          title="Budget Tool"
-                          className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                        >
-                          <span className="hidden md:block">
-                            Monthly budgeting - track income, expenses, and cash
-                            flow.
-                          </span>
-                        </ListItem>
-                      </ul>
-                    </div>
-                  </NavigationMenuContent>
+                  <NavigationMenuLink
+                    asChild
+                    className={`
+                      ${navigationMenuTriggerStyle()}
+                      bg-transparent
+                      hover:text-brand-orange
+                      hover:underline
+                      focus:text-brand-orange
+                      hover:bg-transparent
+                      focus:bg-transparent
+                      `}
+                  >
+                    <Link href="/tools">Tools</Link>
+                  </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="mr-4 bg-transparent md:left-0 md:mr-16 hover:underline hover:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">

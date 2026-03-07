@@ -8,16 +8,10 @@ const tools = [
     status: "active",
   },
   {
-    name: "VaultPipe",
-    description: "Local encrypted secrets manager for managing API keys, passwords, and sensitive credentials.",
-    href: "#",
-    status: "coming_soon",
-  },
-  {
-    name: "BenchPipe",
-    description: "Performance benchmarking dashboard to track latency, memory usage, and throughput metrics.",
-    href: "#",
-    status: "coming_soon",
+    name: "Budget Tool",
+    description: "Monthly budgeting - track income, expenses, and cash flow. Includes template download and Excel import.",
+    href: "/budget",
+    status: "active",
   },
 ];
 
