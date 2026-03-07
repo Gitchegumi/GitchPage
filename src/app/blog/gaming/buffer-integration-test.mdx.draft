@@ -1,0 +1,12 @@
+export const metadata = {
+  title: "create",
+  slug: "buffer-integration-test",
+  date: "2026-02-26",
+  author: "Mathew 'Gitchegumi' Lindholm",
+  description: "",
+  category: "gaming",
+  tags: ["gta6", "testing"],
+  featureImage: ""
+};
+
+This is the body of the test post.
