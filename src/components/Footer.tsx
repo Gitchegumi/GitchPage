@@ -38,10 +38,30 @@ export default function Footer() {
                     Voice Over
                   </Link>
                 </li>
-                <li>
+                <li className="font-semibold">
                   <Link href="/tools" className="hover:underline">
-                    Tools
+                    All Tools
                   </Link>
+                </li>
+                <li className="pl-4">
+                  <Link href="/debtpipe" className="hover:underline text-sm">
+                    DebtPipe
+                  </Link>
+                </li>
+                <li className="pl-4">
+                  <Link href="/budget" className="hover:underline text-sm">
+                    Budget Tool
+                  </Link>
+                </li>
+                <li className="pl-4">
+                  <span className="text-gray-500 text-sm cursor-not-allowed">
+                    VaultPipe (Coming Soon)
+                  </span>
+                </li>
+                <li className="pl-4">
+                  <span className="text-gray-500 text-sm cursor-not-allowed">
+                    BenchPipe (Coming Soon)
+                  </span>
                 </li>
                 <li>
                   <Link

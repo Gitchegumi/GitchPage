@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   pageExtensions: ['ts', 'tsx', 'mdx', 'md', 'js', 'jsx'],
+  outputFileTracingRoot: '../..',
 };
 
 export default withMDX(nextConfig);
