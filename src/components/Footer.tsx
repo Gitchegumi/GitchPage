@@ -53,16 +53,6 @@ export default function Footer() {
                     Budget Tool
                   </Link>
                 </li>
-                <li className="pl-4">
-                  <span className="text-gray-500 text-sm cursor-not-allowed">
-                    VaultPipe (Coming Soon)
-                  </span>
-                </li>
-                <li className="pl-4">
-                  <span className="text-gray-500 text-sm cursor-not-allowed">
-                    BenchPipe (Coming Soon)
-                  </span>
-                </li>
                 <li>
                   <Link
                     href="https://store.gitchegumi.com"
