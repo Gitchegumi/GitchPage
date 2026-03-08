@@ -83,147 +83,200 @@ function SortableRow({
     }
   };
 
+  // Budget utilization (actual vs budgeted)
+  const hasActual = item.actual !== null && item.actual !== undefined;
+  const budgeted = item.monthlyAmount;
+  const actual = item.actual ?? 0;
+  const budgetUtilizationPct = budgeted > 0 && hasActual ? (actual / budgeted) * 100 : 0;
+  const isOverBudget = hasActual && actual > budgeted;
+  const remaining = budgeted - actual;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-2 p-3 bg-gray-900/50 rounded-lg border border-gray-700 group hover:border-orange-500/50 transition ${item.paid ? "opacity-60" : ""}`}
+      className={`bg-gray-900/50 rounded-lg border border-gray-700 group hover:border-orange-500/50 transition ${item.paid ? "opacity-60" : ""}`}
     >
-      {/* Paid checkbox */}
-      <input
-        type="checkbox"
-        checked={item.paid ?? false}
-        onChange={(e) => onUpdate(item.id, { paid: e.target.checked })}
-        className="w-4 h-4 rounded border-gray-600 bg-gray-800 text-orange-500 focus:ring-orange-500 focus:ring-offset-0 cursor-pointer accent-orange-500"
-        title={item.paid ? "Mark unpaid" : "Mark paid"}
-      />
+      <div className="flex items-center gap-2 p-3">
+        {/* Paid checkbox */}
+        <input
+          type="checkbox"
+          checked={item.paid ?? false}
+          onChange={(e) => onUpdate(item.id, { paid: e.target.checked })}
+          className="w-4 h-4 rounded border-gray-600 bg-gray-800 text-orange-500 focus:ring-orange-500 focus:ring-offset-0 cursor-pointer accent-orange-500"
+          title={item.paid ? "Mark unpaid" : "Mark paid"}
+        />
 
-      <button
-        {...attributes}
-        {...listeners}
-        className="cursor-grab active:cursor-grabbing text-gray-500 hover:text-gray-300 p-1 touch-none"
-        title="Drag to reorder"
-      >
-        ☰
-      </button>
-
-      {/* Name */}
-      <input
-        type="text"
-        value={item.name}
-        onChange={(e) => onUpdate(item.id, { name: e.target.value })}
-        placeholder="Bill name"
-        className={`flex-1 min-w-0 px-2 py-1 bg-transparent border border-transparent hover:border-gray-600 focus:border-orange-500 rounded text-sm text-white focus:outline-none transition ${item.paid ? "line-through text-gray-500" : ""}`}
-      />
-
-      {/* Category dropdown */}
-      {showCustom ? (
-        <div className="flex items-center gap-1">
-          <input
-            type="text"
-            value={customValue}
-            onChange={(e) => setCustomValue(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleCustomSubmit()}
-            placeholder="New category"
-            className="w-28 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white focus:outline-none focus:border-orange-500"
-            autoFocus
-          />
-          <button
-            onClick={handleCustomSubmit}
-            className="text-green-400 text-sm px-1"
-          >
-            ✓
-          </button>
-          <button
-            onClick={() => setShowCustom(false)}
-            className="text-gray-400 text-sm px-1"
-          >
-            ✕
-          </button>
-        </div>
-      ) : (
-        <select
-          value={item.category}
-          onChange={(e) => handleCategoryChange(e.target.value)}
-          className="w-32 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-gray-300 focus:outline-none focus:border-orange-500"
+        <button
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing text-gray-500 hover:text-gray-300 p-1 touch-none"
+          title="Drag to reorder"
         >
-          <option value="">Category</option>
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-          <option value="__custom__">+ Custom...</option>
-        </select>
+          ☰
+        </button>
+
+        {/* Name */}
+        <input
+          type="text"
+          value={item.name}
+          onChange={(e) => onUpdate(item.id, { name: e.target.value })}
+          placeholder="Bill name"
+          className={`flex-1 min-w-0 px-2 py-1 bg-transparent border border-transparent hover:border-gray-600 focus:border-orange-500 rounded text-sm text-white focus:outline-none transition ${item.paid ? "line-through text-gray-500" : ""}`}
+        />
+
+        {/* Category dropdown */}
+        {showCustom ? (
+          <div className="flex items-center gap-1">
+            <input
+              type="text"
+              value={customValue}
+              onChange={(e) => setCustomValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleCustomSubmit()}
+              placeholder="New category"
+              className="w-28 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white focus:outline-none focus:border-orange-500"
+              autoFocus
+            />
+            <button
+              onClick={handleCustomSubmit}
+              className="text-green-400 text-sm px-1"
+            >
+              ✓
+            </button>
+            <button
+              onClick={() => setShowCustom(false)}
+              className="text-gray-400 text-sm px-1"
+            >
+              ✕
+            </button>
+          </div>
+        ) : (
+          <select
+            value={item.category}
+            onChange={(e) => handleCategoryChange(e.target.value)}
+            className="w-32 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-gray-300 focus:outline-none focus:border-orange-500"
+          >
+            <option value="">Category</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+            <option value="__custom__">+ Custom...</option>
+          </select>
+        )}
+
+        {/* Amount */}
+        <div className="flex items-center">
+          <span className="text-xs text-gray-500 mr-1">$</span>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={item.monthlyAmount || ""}
+            onChange={(e) =>
+              onUpdate(item.id, {
+                monthlyAmount: parseFloat(e.target.value) || 0,
+              })
+            }
+            placeholder="Amount"
+            className="w-24 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white text-right focus:outline-none focus:border-orange-500"
+          />
+        </div>
+
+        {/* Actual Amount */}
+        <div className="flex items-center">
+          <span className="text-[10px] text-gray-500 mr-1">Act</span>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={item.actual ?? ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              onUpdate(item.id, {
+                actual: val === "" ? null : parseFloat(val) || 0,
+              });
+            }}
+            placeholder="—"
+            title="Actual amount spent"
+            className="w-20 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-green-400 text-right focus:outline-none focus:border-green-500"
+          />
+        </div>
+
+        {/* Due By */}
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] text-gray-500 whitespace-nowrap">Due</span>
+          <input
+            type="number"
+            min="1"
+            max="31"
+            value={item.dueBy ?? ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              onUpdate(item.id, {
+                dueBy:
+                  val === ""
+                    ? null
+                    : Math.min(31, Math.max(1, parseInt(val) || 1)),
+              });
+            }}
+            placeholder="—"
+            className="w-12 px-1 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white text-center focus:outline-none focus:border-orange-500"
+          />
+        </div>
+
+        <button
+          onClick={() => onRemove(item.id)}
+          className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition p-1"
+          title="Remove"
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* Budget Utilization Bar - Blue Gradient */}
+      {hasActual && budgeted > 0 && (
+        <div className="px-3 pb-3 pt-0">
+          <div className="bg-gray-800 rounded-lg p-3 border border-gray-700/50">
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="text-gray-400">
+                Budget:{" "}
+                <span className="text-blue-400 font-semibold">
+                  {budgetUtilizationPct.toFixed(1)}%
+                </span>
+              </span>
+              <span className="text-gray-500">
+                ${fmt(actual)} of ${fmt(budgeted)}
+              </span>
+            </div>
+            {/* Blue gradient progress bar */}
+            <div className="relative w-full h-3 bg-gray-700 rounded-full overflow-hidden">
+              {/* Usage bar with blue gradient */}
+              <div
+                className="h-full rounded-full transition-all duration-300 bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-400"
+                style={{ width: `${Math.min(budgetUtilizationPct, 100)}%` }}
+              />
+              {/* Over-budget indicator */}
+              {isOverBudget && (
+                <div className="absolute inset-0 bg-red-500/20 animate-pulse" />
+              )}
+            </div>
+            {/* Remaining/Over budget text */}
+            <div className="mt-2 text-xs">
+              {isOverBudget ? (
+                <span className="text-red-400">
+                  ⚠ Over budget by <span className="font-bold">${fmt(actual - budgeted)}</span>
+                </span>
+              ) : (
+                <span className="text-cyan-400">
+                  ✓ <span className="font-bold">${fmt(remaining)}</span> remaining
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
       )}
-
-      {/* Amount */}
-      <div className="flex items-center">
-        <span className="text-xs text-gray-500 mr-1">$</span>
-        <input
-          type="number"
-          min="0"
-          step="0.01"
-          value={item.monthlyAmount || ""}
-          onChange={(e) =>
-            onUpdate(item.id, {
-              monthlyAmount: parseFloat(e.target.value) || 0,
-            })
-          }
-          placeholder="Amount"
-          className="w-24 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white text-right focus:outline-none focus:border-orange-500"
-        />
-      </div>
-
-      {/* Actual Amount */}
-      <div className="flex items-center">
-        <span className="text-[10px] text-gray-500 mr-1">Act</span>
-        <input
-          type="number"
-          min="0"
-          step="0.01"
-          value={item.actual ?? ""}
-          onChange={(e) => {
-            const val = e.target.value;
-            onUpdate(item.id, {
-              actual: val === "" ? null : parseFloat(val) || 0,
-            });
-          }}
-          placeholder="—"
-          title="Actual amount spent"
-          className="w-20 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-green-400 text-right focus:outline-none focus:border-green-500"
-        />
-      </div>
-
-      {/* Due By */}
-      <div className="flex items-center gap-1">
-        <span className="text-[10px] text-gray-500 whitespace-nowrap">Due</span>
-        <input
-          type="number"
-          min="1"
-          max="31"
-          value={item.dueBy ?? ""}
-          onChange={(e) => {
-            const val = e.target.value;
-            onUpdate(item.id, {
-              dueBy:
-                val === ""
-                  ? null
-                  : Math.min(31, Math.max(1, parseInt(val) || 1)),
-            });
-          }}
-          placeholder="—"
-          className="w-12 px-1 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white text-center focus:outline-none focus:border-orange-500"
-        />
-      </div>
-
-      <button
-        onClick={() => onRemove(item.id)}
-        className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition p-1"
-        title="Remove"
-      >
-        ✕
-      </button>
     </div>
   );
 }
