@@ -38,6 +38,11 @@ export default function Footer() {
                     Voice Over
                   </Link>
                 </li>
+                <li className="font-semibold">
+                  <Link href="/tools" className="hover:underline">
+                    Tools
+                  </Link>
+                </li>
                 <li>
                   <Link
                     href="https://store.gitchegumi.com"
