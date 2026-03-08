@@ -87,7 +87,8 @@ function SortableRow({
   const hasActual = item.actual !== null && item.actual !== undefined;
   const budgeted = item.monthlyAmount;
   const actual = item.actual ?? 0;
-  const budgetUtilizationPct = budgeted > 0 && hasActual ? (actual / budgeted) * 100 : 0;
+  const budgetUtilizationPct =
+    budgeted > 0 && hasActual ? (actual / budgeted) * 100 : 0;
   const isOverBudget = hasActual && actual > budgeted;
   const remaining = budgeted - actual;
 
@@ -206,7 +207,9 @@ function SortableRow({
 
         {/* Due By */}
         <div className="flex items-center gap-1">
-          <span className="text-[10px] text-gray-500 whitespace-nowrap">Due</span>
+          <span className="text-[10px] text-gray-500 whitespace-nowrap">
+            Due
+          </span>
           <input
             type="number"
             min="1"
@@ -266,11 +269,13 @@ function SortableRow({
             <div className="mt-2 text-xs">
               {isOverBudget ? (
                 <span className="text-red-400">
-                  ⚠ Over budget by <span className="font-bold">${fmt(actual - budgeted)}</span>
+                  ⚠ Over budget by{" "}
+                  <span className="font-bold">${fmt(actual - budgeted)}</span>
                 </span>
               ) : (
                 <span className="text-cyan-400">
-                  ✓ <span className="font-bold">${fmt(remaining)}</span> remaining
+                  ✓ <span className="font-bold">${fmt(remaining)}</span>{" "}
+                  remaining
                 </span>
               )}
             </div>
@@ -316,6 +321,7 @@ export default function BillsSection({
       name: "",
       category: "",
       monthlyAmount: 0,
+      actual: null,
       dueBy: null,
       paid: false,
     };
