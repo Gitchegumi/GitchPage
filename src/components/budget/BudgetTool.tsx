@@ -154,6 +154,7 @@ export default function BudgetTool() {
                   name: e.name,
                   category: hasCreditLimit ? "Credit Card" : "",
                   monthlyAmount: e.minPayment,
+                  actual: null,
                   balance: e.balance ?? null,
                   interestRate:
                     e.interestRate != null

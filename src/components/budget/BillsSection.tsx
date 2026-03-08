@@ -175,6 +175,26 @@ function SortableRow({
         />
       </div>
 
+      {/* Actual Amount */}
+      <div className="flex items-center">
+        <span className="text-[10px] text-gray-500 mr-1">Act</span>
+        <input
+          type="number"
+          min="0"
+          step="0.01"
+          value={item.actual ?? ""}
+          onChange={(e) => {
+            const val = e.target.value;
+            onUpdate(item.id, {
+              actual: val === "" ? null : parseFloat(val) || 0,
+            });
+          }}
+          placeholder="—"
+          title="Actual amount spent"
+          className="w-20 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-green-400 text-right focus:outline-none focus:border-green-500"
+        />
+      </div>
+
       {/* Due By */}
       <div className="flex items-center gap-1">
         <span className="text-[10px] text-gray-500 whitespace-nowrap">Due</span>
