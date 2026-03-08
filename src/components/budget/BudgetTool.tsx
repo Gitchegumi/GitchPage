@@ -17,6 +17,7 @@ import IncomeSection from "./IncomeSection";
 import DebtSection from "./DebtSection";
 import BillsSection from "./BillsSection";
 import SummaryCards from "./SummaryCards";
+import TotalBudgetTracker from "./TotalBudgetTracker";
 import {
   Download,
   Upload,
@@ -429,6 +430,9 @@ export default function BudgetTool() {
         firstHalf={firstHalf}
         secondHalf={secondHalf}
       />
+
+      {/* Total Budget Tracker */}
+      <TotalBudgetTracker debts={budget.debts} bills={budget.bills} />
 
       {/* Sections */}
       <IncomeSection
