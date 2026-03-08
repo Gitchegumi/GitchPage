@@ -40,17 +40,7 @@ export default function Footer() {
                 </li>
                 <li className="font-semibold">
                   <Link href="/tools" className="hover:underline">
-                    All Tools
-                  </Link>
-                </li>
-                <li className="pl-4">
-                  <Link href="/debtpipe" className="hover:underline text-sm">
-                    DebtPipe
-                  </Link>
-                </li>
-                <li className="pl-4">
-                  <Link href="/budget" className="hover:underline text-sm">
-                    Budget Tool
+                    Tools
                   </Link>
                 </li>
                 <li>

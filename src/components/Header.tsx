@@ -214,20 +214,53 @@ export default function Header() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink
-                    asChild
-                    className={`
-                      ${navigationMenuTriggerStyle()}
-                      bg-transparent
-                      hover:text-brand-orange
-                      hover:underline
-                      focus:text-brand-orange
-                      hover:bg-transparent
-                      focus:bg-transparent
-                      `}
-                  >
+                  <NavigationMenuTrigger className="bg-transparent hover:underline hover:bg-transparent focus:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">
                     <Link href="/tools">Tools</Link>
-                  </NavigationMenuLink>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="md:-translate-x-1/2">
+                    <div className="rounded-lg text-soft-white bg-brand-dark">
+                      <div className="grid w-60">
+                        <div>
+                          <NavigationMenuLink asChild>
+                            <div className="mb-2 text-2xl font-bold md:mb-4 hover:bg-transparent text-brand-orange font-oswald hover:text-brand-orange">
+                              FinPipe
+                            </div>
+                          </NavigationMenuLink>
+                          <ul className="z-50 space-y-2">
+                            <ListItem
+                              href="/budget"
+                              title="SpendPipe"
+                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
+                            >
+                              <span className="hidden md:block">
+                                A simple budget tracking tool.
+                              </span>
+                            </ListItem>
+                            <ListItem
+                              href="/debtpipe"
+                              title="DebtPipe"
+                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
+                            >
+                              <span className="hidden md:block">
+                                A simple debt tracking tool.
+                              </span>
+                            </ListItem>
+                            <ListItem
+                              href="https://github.com/Gitchegumi/quantpipe"
+                              title="QuantPipe"
+                              target="_blank"
+                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
+                            >
+                              <span className="hidden md:block">
+                                Backtesting, forwardtesting, and trading bot in
+                                development.
+                              </span>
+                            </ListItem>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="mr-4 bg-transparent md:left-0 md:mr-16 hover:underline hover:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">
@@ -270,7 +303,7 @@ export default function Header() {
 }
 
 const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
+  React.ComponentRef<"a">,
   React.ComponentPropsWithoutRef<"a">
 >(({ className, title, children, target, ...props }, ref) => {
   return (
