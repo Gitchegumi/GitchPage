@@ -98,6 +98,14 @@ function SortableRow({
   const paydownTo50 = balance > fiftyPctLevel ? balance - fiftyPctLevel : 0;
   const paydownTo30 = balance > thirtyPctLevel ? balance - thirtyPctLevel : 0;
 
+  // Budget utilization (actual vs budgeted)
+  const hasActual = item.actual !== null && item.actual !== undefined;
+  const budgeted = item.monthlyAmount;
+  const actual = item.actual ?? 0;
+  const budgetUtilizationPct = budgeted > 0 && hasActual ? (actual / budgeted) * 100 : 0;
+  const isOverBudget = hasActual && actual > budgeted;
+  const remaining = budgeted - actual;
+
   return (
     <div
       ref={setNodeRef}
@@ -188,6 +196,26 @@ function SortableRow({
             }
             placeholder="Payment"
             className="w-24 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-white text-right focus:outline-none focus:border-red-500"
+          />
+        </div>
+
+        {/* Actual Amount */}
+        <div className="flex items-center">
+          <span className="text-[10px] text-gray-500 mr-1">Act</span>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={item.actual ?? ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              onUpdate(item.id, {
+                actual: val === "" ? null : parseFloat(val) || 0,
+              });
+            }}
+            placeholder="—"
+            title="Actual amount spent"
+            className="w-20 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-sm text-green-400 text-right focus:outline-none focus:border-green-500"
           />
         </div>
 
@@ -362,6 +390,49 @@ function SortableRow({
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Budget Utilization Bar - Blue Gradient */}
+      {hasActual && budgeted > 0 && (
+        <div className="px-3 pb-3 pt-0">
+          <div className="bg-gray-800 rounded-lg p-3 border border-gray-700/50">
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="text-gray-400">
+                Budget:{" "}
+                <span className="text-blue-400 font-semibold">
+                  {budgetUtilizationPct.toFixed(1)}%
+                </span>
+              </span>
+              <span className="text-gray-500">
+                ${fmt(actual)} of ${fmt(budgeted)}
+              </span>
+            </div>
+            {/* Blue gradient progress bar */}
+            <div className="relative w-full h-3 bg-gray-700 rounded-full overflow-hidden">
+              {/* Usage bar with blue gradient */}
+              <div
+                className="h-full rounded-full transition-all duration-300 bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-400"
+                style={{ width: `${Math.min(budgetUtilizationPct, 100)}%` }}
+              />
+              {/* Over-budget indicator */}
+              {isOverBudget && (
+                <div className="absolute inset-0 bg-red-500/20 animate-pulse" />
+              )}
+            </div>
+            {/* Remaining/Over budget text */}
+            <div className="mt-2 text-xs">
+              {isOverBudget ? (
+                <span className="text-red-400">
+                  ⚠ Over budget by <span className="font-bold">${fmt(actual - budgeted)}</span>
+                </span>
+              ) : (
+                <span className="text-cyan-400">
+                  ✓ <span className="font-bold">${fmt(remaining)}</span> remaining
+                </span>
+              )}
+            </div>
           </div>
         </div>
       )}

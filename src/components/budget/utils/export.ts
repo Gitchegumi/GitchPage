@@ -53,6 +53,7 @@ export function exportToCSV(data: BudgetData) {
     Paid: d.paid ? "Yes" : "No",
     Balance: d.balance ?? "",
     Limit: d.availableCredit ?? "",
+    Actual: d.actual ?? "",
   }));
 
   const bills = data.bills.map((b) => ({
@@ -67,6 +68,7 @@ export function exportToCSV(data: BudgetData) {
     Paid: b.paid ? "Yes" : "No",
     Balance: "",
     Limit: "",
+    Actual: b.actual ?? "",
   }));
 
   const combined = [...incomes, ...debts, ...bills];
@@ -117,8 +119,14 @@ export async function exportToExcel(data: BudgetData) {
     { header: "Name", key: "name", width: 30 },
     { header: "Category", key: "category", width: 15 },
     {
-      header: "Monthly Payment",
+      header: "Budgeted",
       key: "monthlyAmount",
+      width: 15,
+      style: { numFmt: "$#,##0.00" },
+    },
+    {
+      header: "Actual",
+      key: "actual",
       width: 15,
       style: { numFmt: "$#,##0.00" },
     },
@@ -143,6 +151,7 @@ export async function exportToExcel(data: BudgetData) {
       name: d.name,
       category: d.category,
       monthlyAmount: d.monthlyAmount,
+      actual: d.actual ?? "",
       balance: d.balance ?? "",
       interestRate: d.interestRate ?? "",
       availableCredit: d.availableCredit ?? "",
@@ -157,8 +166,14 @@ export async function exportToExcel(data: BudgetData) {
     { header: "Name", key: "name", width: 30 },
     { header: "Category", key: "category", width: 15 },
     {
-      header: "Amount",
+      header: "Budgeted",
       key: "monthlyAmount",
+      width: 15,
+      style: { numFmt: "$#,##0.00" },
+    },
+    {
+      header: "Actual",
+      key: "actual",
       width: 15,
       style: { numFmt: "$#,##0.00" },
     },
@@ -170,6 +185,7 @@ export async function exportToExcel(data: BudgetData) {
       name: b.name,
       category: b.category,
       monthlyAmount: b.monthlyAmount,
+      actual: b.actual ?? "",
       dueBy: b.dueBy ?? "",
       paid: b.paid ? "Yes" : "No",
     });
@@ -419,11 +435,12 @@ export function exportToPDF(data: BudgetData) {
   doc.text("Debt Details", 14, currentY);
   autoTable(doc, {
     startY: currentY + 5,
-    head: [["Name", "Category", "Payment", "Balance", "Paid"]],
+    head: [["Name", "Category", "Budgeted", "Actual", "Balance", "Paid"]],
     body: data.debts.map((d) => [
       d.name,
       d.category,
       `$${fmt(d.monthlyAmount)}`,
+      d.actual !== null ? `$${fmt(d.actual)}` : "—",
       d.balance !== null ? `$${fmt(d.balance)}` : "—",
       d.paid ? "Yes" : "No",
     ]),
@@ -439,12 +456,13 @@ export function exportToPDF(data: BudgetData) {
   doc.text("Bill Details", 14, currentY);
   autoTable(doc, {
     startY: currentY + 5,
-    head: [["Name", "Category", "Due Day", "Amount", "Paid"]],
+    head: [["Name", "Category", "Budgeted", "Actual", "Due Day", "Paid"]],
     body: data.bills.map((b) => [
       b.name,
       b.category,
-      b.dueBy || "—",
       `$${fmt(b.monthlyAmount)}`,
+      b.actual !== null ? `$${fmt(b.actual)}` : "—",
+      b.dueBy || "—",
       b.paid ? "Yes" : "No",
     ]),
     headStyles: { fillColor: [239, 108, 0] }, // Orange
@@ -467,6 +485,7 @@ export function downloadTemplate() {
       Paid: "",
       Balance: "",
       Limit: "",
+      Actual: "",
     },
     {
       Type: "Debt",
@@ -477,6 +496,7 @@ export function downloadTemplate() {
       Paid: "No",
       Balance: "2000",
       Limit: "5000",
+      Actual: "85",
     },
     {
       Type: "Bill",
@@ -487,6 +507,7 @@ export function downloadTemplate() {
       Paid: "No",
       Balance: "",
       Limit: "",
+      Actual: "1500",
     },
   ];
 
@@ -530,6 +551,7 @@ export function importFromCSV(
             name: row.Name || "Unnamed Debt",
             category: row.Category || "Other",
             monthlyAmount: parseFloat(row.Monthly) || 0,
+            actual: row.Actual ? parseFloat(row.Actual) : null,
             interestRate: parseFloat(row.InterestRate) || null,
             dueBy: parseInt(row.PayDay) || null,
             paid: row.Paid === "Yes",
@@ -542,6 +564,7 @@ export function importFromCSV(
             name: row.Name || "Unnamed Bill",
             category: row.Category || "Other",
             monthlyAmount: parseFloat(row.Monthly) || 0,
+            actual: row.Actual ? parseFloat(row.Actual) : null,
             dueBy: parseInt(row.PayDay) || null,
             paid: row.Paid === "Yes",
           });

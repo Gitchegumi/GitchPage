@@ -25,6 +25,8 @@ export interface DebtItem {
   name: string;
   category: string;
   monthlyAmount: number;
+  /** Actual amount spent/paid this month (for reconciliation) */
+  actual: number | null;
   balance: number | null;
   /** Annual interest rate as a percentage (e.g. 19.99 for 19.99% APR) */
   interestRate: number | null;
@@ -41,6 +43,8 @@ export interface BillItem {
   name: string;
   category: string;
   monthlyAmount: number;
+  /** Actual amount spent/paid this month (for reconciliation) */
+  actual: number | null;
   /** Day of month bill is due (1-31) */
   dueBy: number | null;
   /** Whether this bill has been paid this month */
