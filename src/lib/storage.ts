@@ -74,6 +74,7 @@ export interface Account {
   mask?: string;
   color?: string;
   hidden: boolean;
+  showsInBudget: boolean; // whether this account appears in budget calculations (cash & debt)
 
   // Metadata
   createdAt: number;
@@ -90,6 +91,7 @@ function migrateLegacyAccount(legacy: any): Account {
     mask: legacy.mask,
     color: legacy.color,
     hidden: legacy.hidden ?? false,
+    showsInBudget: true, // legacy accounts were in budget by default
     createdAt: legacy.createdAt,
     updatedAt: legacy.updatedAt,
   };
@@ -137,7 +139,7 @@ export interface AccountsData {
 
 export const DEFAULT_ACCOUNTS_DATA: AccountsData = {
   accounts: [],
-  version: 2, // bumped after hierarchical schema
+  version: 3, // bumped after hierarchical schema + showsInBudget
 };
 
 // Main category labels and colors
@@ -195,14 +197,22 @@ export function loadAccounts(): AccountsData {
     if (saved) {
       const parsed = JSON.parse(saved) as AccountsData;
       // Ensure version field exists
-      if (!parsed.version || parsed.version < 2) {
+      if (!parsed.version || parsed.version < 3) {
         // Migrate legacy accounts to hierarchical schema
         parsed.accounts = parsed.accounts.map((acc: any) => {
           // If already has mainCategory, skip
-          if (acc.mainCategory) return acc;
-          return migrateLegacyAccount(acc);
+          if (acc.mainCategory) {
+            // Also ensure showsInBudget exists for older v2 accounts
+            if (acc.showsInBudget === undefined) {
+              acc.showsInBudget = true;
+            }
+            return acc;
+          }
+          const migrated = migrateLegacyAccount(acc);
+          // ensure showsInBudget exists (migrateLegacyAccount sets it to true)
+          return migrated;
         });
-        parsed.version = 2;
+        parsed.version = 3;
         // Save migrated data
         localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(parsed));
       }

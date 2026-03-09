@@ -85,6 +85,7 @@ interface EditingAccount {
   mask: string;
   color: string;
   hidden: boolean;
+  showsInBudget: boolean; // new
 }
 
 // ============================================================================
@@ -116,6 +117,7 @@ const DEFAULT_EDITING: EditingAccount = {
   mask: "",
   color: MAIN_CATEGORY_COLORS.cash,
   hidden: false,
+  showsInBudget: true, // new default
 };
 
 // ============================================================================
@@ -195,7 +197,8 @@ export default function AccountPipe() {
 
   const totalBalance = totalAssets - totalLiabilities;
 
-  // Handlers
+  // Main category order
+  const MAIN_CATEGORY_ORDER: AccountMainCategory[] = ['cash', 'debt', 'bill', 'investment', 'other'];
   const handleAddNew = useCallback(() => {
     setEditing({
       ...DEFAULT_EDITING,
@@ -232,6 +235,7 @@ export default function AccountPipe() {
       mask: account.mask || "",
       color: account.color || MAIN_CATEGORY_COLORS[account.mainCategory],
       hidden: account.hidden,
+      showsInBudget: (account as any).showsInBudget !== false, // default true
     });
     setShowForm(true);
   }, []);
@@ -254,6 +258,7 @@ export default function AccountPipe() {
       mask: editing.mask.trim() || undefined,
       color: editing.color,
       hidden: editing.hidden,
+      showsInBudget: editing.showsInBudget, // new
     };
 
     // Add type-specific fields
@@ -670,7 +675,7 @@ export default function AccountPipe() {
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Category</label>
                 <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
-                  {(Object.keys(MAIN_CATEGORY_LABELS) as AccountMainCategory[]).map((cat) => (
+                  {MAIN_CATEGORY_ORDER.map((cat) => (
                     <button
                       key={cat}
                       type="button"
@@ -825,6 +830,18 @@ export default function AccountPipe() {
                     ))}
                 </div>
               </div>
+
+              {(editing.mainCategory === 'cash' || editing.mainCategory === 'debt') && (
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editing.showsInBudget}
+                    onChange={(e) => setEditing((p) => ({ ...p, showsInBudget: e.target.checked }))}
+                    className="w-4 h-4 rounded bg-gray-700 border-gray-600"
+                  />
+                  <span className="text-gray-300">Shows in budget</span>
+                </label>
+              )}
 
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
