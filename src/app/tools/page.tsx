@@ -24,6 +24,13 @@ const finpipeTools = [
     external: true,
   },
   {
+    name: "AccountPipe",
+    description:
+      "Manage all your accounts in one place - checking, savings, credit cards, investments. Integrates with DebtPipe and SpendPipe.",
+    href: "/accountpipe",
+    status: "active",
+  },
+  {
     name: "LedgerPipe",
     description:
       "Transaction ledger for tracking all your financial movements across accounts. Import, categorize, and reconcile with ease.",
