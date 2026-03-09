@@ -20,6 +20,7 @@ import {
   getDebtAccounts,
 } from "@/lib/storage";
 import { DEFAULT_BILL_CATEGORIES, type BillItem, type DebtItem } from "@/components/budget/types";
+import { formatCurrency } from "@/lib/format-financial";
 import {
   Plus,
   Trash2,
@@ -701,13 +702,13 @@ export default function AccountPipe() {
         <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
           <div className="text-sm text-gray-400">Total Assets</div>
           <div className="text-2xl font-bold text-green-400">
-            ${totalAssets.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            {formatCurrency(totalAssets)}
           </div>
         </div>
         <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
           <div className="text-sm text-gray-400">Total Liabilities</div>
           <div className="text-2xl font-bold text-red-400">
-            -${totalLiabilities.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            -{formatCurrency(totalLiabilities)}
           </div>
         </div>
         <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
@@ -717,7 +718,7 @@ export default function AccountPipe() {
               totalBalance >= 0 ? "text-blue-400" : "text-red-400"
             }`}
           >
-            ${totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            {formatCurrency(totalBalance)}
           </div>
         </div>
         <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
@@ -1093,7 +1094,7 @@ export default function AccountPipe() {
                             <div className="flex-1">
                               <div className="font-medium text-white">{bill.name}</div>
                               <div className="text-sm text-gray-400">
-                                {bill.category} • ${bill.monthlyAmount}/mo • Due: {bill.dueBy}
+                                {bill.category} • {formatCurrency(bill.monthlyAmount)}/mo • Due: {bill.dueBy}
                               </div>
                             </div>
                           </label>
@@ -1127,9 +1128,9 @@ export default function AccountPipe() {
                             <div className="flex-1">
                               <div className="font-medium text-white">{debt.name}</div>
                               <div className="text-sm text-gray-400">
-                                {debt.category} • Balance: ${debt.balance?.toLocaleString() || 'N/A'}
+                                {debt.category} • Balance: {debt.balance ? formatCurrency(debt.balance) : 'N/A'}
                                 {debt.interestRate && ` • APR: ${debt.interestRate}%`}
-                                {debt.availableCredit && ` • Limit: $${debt.availableCredit.toLocaleString()}`}
+                                {debt.availableCredit && ` • Limit: ${formatCurrency(debt.availableCredit)}`}
                               </div>
                             </div>
                           </label>
@@ -1211,7 +1212,7 @@ export default function AccountPipe() {
                       {account.mask && <span> • ••••{account.mask}</span>}
                       {isBill && billAccount?.monthlyAmount && (
                         <span className="text-blue-300">
-                          • ${billAccount.monthlyAmount}/mo
+                          • {formatCurrency(billAccount.monthlyAmount)}/mo
                         </span>
                       )}
                       {isBill && billAccount?.dueDate && (
@@ -1221,7 +1222,7 @@ export default function AccountPipe() {
                       )}
                       {isDebt && account.creditLimit && (
                         <span className="text-gray-500">
-                          of ${account.creditLimit.toLocaleString()} limit
+                          of {formatCurrency(account.creditLimit)} limit
                         </span>
                       )}
                     </div>
@@ -1235,10 +1236,8 @@ export default function AccountPipe() {
                         isDebt ? "text-red-400" : "text-green-400"
                       }`}
                     >
-                      {isDebt ? "-" : ""}$
-                      {account.balance.toLocaleString("en-US", {
-                        minimumFractionDigits: 2,
-                      })}
+                      {isDebt ? "-" : ""}
+                      {formatCurrency(account.balance)}
                     </div>
                     {isBill && billAccount?.dueDate && (
                       <div className="text-xs text-gray-500">
