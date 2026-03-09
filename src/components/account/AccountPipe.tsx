@@ -1167,7 +1167,7 @@ export default function AccountPipe() {
         </div>
       )}
 
-      {/* Accounts List */}
+      {/* Accounts List - Grouped by Type */}
       {accounts.length === 0 ? (
         <div className="text-center py-12 text-gray-400">
           <Wallet className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -1175,101 +1175,119 @@ export default function AccountPipe() {
           <p className="text-sm">Click "Add Account" to get started</p>
         </div>
       ) : (
-        <div className="space-y-2">
-          {accounts.map((account) => {
-            const isDebt = account.mainCategory === "debt";
-            const isBill = account.mainCategory === "bill";
-            const billAccount = isBill ? account as any : null;
+        <div className="space-y-6">
+          {MAIN_CATEGORY_ORDER.map((category) => {
+            const categoryAccounts = accounts.filter((a) => a.mainCategory === category);
+            if (categoryAccounts.length === 0) return null;
+
             return (
-              <div
-                key={account.id}
-                className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
-                  account.hidden
-                    ? "bg-gray-800/30 border-gray-700/50 opacity-60"
-                    : "bg-gray-800/50 border-gray-700 hover:border-gray-600"
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center"
-                    style={{ backgroundColor: account.color || MAIN_CATEGORY_COLORS[account.mainCategory] }}
-                  >
-                    <CategoryIcon mainCategory={account.mainCategory} subtype={account.subtype} />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-white">{account.name}</span>
-                      {account.hidden && <EyeOff className="w-4 h-4 text-gray-500" />}
-                      {isBill && (
-                        <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">
-                          Bill
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-sm text-gray-400 flex items-center gap-2">
-                      <span>{MAIN_CATEGORY_LABELS[account.mainCategory]}</span>
-                      {account.institution && <span>• {account.institution}</span>}
-                      {account.mask && <span> • ••••{account.mask}</span>}
-                      {isBill && billAccount?.monthlyAmount && (
-                        <span className="text-blue-300">
-                          • {formatCurrency(billAccount.monthlyAmount)}/mo
-                        </span>
-                      )}
-                      {isBill && billAccount?.dueDate && (
-                        <span className="text-gray-500">
-                          • due {billAccount.dueDate}
-                        </span>
-                      )}
-                      {isDebt && account.creditLimit && (
-                        <span className="text-gray-500">
-                          of {formatCurrency(account.creditLimit)} limit
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
+              <div key={category}>
+                <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                  <CategoryIcon mainCategory={category} />
+                  {MAIN_CATEGORY_LABELS[category]}
+                  <span className="text-sm font-normal text-gray-400">
+                    ({categoryAccounts.filter(a => !a.hidden).length})
+                  </span>
+                </h3>
+                <div className="space-y-2">
+                  {categoryAccounts.map((account) => {
+                    const isDebt = account.mainCategory === "debt";
+                    const isBill = account.mainCategory === "bill";
+                    const billAccount = isBill ? account as any : null;
+                    return (
+                      <div
+                        key={account.id}
+                        className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
+                          account.hidden
+                            ? "bg-gray-800/30 border-gray-700/50 opacity-60"
+                            : "bg-gray-800/50 border-gray-700 hover:border-gray-600"
+                        }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div
+                            className="w-10 h-10 rounded-lg flex items-center justify-center"
+                            style={{ backgroundColor: account.color || MAIN_CATEGORY_COLORS[account.mainCategory] }}
+                          >
+                            <CategoryIcon mainCategory={account.mainCategory} subtype={account.subtype} />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-white">{account.name}</span>
+                              {account.hidden && <EyeOff className="w-4 h-4 text-gray-500" />}
+                              {isBill && (
+                                <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">
+                                  Bill
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-400 flex items-center gap-2">
+                              <span>{MAIN_CATEGORY_LABELS[account.mainCategory]}</span>
+                              {account.institution && <span>• {account.institution}</span>}
+                              {account.mask && <span> • ••••{account.mask}</span>}
+                              {isBill && billAccount?.monthlyAmount && (
+                                <span className="text-blue-300">
+                                  • {formatCurrency(billAccount.monthlyAmount)}/mo
+                                </span>
+                              )}
+                              {isBill && billAccount?.dueDate && (
+                                <span className="text-gray-500">
+                                  • due {billAccount.dueDate}
+                                </span>
+                              )}
+                              {isDebt && account.creditLimit && (
+                                <span className="text-gray-500">
+                                  of {formatCurrency(account.creditLimit)} limit
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
 
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <div
-                      className={`font-semibold ${
-                        isDebt ? "text-red-400" : "text-green-400"
-                      }`}
-                    >
-                      {isDebt ? "-" : ""}
-                      {formatCurrency(account.balance)}
-                    </div>
-                    {isBill && billAccount?.dueDate && (
-                      <div className="text-xs text-gray-500">
-                        Due: {billAccount.dueDate}
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <div
+                              className={`font-semibold ${
+                                isDebt ? "text-red-400" : "text-green-400"
+                              }`}
+                            >
+                              {isDebt ? "-" : ""}
+                              {formatCurrency(account.balance)}
+                            </div>
+                            {isBill && billAccount?.dueDate && (
+                              <div className="text-xs text-gray-500">
+                                Due: {billAccount.dueDate}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleHidden(account.id)}
+                              className="p-2 text-gray-400 hover:text-white transition-colors"
+                              title={account.hidden ? "Show" : "Hide"}
+                            >
+                              {account.hidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleEdit(account)}
+                              className="p-2 text-gray-400 hover:text-blue-400 transition-colors"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(account.id)}
+                              className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => handleToggleHidden(account.id)}
-                      className="p-2 text-gray-400 hover:text-white transition-colors"
-                      title={account.hidden ? "Show" : "Hide"}
-                    >
-                      {account.hidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleEdit(account)}
-                      className="p-2 text-gray-400 hover:text-blue-400 transition-colors"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(account.id)}
-                      className="p-2 text-gray-400 hover:text-red-400 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                    );
+                  })}
                 </div>
               </div>
             );
