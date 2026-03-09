@@ -19,7 +19,7 @@ import {
   getCashAccounts,
   getDebtAccounts,
 } from "@/lib/storage";
-import { DEFAULT_BILL_CATEGORIES } from "@/components/budget/types";
+import { DEFAULT_BILL_CATEGORIES, type BillItem, type DebtItem } from "@/components/budget/types";
 import {
   Plus,
   Trash2,
@@ -46,6 +46,7 @@ import {
   Phone,
   Zap,
   Palette,
+  FileDown,
 } from "lucide-react";
 
 // ============================================================================
@@ -178,6 +179,14 @@ export default function AccountPipe() {
   const [showImportModal, setShowImportModal] = useState(false);
   const [importText, setImportText] = useState("");
   const [importError, setImportError] = useState("");
+
+  // SpendPipe import modal state
+  const [showSpendPipeImport, setShowSpendPipeImport] = useState(false);
+  const [spendPipePreview, setSpendPipePreview] = useState<{
+    bills: BillItem[];
+    debts: DebtItem[];
+  } | null>(null);
+  const [spendPipeSelected, setSpendPipeSelected] = useState<Set<string>>(new Set());
 
   // Load accounts on mount
   useEffect(() => {
@@ -344,6 +353,119 @@ export default function AccountPipe() {
       setImportError("Invalid JSON format");
     }
   }, [importText]);
+
+  // Load SpendPipe data for preview
+  const handleLoadSpendPipePreview = useCallback(() => {
+    try {
+      const saved = localStorage.getItem("gitchpage-budget-data");
+      if (!saved) {
+        setSpendPipePreview(null);
+        return;
+      }
+      const parsed = JSON.parse(saved) as any;
+      if (!parsed.bills || !parsed.debts) {
+        setSpendPipePreview(null);
+        return;
+      }
+      setSpendPipePreview({
+        bills: parsed.bills as BillItem[],
+        debts: parsed.debts as DebtItem[],
+      });
+      // Initially select all
+      const selected = new Set<string>();
+      parsed.bills.forEach((b: BillItem) => selected.add(`bill:${b.id}`));
+      parsed.debts.forEach((d: DebtItem) => selected.add(`debt:${d.id}`));
+      setSpendPipeSelected(selected);
+    } catch {
+      setSpendPipePreview(null);
+    }
+  }, []);
+
+  // Toggle selection for preview item
+  const toggleSpendPipeSelection = (type: 'bill' | 'debt', id: string) => {
+    const key = `${type}:${id}`;
+    setSpendPipeSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  // Execute import of selected items
+  const handleSpendPipeImport = useCallback(() => {
+    if (!spendPipePreview) return;
+
+    const existingNames = new Set(accounts.map(a => a.name.toLowerCase()));
+    let importedCount = 0;
+
+    // Import bills
+    spendPipePreview.bills.forEach((bill) => {
+      const key = `bill:${bill.id}`;
+      if (!spendPipeSelected.has(key)) return;
+      const name = bill.name.trim();
+      if (!name || existingNames.has(name.toLowerCase())) return; // skip
+
+      addAccount({
+        name,
+        mainCategory: 'bill',
+        subtype: bill.category as any,
+        balance: 0,
+        monthlyAmount: bill.monthlyAmount,
+        dueDate: bill.dueBy,
+        isActive: true,
+        showsInBudget: true,
+        color: '#3B82F6',
+        hidden: false,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+      existingNames.add(name.toLowerCase());
+      importedCount++;
+    });
+
+    // Import debts
+    spendPipePreview.debts.forEach((debt) => {
+      const key = `debt:${debt.id}`;
+      if (!spendPipeSelected.has(key)) return;
+      const name = debt.name.trim();
+      if (!name || existingNames.has(name.toLowerCase())) return;
+
+      const subtype = debt.category === 'Credit Card' ? 'credit_card' : 'loan';
+      const base: any = {
+        name,
+        mainCategory: 'debt',
+        subtype,
+        balance: debt.balance || 0,
+        showsInBudget: true,
+        color: subtype === 'credit_card' ? '#EF4444' : '#F59E0B',
+        hidden: false,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      };
+
+      if (subtype === 'credit_card') {
+        base.creditLimit = debt.availableCredit || undefined;
+        base.apr = debt.interestRate || undefined;
+      } else {
+        base.originalAmount = debt.balance || undefined;
+        base.currentBalance = debt.balance || undefined;
+        base.interestRate = debt.interestRate || undefined;
+        // missing loan fields: termMonths, startDate, paymentFrequency, etc.
+      }
+
+      addAccount(base);
+      existingNames.add(name.toLowerCase());
+      importedCount++;
+    });
+
+    // Refresh account list
+    const data = loadAccounts();
+    setAccounts(data.accounts);
+    setShowSpendPipeImport(false);
+    setSpendPipePreview(null);
+    setSpendPipeSelected(new Set());
+  }, [spendPipePreview, spendPipeSelected, accounts]);
 
   const handleMainCategoryChange = (mainCategory: AccountMainCategory) => {
     let defaultSubtype: AccountSubtype = "checking";
@@ -616,38 +738,51 @@ export default function AccountPipe() {
           Add Account
         </button>
 
-        <div className="relative">
-          <button
-            onClick={() => setShowDataMenu(!showDataMenu)}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
-          >
-            <Download className="w-4 h-4" />
-            Data
-          </button>
-          {showDataMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10">
-              <button
-                onClick={() => {
-                  handleExport();
-                  setShowDataMenu(false);
-                }}
-                className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Export JSON
-              </button>
-              <button
-                onClick={() => {
-                  setShowImportModal(true);
-                  setShowDataMenu(false);
-                }}
-                className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center gap-2"
-              >
-                <Upload className="w-4 h-4" />
-                Import JSON
-              </button>
-            </div>
-          )}
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <button
+              onClick={() => setShowDataMenu(!showDataMenu)}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              Data
+            </button>
+            {showDataMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10">
+                <button
+                  onClick={() => {
+                    handleExport();
+                    setShowDataMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  Export JSON
+                </button>
+                <button
+                  onClick={() => {
+                    setShowImportModal(true);
+                    setShowDataMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <Upload className="w-4 h-4" />
+                  Import JSON
+                </button>
+                <button
+                  onClick={() => {
+                    setShowSpendPipeImport(true);
+                    handleLoadSpendPipePreview();
+                    setShowDataMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <FileDown className="w-4 h-4" />
+                  Import from SpendPipe
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -914,6 +1049,119 @@ export default function AccountPipe() {
                 Import
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* SpendPipe Import Modal */}
+      {showSpendPipeImport && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl border border-gray-700 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold text-white mb-4">Import from SpendPipe</h2>
+            <p className="text-gray-400 text-sm mb-4">
+              Migrate your existing bills and debts from the Budget tool into AccountPipe. Select which items to import.
+            </p>
+
+            {!spendPipePreview ? (
+              <div className="text-center py-8 text-gray-400">
+                <p>No SpendPipe data found or failed to load.</p>
+                <p className="text-sm mt-2">Make sure you have used the Budget tool at least once.</p>
+              </div>
+            ) : (
+              <>
+                {/* Bills Section */}
+                {spendPipePreview.bills.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-white mb-3">Bills</h3>
+                    <div className="space-y-2">
+                      {spendPipePreview.bills.map((bill) => {
+                        const key = `bill:${bill.id}`;
+                        const selected = spendPipeSelected.has(key);
+                        return (
+                          <label
+                            key={bill.id}
+                            className={`flex items-center gap-3 p-3 rounded-lg border ${
+                              selected ? "bg-blue-900/30 border-blue-600" : "bg-gray-700 border-gray-600"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selected}
+                              onChange={() => toggleSpendPipeSelection('bill', bill.id)}
+                              className="w-4 h-4 rounded"
+                            />
+                            <div className="flex-1">
+                              <div className="font-medium text-white">{bill.name}</div>
+                              <div className="text-sm text-gray-400">
+                                {bill.category} • ${bill.monthlyAmount}/mo • Due: {bill.dueBy}
+                              </div>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Debts Section */}
+                {spendPipePreview.debts.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-white mb-3">Debts</h3>
+                    <div className="space-y-2">
+                      {spendPipePreview.debts.map((debt) => {
+                        const key = `debt:${debt.id}`;
+                        const selected = spendPipeSelected.has(key);
+                        return (
+                          <label
+                            key={debt.id}
+                            className={`flex items-center gap-3 p-3 rounded-lg border ${
+                              selected ? "bg-blue-900/30 border-blue-600" : "bg-gray-700 border-gray-600"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selected}
+                              onChange={() => toggleSpendPipeSelection('debt', debt.id)}
+                              className="w-4 h-4 rounded"
+                            />
+                            <div className="flex-1">
+                              <div className="font-medium text-white">{debt.name}</div>
+                              <div className="text-sm text-gray-400">
+                                {debt.category} • Balance: ${debt.balance?.toLocaleString() || 'N/A'}
+                                {debt.interestRate && ` • APR: ${debt.interestRate}%`}
+                                {debt.availableCredit && ` • Limit: $${debt.availableCredit.toLocaleString()}`}
+                              </div>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowSpendPipeImport(false);
+                      setSpendPipePreview(null);
+                      setSpendPipeSelected(new Set());
+                    }}
+                    className="px-4 py-2 text-gray-300 hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSpendPipeImport}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2"
+                  >
+                    <Check className="w-4 h-4" />
+                    Import Selected
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
