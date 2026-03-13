@@ -17,9 +17,16 @@ import {
   DEBT_SUBTYPE_LABELS,
   getBillAccounts,
   getCashAccounts,
-  getDebtAccounts,
+  CashSubtype,
+  DebtSubtype,
+  BillSubtype,
+  InvestmentSubtype,
 } from "@/lib/storage";
-import { DEFAULT_BILL_CATEGORIES, type BillItem, type DebtItem } from "@/components/budget/types";
+import {
+  DEFAULT_BILL_CATEGORIES,
+  type BillItem,
+  type DebtItem,
+} from "@/components/budget/types";
 import { formatCurrency } from "@/lib/format-financial";
 import {
   Plus,
@@ -68,12 +75,12 @@ interface EditingAccount {
   rewardsType?: string;
 
   // Loan specific
-  loanType?: 'personal' | 'student' | 'auto' | 'mortgage' | 'other';
+  loanType?: "personal" | "student" | "auto" | "mortgage" | "other";
   originalAmount?: string;
   interestRate?: string;
   termMonths?: string;
   startDate?: string;
-  paymentFrequency?: 'monthly' | 'biweekly' | 'weekly';
+  paymentFrequency?: "monthly" | "biweekly" | "weekly";
   firstPaymentDate?: string;
   servicer?: string;
 
@@ -137,9 +144,13 @@ const CategoryIcon = ({
     case "cash":
       return <Building2 className="w-5 h-5" />;
     case "debt":
-      return subtype === "loan" ? <TrendingUp className="w-5 h-5" /> : <CreditCard className="w-5 h-5" />;
+      return subtype === "loan" ? (
+        <TrendingUp className="w-5 h-5" />
+      ) : (
+        <CreditCard className="w-5 h-5" />
+      );
     case "bill":
-      return <FileText className="w-5 h-5" />;
+      return <BillCategoryIcon category={subtype || "Other"} />;
     case "investment":
       return <TrendingUp className="w-5 h-5" />;
     default:
@@ -187,7 +198,9 @@ export default function AccountPipe() {
     bills: BillItem[];
     debts: DebtItem[];
   } | null>(null);
-  const [spendPipeSelected, setSpendPipeSelected] = useState<Set<string>>(new Set());
+  const [spendPipeSelected, setSpendPipeSelected] = useState<Set<string>>(
+    new Set(),
+  );
 
   // Load accounts on mount
   useEffect(() => {
@@ -198,7 +211,10 @@ export default function AccountPipe() {
 
   // Compute totals
   const totalAssets = accounts
-    .filter((a) => !a.hidden && a.mainCategory !== "debt")
+    .filter(
+      (a) =>
+        !a.hidden && a.mainCategory !== "debt" && a.mainCategory !== "bill",
+    )
     .reduce((sum, a) => sum + (a.balance || 0), 0);
 
   const totalLiabilities = accounts
@@ -208,7 +224,13 @@ export default function AccountPipe() {
   const totalBalance = totalAssets - totalLiabilities;
 
   // Main category order
-  const MAIN_CATEGORY_ORDER: AccountMainCategory[] = ['cash', 'debt', 'bill', 'investment', 'other'];
+  const MAIN_CATEGORY_ORDER: AccountMainCategory[] = [
+    "cash",
+    "debt",
+    "bill",
+    "investment",
+    "other",
+  ];
   const handleAddNew = useCallback(() => {
     setEditing({
       ...DEFAULT_EDITING,
@@ -273,23 +295,47 @@ export default function AccountPipe() {
 
     // Add type-specific fields
     if (editing.mainCategory === "debt" && editing.subtype === "credit_card") {
-      baseAccount.creditLimit = editing.creditLimit ? parseFloat(editing.creditLimit) : undefined;
+      baseAccount.creditLimit = editing.creditLimit
+        ? parseFloat(editing.creditLimit)
+        : undefined;
       baseAccount.apr = editing.apr ? parseFloat(editing.apr) : undefined;
-      baseAccount.annualFee = editing.annualFee ? parseFloat(editing.annualFee) : undefined;
+      baseAccount.annualFee = editing.annualFee
+        ? parseFloat(editing.annualFee)
+        : undefined;
       baseAccount.rewardsType = editing.rewardsType || undefined;
+      baseAccount.dueDate = editing.dueDate
+        ? parseInt(editing.dueDate)
+        : undefined;
     } else if (editing.mainCategory === "debt" && editing.subtype === "loan") {
       baseAccount.loanType = editing.loanType;
-      baseAccount.originalAmount = editing.originalAmount ? parseFloat(editing.originalAmount) : undefined;
+      baseAccount.originalAmount = editing.originalAmount
+        ? parseFloat(editing.originalAmount)
+        : undefined;
       baseAccount.currentBalance = balance; // sync
-      baseAccount.interestRate = editing.interestRate ? parseFloat(editing.interestRate) : undefined;
-      baseAccount.termMonths = editing.termMonths ? parseInt(editing.termMonths) : undefined;
-      baseAccount.startDate = editing.startDate ? parseInt(editing.startDate) : undefined;
+      baseAccount.interestRate = editing.interestRate
+        ? parseFloat(editing.interestRate)
+        : undefined;
+      baseAccount.termMonths = editing.termMonths
+        ? parseInt(editing.termMonths)
+        : undefined;
+      baseAccount.startDate = editing.startDate
+        ? parseInt(editing.startDate)
+        : undefined;
       baseAccount.paymentFrequency = editing.paymentFrequency;
-      baseAccount.firstPaymentDate = editing.firstPaymentDate ? parseInt(editing.firstPaymentDate) : undefined;
+      baseAccount.firstPaymentDate = editing.firstPaymentDate
+        ? parseInt(editing.firstPaymentDate)
+        : undefined;
       baseAccount.servicer = editing.servicer || undefined;
+      baseAccount.dueDate = editing.dueDate
+        ? parseInt(editing.dueDate)
+        : undefined;
     } else if (editing.mainCategory === "bill") {
-      baseAccount.monthlyAmount = editing.monthlyAmount ? parseFloat(editing.monthlyAmount) : undefined;
-      baseAccount.dueDate = editing.dueDate ? parseInt(editing.dueDate) : undefined;
+      baseAccount.monthlyAmount = editing.monthlyAmount
+        ? parseFloat(editing.monthlyAmount)
+        : undefined;
+      baseAccount.dueDate = editing.dueDate
+        ? parseInt(editing.dueDate)
+        : undefined;
       baseAccount.isActive = editing.isActive;
     }
 
@@ -298,7 +344,9 @@ export default function AccountPipe() {
       updateAccount(editing.id, baseAccount);
     } else {
       // Add new
-      addAccount(baseAccount as Omit<Account, "id" | "createdAt" | "updatedAt">);
+      addAccount(
+        baseAccount as Omit<Account, "id" | "createdAt" | "updatedAt">,
+      );
     }
 
     // Reload accounts
@@ -316,14 +364,17 @@ export default function AccountPipe() {
     }
   }, []);
 
-  const handleToggleHidden = useCallback((id: string) => {
-    const account = accounts.find((a) => a.id === id);
-    if (account) {
-      updateAccount(id, { hidden: !account.hidden });
-      const data = loadAccounts();
-      setAccounts(data.accounts);
-    }
-  }, [accounts]);
+  const handleToggleHidden = useCallback(
+    (id: string) => {
+      const account = accounts.find((a) => a.id === id);
+      if (account) {
+        updateAccount(id, { hidden: !account.hidden });
+        const data = loadAccounts();
+        setAccounts(data.accounts);
+      }
+    },
+    [accounts],
+  );
 
   const handleExport = useCallback(() => {
     const data = loadAccounts();
@@ -383,7 +434,7 @@ export default function AccountPipe() {
   }, []);
 
   // Toggle selection for preview item
-  const toggleSpendPipeSelection = (type: 'bill' | 'debt', id: string) => {
+  const toggleSpendPipeSelection = (type: "bill" | "debt", id: string) => {
     const key = `${type}:${id}`;
     setSpendPipeSelected((prev) => {
       const next = new Set(prev);
@@ -397,7 +448,7 @@ export default function AccountPipe() {
   const handleSpendPipeImport = useCallback(() => {
     if (!spendPipePreview) return;
 
-    const existingNames = new Set(accounts.map(a => a.name.toLowerCase()));
+    const existingNames = new Set(accounts.map((a) => a.name.toLowerCase()));
     let importedCount = 0;
 
     // Import bills
@@ -409,17 +460,15 @@ export default function AccountPipe() {
 
       addAccount({
         name,
-        mainCategory: 'bill',
+        mainCategory: "bill",
         subtype: bill.category as any,
         balance: 0,
         monthlyAmount: bill.monthlyAmount,
-        dueDate: bill.dueBy,
+        dueDate: bill.dueBy ?? undefined,
         isActive: true,
         showsInBudget: true,
-        color: '#3B82F6',
+        color: "#3B82F6",
         hidden: false,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
       });
       existingNames.add(name.toLowerCase());
       importedCount++;
@@ -432,20 +481,18 @@ export default function AccountPipe() {
       const name = debt.name.trim();
       if (!name || existingNames.has(name.toLowerCase())) return;
 
-      const subtype = debt.category === 'Credit Card' ? 'credit_card' : 'loan';
+      const subtype = debt.category === "Credit Card" ? "credit_card" : "loan";
       const base: any = {
         name,
-        mainCategory: 'debt',
+        mainCategory: "debt",
         subtype,
         balance: debt.balance || 0,
         showsInBudget: true,
-        color: subtype === 'credit_card' ? '#EF4444' : '#F59E0B',
+        color: subtype === "credit_card" ? "#EF4444" : "#F59E0B",
         hidden: false,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
       };
 
-      if (subtype === 'credit_card') {
+      if (subtype === "credit_card") {
         base.creditLimit = debt.availableCredit || undefined;
         base.apr = debt.interestRate || undefined;
       } else {
@@ -471,7 +518,8 @@ export default function AccountPipe() {
   const handleMainCategoryChange = (mainCategory: AccountMainCategory) => {
     let defaultSubtype: AccountSubtype = "checking";
     if (mainCategory === "debt") defaultSubtype = "credit_card";
-    else if (mainCategory === "bill") defaultSubtype = DEFAULT_BILL_CATEGORIES[0];
+    else if (mainCategory === "bill")
+      defaultSubtype = DEFAULT_BILL_CATEGORIES[0];
     else if (mainCategory === "investment") defaultSubtype = "investment";
     else if (mainCategory === "other") defaultSubtype = "other";
 
@@ -495,12 +543,16 @@ export default function AccountPipe() {
       return (
         <>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Credit Limit *</label>
+            <label className="block text-sm text-gray-400 mb-1">
+              Credit Limit *
+            </label>
             <input
               type="number"
               step="0.01"
               value={editing.creditLimit}
-              onChange={(e) => setEditing((p) => ({ ...p, creditLimit: e.target.value }))}
+              onChange={(e) =>
+                setEditing((p) => ({ ...p, creditLimit: e.target.value }))
+              }
               placeholder="0.00"
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
@@ -511,33 +563,59 @@ export default function AccountPipe() {
               type="number"
               step="0.01"
               value={editing.apr}
-              onChange={(e) => setEditing((p) => ({ ...p, apr: e.target.value }))}
+              onChange={(e) =>
+                setEditing((p) => ({ ...p, apr: e.target.value }))
+              }
               placeholder="e.g., 19.99"
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Annual Fee</label>
+              <label className="block text-sm text-gray-400 mb-1">
+                Annual Fee
+              </label>
               <input
                 type="number"
                 step="0.01"
                 value={editing.annualFee}
-                onChange={(e) => setEditing((p) => ({ ...p, annualFee: e.target.value }))}
+                onChange={(e) =>
+                  setEditing((p) => ({ ...p, annualFee: e.target.value }))
+                }
                 placeholder="0.00"
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Rewards Type</label>
+              <label className="block text-sm text-gray-400 mb-1">
+                Rewards Type
+              </label>
               <input
                 type="text"
                 value={editing.rewardsType}
-                onChange={(e) => setEditing((p) => ({ ...p, rewardsType: e.target.value }))}
+                onChange={(e) =>
+                  setEditing((p) => ({ ...p, rewardsType: e.target.value }))
+                }
                 placeholder="e.g., cashback, points"
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
               />
             </div>
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">
+              Due Date (1-31)
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="31"
+              value={editing.dueDate}
+              onChange={(e) =>
+                setEditing((p) => ({ ...p, dueDate: e.target.value }))
+              }
+              placeholder="e.g., 15"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+            />
           </div>
         </>
       );
@@ -548,10 +626,14 @@ export default function AccountPipe() {
         <>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Loan Type</label>
+              <label className="block text-sm text-gray-400 mb-1">
+                Loan Type
+              </label>
               <select
                 value={editing.loanType}
-                onChange={(e) => setEditing((p) => ({ ...p, loanType: e.target.value as any }))}
+                onChange={(e) =>
+                  setEditing((p) => ({ ...p, loanType: e.target.value as any }))
+                }
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
               >
                 <option value="personal">Personal</option>
@@ -562,10 +644,17 @@ export default function AccountPipe() {
               </select>
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Payment Frequency</label>
+              <label className="block text-sm text-gray-400 mb-1">
+                Payment Frequency
+              </label>
               <select
                 value={editing.paymentFrequency}
-                onChange={(e) => setEditing((p) => ({ ...p, paymentFrequency: e.target.value as any }))}
+                onChange={(e) =>
+                  setEditing((p) => ({
+                    ...p,
+                    paymentFrequency: e.target.value as any,
+                  }))
+                }
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
               >
                 <option value="monthly">Monthly</option>
@@ -576,24 +665,32 @@ export default function AccountPipe() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Original Amount</label>
+            <label className="block text-sm text-gray-400 mb-1">
+              Original Amount
+            </label>
             <input
               type="number"
               step="0.01"
               value={editing.originalAmount}
-              onChange={(e) => setEditing((p) => ({ ...p, originalAmount: e.target.value }))}
+              onChange={(e) =>
+                setEditing((p) => ({ ...p, originalAmount: e.target.value }))
+              }
               placeholder="0.00"
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Interest Rate (APR %)</label>
+            <label className="block text-sm text-gray-400 mb-1">
+              Interest Rate (APR %)
+            </label>
             <input
               type="number"
               step="0.01"
               value={editing.interestRate}
-              onChange={(e) => setEditing((p) => ({ ...p, interestRate: e.target.value }))}
+              onChange={(e) =>
+                setEditing((p) => ({ ...p, interestRate: e.target.value }))
+              }
               placeholder="e.g., 5.5"
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
@@ -601,43 +698,97 @@ export default function AccountPipe() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Term (months)</label>
+              <label className="block text-sm text-gray-400 mb-1">
+                Term (months)
+              </label>
               <input
                 type="number"
                 value={editing.termMonths}
-                onChange={(e) => setEditing((p) => ({ ...p, termMonths: e.target.value }))}
+                onChange={(e) =>
+                  setEditing((p) => ({ ...p, termMonths: e.target.value }))
+                }
                 placeholder="e.g., 360"
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Start Date</label>
+              <label className="block text-sm text-gray-400 mb-1">
+                Start Date
+              </label>
               <input
                 type="date"
-                value={editing.startDate ? new Date(parseInt(editing.startDate)).toISOString().split('T')[0] : ''}
-                onChange={(e) => setEditing((p) => ({ ...p, startDate: e.target.value ? new Date(e.target.value).getTime().toString() : '' }))}
+                value={
+                  editing.startDate
+                    ? new Date(parseInt(editing.startDate))
+                        .toISOString()
+                        .split("T")[0]
+                    : ""
+                }
+                onChange={(e) =>
+                  setEditing((p) => ({
+                    ...p,
+                    startDate: e.target.value
+                      ? new Date(e.target.value).getTime().toString()
+                      : "",
+                  }))
+                }
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">First Payment Date (optional)</label>
+            <label className="block text-sm text-gray-400 mb-1">
+              First Payment Date (optional)
+            </label>
             <input
               type="date"
-              value={editing.firstPaymentDate ? new Date(parseInt(editing.firstPaymentDate)).toISOString().split('T')[0] : ''}
-              onChange={(e) => setEditing((p) => ({ ...p, firstPaymentDate: e.target.value ? new Date(e.target.value).getTime().toString() : '' }))}
+              value={
+                editing.firstPaymentDate
+                  ? new Date(parseInt(editing.firstPaymentDate))
+                      .toISOString()
+                      .split("T")[0]
+                  : ""
+              }
+              onChange={(e) =>
+                setEditing((p) => ({
+                  ...p,
+                  firstPaymentDate: e.target.value
+                    ? new Date(e.target.value).getTime().toString()
+                    : "",
+                }))
+              }
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Servicer (optional)</label>
+            <label className="block text-sm text-gray-400 mb-1">
+              Servicer (optional)
+            </label>
             <input
               type="text"
               value={editing.servicer}
-              onChange={(e) => setEditing((p) => ({ ...p, servicer: e.target.value }))}
+              onChange={(e) =>
+                setEditing((p) => ({ ...p, servicer: e.target.value }))
+              }
               placeholder="e.g., Sallie Mae"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">
+              Due Date (1-31)
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="31"
+              value={editing.dueDate}
+              onChange={(e) =>
+                setEditing((p) => ({ ...p, dueDate: e.target.value }))
+              }
+              placeholder="e.g., 15"
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -649,24 +800,32 @@ export default function AccountPipe() {
       return (
         <>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Monthly Amount *</label>
+            <label className="block text-sm text-gray-400 mb-1">
+              Monthly Amount *
+            </label>
             <input
               type="number"
               step="0.01"
               value={editing.monthlyAmount}
-              onChange={(e) => setEditing((p) => ({ ...p, monthlyAmount: e.target.value }))}
+              onChange={(e) =>
+                setEditing((p) => ({ ...p, monthlyAmount: e.target.value }))
+              }
               placeholder="0.00"
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Due Date *</label>
+            <label className="block text-sm text-gray-400 mb-1">
+              Due Date *
+            </label>
             <input
               type="number"
               min="1"
               max="31"
               value={editing.dueDate}
-              onChange={(e) => setEditing((p) => ({ ...p, dueDate: e.target.value }))}
+              onChange={(e) =>
+                setEditing((p) => ({ ...p, dueDate: e.target.value }))
+              }
               placeholder="1-31"
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
@@ -675,7 +834,9 @@ export default function AccountPipe() {
             <input
               type="checkbox"
               checked={editing.isActive}
-              onChange={(e) => setEditing((p) => ({ ...p, isActive: e.target.checked }))}
+              onChange={(e) =>
+                setEditing((p) => ({ ...p, isActive: e.target.checked }))
+              }
               className="w-4 h-4 rounded bg-gray-700 border-gray-600"
             />
             <span className="text-gray-300">Active (shows in budget)</span>
@@ -797,11 +958,15 @@ export default function AccountPipe() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Account Name *</label>
+                <label className="block text-sm text-gray-400 mb-1">
+                  Account Name *
+                </label>
                 <input
                   type="text"
                   value={editing.name}
-                  onChange={(e) => setEditing((p) => ({ ...p, name: e.target.value }))}
+                  onChange={(e) =>
+                    setEditing((p) => ({ ...p, name: e.target.value }))
+                  }
                   placeholder="e.g., Main Checking"
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                 />
@@ -809,7 +974,9 @@ export default function AccountPipe() {
 
               {/* Main Category Selection */}
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Category</label>
+                <label className="block text-sm text-gray-400 mb-1">
+                  Category
+                </label>
                 <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
                   {MAIN_CATEGORY_ORDER.map((cat) => (
                     <button
@@ -822,7 +989,10 @@ export default function AccountPipe() {
                           : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                       }`}
                     >
-                      <CategoryIcon mainCategory={cat} subtype={editing.subtype} />
+                      <CategoryIcon
+                        mainCategory={cat}
+                        subtype={editing.subtype}
+                      />
                       {MAIN_CATEGORY_LABELS[cat]}
                     </button>
                   ))}
@@ -832,9 +1002,13 @@ export default function AccountPipe() {
               {/* Subtype Selection */}
               {editing.mainCategory === "cash" && (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Account Type</label>
+                  <label className="block text-sm text-gray-400 mb-1">
+                    Account Type
+                  </label>
                   <div className="flex gap-2 flex-wrap">
-                    {(["checking", "savings", "cash_wallet"] as CashSubtype[]).map((sub) => (
+                    {(
+                      ["checking", "savings", "cash_wallet"] as CashSubtype[]
+                    ).map((sub) => (
                       <button
                         key={sub}
                         type="button"
@@ -854,7 +1028,9 @@ export default function AccountPipe() {
 
               {editing.mainCategory === "debt" && (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Debt Type</label>
+                  <label className="block text-sm text-gray-400 mb-1">
+                    Debt Type
+                  </label>
                   <div className="flex gap-2">
                     {(["credit_card", "loan"] as DebtSubtype[]).map((sub) => (
                       <button
@@ -876,10 +1052,14 @@ export default function AccountPipe() {
 
               {editing.mainCategory === "bill" && (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Bill Category</label>
+                  <label className="block text-sm text-gray-400 mb-1">
+                    Bill Category
+                  </label>
                   <select
                     value={editing.subtype as BillSubtype}
-                    onChange={(e) => handleSubtypeChange(e.target.value as BillSubtype)}
+                    onChange={(e) =>
+                      handleSubtypeChange(e.target.value as BillSubtype)
+                    }
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
                   >
                     {DEFAULT_BILL_CATEGORIES.map((cat) => (
@@ -893,10 +1073,14 @@ export default function AccountPipe() {
 
               {editing.mainCategory === "investment" && (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Investment Type</label>
+                  <label className="block text-sm text-gray-400 mb-1">
+                    Investment Type
+                  </label>
                   <select
                     value={String(editing.subtype || "investment")}
-                    onChange={(e) => handleSubtypeChange(e.target.value as InvestmentSubtype)}
+                    onChange={(e) =>
+                      handleSubtypeChange(e.target.value as InvestmentSubtype)
+                    }
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
                   >
                     <option value="stock">Stock</option>
@@ -907,41 +1091,58 @@ export default function AccountPipe() {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm text-gray-400 mb-1">Balance</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={editing.balance}
-                    onChange={(e) => setEditing((p) => ({ ...p, balance: e.target.value }))}
-                    placeholder="0.00"
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                  />
+              {editing.mainCategory !== "bill" && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">
+                      Balance
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editing.balance}
+                      onChange={(e) =>
+                        setEditing((p) => ({ ...p, balance: e.target.value }))
+                      }
+                      placeholder="0.00"
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Type-specific fields */}
               {renderTypeSpecificFields()}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Institution</label>
+                  <label className="block text-sm text-gray-400 mb-1">
+                    Institution
+                  </label>
                   <input
                     type="text"
                     value={editing.institution}
-                    onChange={(e) => setEditing((p) => ({ ...p, institution: e.target.value }))}
+                    onChange={(e) =>
+                      setEditing((p) => ({ ...p, institution: e.target.value }))
+                    }
                     placeholder="e.g., Chase Bank"
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Last 4 Digits</label>
+                  <label className="block text-sm text-gray-400 mb-1">
+                    Last 4 Digits
+                  </label>
                   <input
                     type="text"
                     maxLength={4}
                     value={editing.mask}
-                    onChange={(e) => setEditing((p) => ({ ...p, mask: e.target.value.replace(/\D/g, "") }))}
+                    onChange={(e) =>
+                      setEditing((p) => ({
+                        ...p,
+                        mask: e.target.value.replace(/\D/g, ""),
+                      }))
+                    }
                     placeholder="1234"
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                   />
@@ -949,7 +1150,9 @@ export default function AccountPipe() {
               </div>
 
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Color</label>
+                <label className="block text-sm text-gray-400 mb-1">
+                  Color
+                </label>
                 <div className="flex gap-2 flex-wrap">
                   {Object.values(MAIN_CATEGORY_COLORS)
                     .filter((color, idx, arr) => arr.indexOf(color) === idx) // unique
@@ -959,7 +1162,9 @@ export default function AccountPipe() {
                         type="button"
                         onClick={() => setEditing((p) => ({ ...p, color }))}
                         className={`w-8 h-8 rounded-full transition-transform ${
-                          editing.color === color ? "ring-2 ring-white ring-offset-2 ring-offset-gray-800 scale-110" : ""
+                          editing.color === color
+                            ? "ring-2 ring-white ring-offset-2 ring-offset-gray-800 scale-110"
+                            : ""
                         }`}
                         style={{ backgroundColor: color }}
                       />
@@ -967,12 +1172,18 @@ export default function AccountPipe() {
                 </div>
               </div>
 
-              {(editing.mainCategory === 'cash' || editing.mainCategory === 'debt') && (
+              {(editing.mainCategory === "cash" ||
+                editing.mainCategory === "debt") && (
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={editing.showsInBudget}
-                    onChange={(e) => setEditing((p) => ({ ...p, showsInBudget: e.target.checked }))}
+                    onChange={(e) =>
+                      setEditing((p) => ({
+                        ...p,
+                        showsInBudget: e.target.checked,
+                      }))
+                    }
                     className="w-4 h-4 rounded bg-gray-700 border-gray-600"
                   />
                   <span className="text-gray-300">Shows in budget</span>
@@ -983,7 +1194,9 @@ export default function AccountPipe() {
                 <input
                   type="checkbox"
                   checked={editing.hidden}
-                  onChange={(e) => setEditing((p) => ({ ...p, hidden: e.target.checked }))}
+                  onChange={(e) =>
+                    setEditing((p) => ({ ...p, hidden: e.target.checked }))
+                  }
                   className="w-4 h-4 rounded bg-gray-700 border-gray-600"
                 />
                 <span className="text-gray-300">Hidden from dashboards</span>
@@ -1018,9 +1231,12 @@ export default function AccountPipe() {
       {showImportModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-700">
-            <h2 className="text-xl font-bold text-white mb-4">Import Accounts</h2>
+            <h2 className="text-xl font-bold text-white mb-4">
+              Import Accounts
+            </h2>
             <p className="text-gray-400 text-sm mb-4">
-              Paste the exported JSON data below. This will replace all existing accounts.
+              Paste the exported JSON data below. This will replace all existing
+              accounts.
             </p>
             <textarea
               value={importText}
@@ -1028,7 +1244,9 @@ export default function AccountPipe() {
               placeholder='{"accounts": [...], "version": 2}'
               className="w-full h-48 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 font-mono text-sm focus:outline-none focus:border-blue-500 resize-none"
             />
-            {importError && <p className="text-red-400 text-sm mt-2">{importError}</p>}
+            {importError && (
+              <p className="text-red-400 text-sm mt-2">{importError}</p>
+            )}
             <div className="flex justify-end gap-2 mt-4">
               <button
                 type="button"
@@ -1058,22 +1276,29 @@ export default function AccountPipe() {
       {showSpendPipeImport && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl border border-gray-700 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold text-white mb-4">Import from SpendPipe</h2>
+            <h2 className="text-xl font-bold text-white mb-4">
+              Import from SpendPipe
+            </h2>
             <p className="text-gray-400 text-sm mb-4">
-              Migrate your existing bills and debts from the Budget tool into AccountPipe. Select which items to import.
+              Migrate your existing bills and debts from the Budget tool into
+              AccountPipe. Select which items to import.
             </p>
 
             {!spendPipePreview ? (
               <div className="text-center py-8 text-gray-400">
                 <p>No SpendPipe data found or failed to load.</p>
-                <p className="text-sm mt-2">Make sure you have used the Budget tool at least once.</p>
+                <p className="text-sm mt-2">
+                  Make sure you have used the Budget tool at least once.
+                </p>
               </div>
             ) : (
               <>
                 {/* Bills Section */}
                 {spendPipePreview.bills.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-white mb-3">Bills</h3>
+                    <h3 className="text-lg font-semibold text-white mb-3">
+                      Bills
+                    </h3>
                     <div className="space-y-2">
                       {spendPipePreview.bills.map((bill) => {
                         const key = `bill:${bill.id}`;
@@ -1082,19 +1307,25 @@ export default function AccountPipe() {
                           <label
                             key={bill.id}
                             className={`flex items-center gap-3 p-3 rounded-lg border ${
-                              selected ? "bg-blue-900/30 border-blue-600" : "bg-gray-700 border-gray-600"
+                              selected
+                                ? "bg-blue-900/30 border-blue-600"
+                                : "bg-gray-700 border-gray-600"
                             }`}
                           >
                             <input
                               type="checkbox"
                               checked={selected}
-                              onChange={() => toggleSpendPipeSelection('bill', bill.id)}
+                              onChange={() =>
+                                toggleSpendPipeSelection("bill", bill.id)
+                              }
                               className="w-4 h-4 rounded"
                             />
                             <div className="flex-1">
-                              <div className="font-medium text-white">{bill.name}</div>
+                              <div className="font-medium text-white">
+                                {bill.name}
+                              </div>
                               <div className="text-sm text-gray-400">
-                                {bill.category} • {formatCurrency(bill.monthlyAmount)}/mo • Due: {bill.dueBy}
+                                {bill.category}
                               </div>
                             </div>
                           </label>
@@ -1107,7 +1338,9 @@ export default function AccountPipe() {
                 {/* Debts Section */}
                 {spendPipePreview.debts.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-white mb-3">Debts</h3>
+                    <h3 className="text-lg font-semibold text-white mb-3">
+                      Debts
+                    </h3>
                     <div className="space-y-2">
                       {spendPipePreview.debts.map((debt) => {
                         const key = `debt:${debt.id}`;
@@ -1116,21 +1349,32 @@ export default function AccountPipe() {
                           <label
                             key={debt.id}
                             className={`flex items-center gap-3 p-3 rounded-lg border ${
-                              selected ? "bg-blue-900/30 border-blue-600" : "bg-gray-700 border-gray-600"
+                              selected
+                                ? "bg-blue-900/30 border-blue-600"
+                                : "bg-gray-700 border-gray-600"
                             }`}
                           >
                             <input
                               type="checkbox"
                               checked={selected}
-                              onChange={() => toggleSpendPipeSelection('debt', debt.id)}
+                              onChange={() =>
+                                toggleSpendPipeSelection("debt", debt.id)
+                              }
                               className="w-4 h-4 rounded"
                             />
                             <div className="flex-1">
-                              <div className="font-medium text-white">{debt.name}</div>
+                              <div className="font-medium text-white">
+                                {debt.name}
+                              </div>
                               <div className="text-sm text-gray-400">
-                                {debt.category} • Balance: {debt.balance ? formatCurrency(debt.balance) : 'N/A'}
-                                {debt.interestRate && ` • APR: ${debt.interestRate}%`}
-                                {debt.availableCredit && ` • Limit: ${formatCurrency(debt.availableCredit)}`}
+                                {debt.category} • Balance:{" "}
+                                {debt.balance
+                                  ? formatCurrency(debt.balance)
+                                  : "N/A"}
+                                {debt.interestRate &&
+                                  ` • APR: ${debt.interestRate}%`}
+                                {debt.availableCredit &&
+                                  ` • Limit: ${formatCurrency(debt.availableCredit)}`}
                               </div>
                             </div>
                           </label>
@@ -1177,7 +1421,9 @@ export default function AccountPipe() {
       ) : (
         <div className="space-y-6">
           {MAIN_CATEGORY_ORDER.map((category) => {
-            const categoryAccounts = accounts.filter((a) => a.mainCategory === category);
+            const categoryAccounts = accounts.filter(
+              (a) => a.mainCategory === category,
+            );
             if (categoryAccounts.length === 0) return null;
 
             return (
@@ -1186,14 +1432,14 @@ export default function AccountPipe() {
                   <CategoryIcon mainCategory={category} />
                   {MAIN_CATEGORY_LABELS[category]}
                   <span className="text-sm font-normal text-gray-400">
-                    ({categoryAccounts.filter(a => !a.hidden).length})
+                    ({categoryAccounts.filter((a) => !a.hidden).length})
                   </span>
                 </h3>
                 <div className="space-y-2">
                   {categoryAccounts.map((account) => {
                     const isDebt = account.mainCategory === "debt";
                     const isBill = account.mainCategory === "bill";
-                    const billAccount = isBill ? account as any : null;
+                    const billAccount = isBill ? (account as any) : null;
                     return (
                       <div
                         key={account.id}
@@ -1206,33 +1452,35 @@ export default function AccountPipe() {
                         <div className="flex items-center gap-4">
                           <div
                             className="w-10 h-10 rounded-lg flex items-center justify-center"
-                            style={{ backgroundColor: account.color || MAIN_CATEGORY_COLORS[account.mainCategory] }}
+                            style={{
+                              backgroundColor:
+                                account.color ||
+                                MAIN_CATEGORY_COLORS[account.mainCategory],
+                            }}
                           >
-                            <CategoryIcon mainCategory={account.mainCategory} subtype={account.subtype} />
+                            <CategoryIcon
+                              mainCategory={account.mainCategory}
+                              subtype={account.subtype}
+                            />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-medium text-white">{account.name}</span>
-                              {account.hidden && <EyeOff className="w-4 h-4 text-gray-500" />}
-                              {isBill && (
-                                <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">
-                                  Bill
-                                </span>
+                              <span className="font-medium text-white">
+                                {account.name}
+                              </span>
+                              {account.hidden && (
+                                <EyeOff className="w-4 h-4 text-gray-500" />
                               )}
                             </div>
                             <div className="text-sm text-gray-400 flex items-center gap-2">
-                              <span>{MAIN_CATEGORY_LABELS[account.mainCategory]}</span>
-                              {account.institution && <span>• {account.institution}</span>}
-                              {account.mask && <span> • ••••{account.mask}</span>}
-                              {isBill && billAccount?.monthlyAmount && (
-                                <span className="text-blue-300">
-                                  • {formatCurrency(billAccount.monthlyAmount)}/mo
-                                </span>
+                              <span className="capitalize">
+                                {account.subtype.replace(/_/g, " ")}
+                              </span>
+                              {account.institution && (
+                                <span>• {account.institution}</span>
                               )}
-                              {isBill && billAccount?.dueDate && (
-                                <span className="text-gray-500">
-                                  • due {billAccount.dueDate}
-                                </span>
+                              {account.mask && (
+                                <span> • ••••{account.mask}</span>
                               )}
                               {isDebt && account.creditLimit && (
                                 <span className="text-gray-500">
@@ -1244,19 +1492,37 @@ export default function AccountPipe() {
                         </div>
 
                         <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <div
-                              className={`font-semibold ${
-                                isDebt ? "text-red-400" : "text-green-400"
-                              }`}
-                            >
-                              {isDebt ? "-" : ""}
-                              {formatCurrency(account.balance)}
-                            </div>
-                            {isBill && billAccount?.dueDate && (
-                              <div className="text-xs text-gray-500">
-                                Due: {billAccount.dueDate}
-                              </div>
+                          <div className="text-right flex flex-col items-end justify-center h-full">
+                            {isBill ? (
+                              <>
+                                <div className="font-semibold text-blue-400">
+                                  {formatCurrency(
+                                    billAccount?.monthlyAmount || 0,
+                                  )}
+                                  /mo
+                                </div>
+                                {billAccount?.dueDate && (
+                                  <div className="text-xs text-gray-500">
+                                    Due: {billAccount.dueDate}
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                <div
+                                  className={`font-semibold ${
+                                    isDebt ? "text-red-400" : "text-green-400"
+                                  }`}
+                                >
+                                  {isDebt ? "-" : ""}
+                                  {formatCurrency(account.balance)}
+                                </div>
+                                {isDebt && account.dueDate && (
+                                  <div className="text-xs text-gray-500">
+                                    Due: {account.dueDate}
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
 
@@ -1267,7 +1533,11 @@ export default function AccountPipe() {
                               className="p-2 text-gray-400 hover:text-white transition-colors"
                               title={account.hidden ? "Show" : "Hide"}
                             >
-                              {account.hidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              {account.hidden ? (
+                                <EyeOff className="w-4 h-4" />
+                              ) : (
+                                <Eye className="w-4 h-4" />
+                              )}
                             </button>
                             <button
                               type="button"

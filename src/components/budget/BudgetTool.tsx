@@ -13,6 +13,7 @@ import {
   type IncomeFrequency,
   DEBTPIPE_TO_BUDGET_KEY,
 } from "./types";
+import { loadAccounts, Account } from "@/lib/storage";
 import IncomeSection from "./IncomeSection";
 import DebtSection from "./DebtSection";
 import BillsSection from "./BillsSection";
@@ -112,6 +113,47 @@ export default function BudgetTool() {
             paid: raw.paid === true,
           } as BillItem;
         });
+
+        // --- ACCOUNTPIPE SYNC LOGIC ---
+        try {
+          const accData = loadAccounts();
+          if (accData && accData.accounts.length > 0) {
+            const hasMatches = { debts: false, bills: false };
+            
+            // Sync Debts
+            parsed.debts = parsed.debts.map(debt => {
+              const matchedAcc = accData.accounts.find(a => a.mainCategory === 'debt' && a.name.toLowerCase() === debt.name.toLowerCase());
+              if (matchedAcc) {
+                hasMatches.debts = true;
+                return { 
+                  ...debt, 
+                  balance: matchedAcc.balance,
+                  ...(matchedAcc.dueDate !== undefined ? { dueDay: matchedAcc.dueDate } : {})
+                };
+              }
+              return debt;
+            });
+
+            // Sync Bills
+            parsed.bills = parsed.bills.map(bill => {
+              const matchedAcc = accData.accounts.find(a => a.mainCategory === 'bill' && a.name.toLowerCase() === bill.name.toLowerCase());
+              if (matchedAcc) {
+                hasMatches.bills = true;
+                return { 
+                  ...bill, 
+                  ...(matchedAcc.monthlyAmount !== undefined ? { monthlyAmount: matchedAcc.monthlyAmount } : {}),
+                  ...(matchedAcc.dueDate !== undefined ? { dueBy: matchedAcc.dueDate } : {})
+                };
+              }
+              return bill;
+            });
+
+            // If we synced anything, we might want to log it or just silently benefit from it
+          }
+        } catch (e) {
+          console.error("Failed to sync with AccountPipe during hydration", e);
+        }
+
         setBudget(parsed);
       }
     } catch {

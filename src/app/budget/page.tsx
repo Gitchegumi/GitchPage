@@ -1,4 +1,5 @@
 import BudgetTool from "@/components/budget/BudgetTool";
+import { FinPipeMenu } from "@/components/utilities/FinPipeMenu";
 
 export default function BudgetPage() {
   return (
@@ -7,9 +8,10 @@ export default function BudgetPage() {
         <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
           SpendPipe
         </h1>
-        <p className="text-gray-400 mb-8">
+        <p className="text-gray-400 mb-6">
           Track income, expenses, and build your monthly budget.
         </p>
+        <FinPipeMenu current="spendpipe" />
 
         <BudgetTool />
       </div>
