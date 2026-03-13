@@ -222,11 +222,21 @@ export default function Header() {
                       <div className="grid w-60">
                         <div>
                           <NavigationMenuLink asChild>
-                            <div className="mb-2 text-2xl font-bold md:mb-4 hover:bg-transparent text-brand-orange font-oswald hover:text-brand-orange">
+                            <div className="mb-2 text-2xl font-bold hover:bg-transparent text-brand-orange font-oswald hover:text-brand-orange">
                               FinPipe
                             </div>
                           </NavigationMenuLink>
                           <ul className="z-50 space-y-2">
+                            <ListItem
+                              href="/accountpipe"
+                              title="AccountPipe"
+                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
+                            >
+                              <span className="hidden md:block">
+                                The source of truth for your accounts accross
+                                FinPipe.
+                              </span>
+                            </ListItem>
                             <ListItem
                               href="/budget"
                               title="SpendPipe"
@@ -245,6 +255,11 @@ export default function Header() {
                                 A simple debt tracking tool.
                               </span>
                             </ListItem>
+                            <NavigationMenuLink asChild>
+                              <div className="mb-2 text-2xl font-bold hover:bg-transparent text-brand-orange font-oswald hover:text-brand-orange">
+                                Trading
+                              </div>
+                            </NavigationMenuLink>
                             <ListItem
                               href="https://github.com/Gitchegumi/quantpipe"
                               title="QuantPipe"
