@@ -21,6 +21,7 @@ export const STORAGE_KEYS = {
   ACCOUNTS: "gitchpage-accounts",
   BUDGET: "gitchpage-budget-data",
   DEBTS: "gitchpage-debts", // Legacy DebtPipe storage
+  TRANSACTIONS: "gitchpage-transactions",
 } as const;
 
 // ============================================================================
@@ -339,6 +340,135 @@ export function getCashAccounts(): Account[] {
 export function getDebtAccounts(): Account[] {
   const data = loadAccounts();
   return data.accounts.filter((a) => a.mainCategory === 'debt');
+}
+
+// ============================================================================
+// Transaction Support (for TrakPipe)
+// ============================================================================
+
+export interface Transaction {
+  id: string;
+  accountId: string;
+  date: number; // timestamp ms
+  payee: string;
+  category?: string;
+  amount: number; // signed: positive income, negative expense
+  memo?: string;
+  cleared: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface TransactionsData {
+  transactions: Transaction[];
+  version: number;
+}
+
+export const DEFAULT_TRANSACTIONS_DATA: TransactionsData = {
+  transactions: [],
+  version: 1,
+};
+
+export function loadTransactions(): TransactionsData {
+  if (typeof window === "undefined") return DEFAULT_TRANSACTIONS_DATA;
+  try {
+    const saved = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
+    if (saved) return JSON.parse(saved);
+  } catch (e) {
+    console.error("Failed to load transactions:", e);
+  }
+  return DEFAULT_TRANSACTIONS_DATA;
+}
+
+export function saveTransactions(data: TransactionsData): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(data));
+  } catch (e) {
+    console.error("Failed to save transactions:", e);
+  }
+}
+
+export function addTransaction(tx: Omit<Transaction, "id" | "createdAt" | "updatedAt">): Transaction {
+  const data = loadTransactions();
+  const now = Date.now();
+
+  // Adjust account balance
+  const accountsData = loadAccounts();
+  const acctIdx = accountsData.accounts.findIndex(a => a.id === tx.accountId);
+  if (acctIdx !== -1) {
+    const currentBal = accountsData.accounts[acctIdx].balance || 0;
+    accountsData.accounts[acctIdx].balance = currentBal + tx.amount;
+    saveAccounts(accountsData);
+  }
+
+  const newTx: Transaction = {
+    ...tx,
+    id: `tx_${now}_${Math.random().toString(36).slice(2, 9)}`,
+    createdAt: now,
+    updatedAt: now,
+  };
+  data.transactions.push(newTx);
+  saveTransactions(data);
+  return newTx;
+}
+
+export function updateTransaction(id: string, updates: Partial<Transaction>): Transaction | null {
+  const data = loadTransactions();
+  const idx = data.transactions.findIndex(t => t.id === id);
+  if (idx === -1) return null;
+
+  const oldTx = data.transactions[idx];
+  const amountDelta = (updates.amount ?? oldTx.amount) - oldTx.amount;
+
+  // Adjust account balance for amount change
+  if (amountDelta !== 0) {
+    const accountsData = loadAccounts();
+    const acctIdx = accountsData.accounts.findIndex(a => a.id === oldTx.accountId);
+    if (acctIdx !== -1) {
+      accountsData.accounts[acctIdx].balance = (accountsData.accounts[acctIdx].balance || 0) + amountDelta;
+      saveAccounts(accountsData);
+    }
+  }
+
+  data.transactions[idx] = {
+    ...data.transactions[idx],
+    ...updates,
+    updatedAt: Date.now(),
+  };
+  saveTransactions(data);
+  return data.transactions[idx];
+}
+
+export function deleteTransaction(id: string): boolean {
+  const data = loadTransactions();
+  const idx = data.transactions.findIndex(t => t.id === id);
+  if (idx === -1) return false;
+
+  const tx = data.transactions[idx];
+  // Reverse the account balance adjustment
+  const accountsData = loadAccounts();
+  const acctIdx = accountsData.accounts.findIndex(a => a.id === tx.accountId);
+  if (acctIdx !== -1) {
+    accountsData.accounts[acctIdx].balance = (accountsData.accounts[acctIdx].balance || 0) - tx.amount;
+    saveAccounts(accountsData);
+  }
+
+  data.transactions.splice(idx, 1);
+  saveTransactions(data);
+  return true;
+}
+
+export function getTransactionsForAccount(accountId: string): Transaction[] {
+  const data = loadTransactions();
+  return data.transactions
+    .filter(t => t.accountId === accountId)
+    .sort((a, b) => a.date - b.date); // oldest first
+}
+
+export function getAllTransactions(): Transaction[] {
+  const data = loadTransactions();
+  return data.transactions.sort((a, b) => a.date - b.date);
 }
 
 /** Export all accounts as JSON for backup */

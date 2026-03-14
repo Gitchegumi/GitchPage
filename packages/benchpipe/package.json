@@ -1,0 +1,26 @@
+{
+  "name": "@gitchpage/benchpipe",
+  "version": "0.1.0",
+  "description": "Simple benchmarking recorder for QuantPipe and GitchPage tools",
+  "bin": {
+    "benchpipe": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "files": ["dist"],
+  "dependencies": {
+    "commander": "^12.1.0",
+    "execa": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "typescript": "^5.5.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
