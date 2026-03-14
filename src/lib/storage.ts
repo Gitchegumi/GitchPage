@@ -336,6 +336,12 @@ export function getCashAccounts(): Account[] {
   return data.accounts.filter((a) => a.mainCategory === 'cash');
 }
 
+/** Get investment accounts */
+export function getInvestmentAccounts(): Account[] {
+  const data = loadAccounts();
+  return data.accounts.filter((a) => a.mainCategory === 'investment');
+}
+
 /** Get debt accounts (credit_card/loan) */
 export function getDebtAccounts(): Account[] {
   const data = loadAccounts();
