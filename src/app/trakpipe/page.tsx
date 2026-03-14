@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Account, getCashAccounts, getInvestmentAccounts, loadAccounts } from "@/lib/storage";
-import { Transaction, addTransaction, getTransactionsForAccount } from "@/lib/storage";
+import { useState, useEffect, useSearchParams } from "react";
+import { useSearchParams } from "next/navigation";
+import { Account, getCashAccounts, getInvestmentAccounts, loadAccounts, addAccount } from "@/lib/storage";
+import { Transaction, addTransaction, getTransactionsForAccount, saveTransactions, loadTransactions } from "@/lib/storage";
 import {
   Plus,
   ArrowLeft,
@@ -12,6 +13,10 @@ import {
   Trash2,
   ArrowDownCircle,
   ArrowUpCircle,
+  Share2,
+  Copy,
+  Check,
+  Link,
 } from "lucide-react";
 
 type View = "dashboard" | "register";
