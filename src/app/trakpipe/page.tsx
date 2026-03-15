@@ -1,9 +1,21 @@
 "use client";
 
-import { useState, useEffect, useSearchParams } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Account, getCashAccounts, getInvestmentAccounts, loadAccounts, addAccount } from "@/lib/storage";
-import { Transaction, addTransaction, getTransactionsForAccount, saveTransactions, loadTransactions } from "@/lib/storage";
+import {
+  Account,
+  getCashAccounts,
+  getInvestmentAccounts,
+  loadAccounts,
+  addAccount,
+} from "@/lib/storage";
+import {
+  Transaction,
+  addTransaction,
+  getTransactionsForAccount,
+  saveTransactions,
+  loadTransactions,
+} from "@/lib/storage";
 import {
   Plus,
   ArrowLeft,
@@ -28,7 +40,9 @@ export default function TrakPipe() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
-    const accs = [...getCashAccounts(), ...getInvestmentAccounts()].filter(a => !a.hidden);
+    const accs = [...getCashAccounts(), ...getInvestmentAccounts()].filter(
+      (a) => !a.hidden,
+    );
     setAccounts(accs);
   }, []);
 
@@ -45,7 +59,11 @@ export default function TrakPipe() {
     setTransactions([]);
   };
 
-  const handleAddTransaction = (payee: string, amount: number, category?: string) => {
+  const handleAddTransaction = (
+    payee: string,
+    amount: number,
+    category?: string,
+  ) => {
     if (!selectedAccount) return;
     addTransaction({
       accountId: selectedAccount.id,
@@ -59,37 +77,51 @@ export default function TrakPipe() {
     const txs = getTransactionsForAccount(selectedAccount.id);
     setTransactions(txs);
     // Also refresh accounts list to update balance
-    const accs = [...getCashAccounts(), ...getInvestmentAccounts()].filter(a => !a.hidden);
+    const accs = [...getCashAccounts(), ...getInvestmentAccounts()].filter(
+      (a) => !a.hidden,
+    );
     setAccounts(accs);
   };
 
   if (view === "dashboard") {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 md:mx-16 mx-8 md:my-8 my-4">
         <h1 className="text-2xl font-bold text-white">TrakPipe</h1>
-        <p className="text-gray-400">Transaction register for cash and investment accounts.</p>
+        <p className="text-gray-400">
+          Transaction register for cash and investment accounts.
+        </p>
 
         {accounts.length === 0 ? (
-          <div className="text-gray-400">No accounts available. Create accounts in AccountPipe first.</div>
+          <div className="text-gray-400">
+            No accounts available. Create accounts in AccountPipe first.
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {accounts.map(acc => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:mb-8 mb-4">
+            {accounts.map((acc) => (
               <div
                 key={acc.id}
                 className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-blue-500 cursor-pointer transition-colors"
                 onClick={() => loadRegister(acc)}
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: acc.color || '#3B82F6' }}>
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: acc.color || "#3B82F6" }}
+                  >
                     <Wallet className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <div className="font-medium text-white">{acc.name}</div>
-                    <div className="text-sm text-gray-400">{acc.institution || ''}</div>
+                    <div className="text-sm text-gray-400">
+                      {acc.institution || ""}
+                    </div>
                   </div>
                 </div>
                 <div className="text-2xl font-bold text-green-400">
-                  ${acc.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  $
+                  {acc.balance.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                  })}
                 </div>
               </div>
             ))}
@@ -102,21 +134,36 @@ export default function TrakPipe() {
   // Register view
   if (!selectedAccount) return null;
 
-  const expenseCategories = ["Food", "Transport", "Shopping", "Entertainment", "Utilities", "Other"];
+  const expenseCategories = [
+    "Food",
+    "Transport",
+    "Shopping",
+    "Entertainment",
+    "Utilities",
+    "Other",
+  ];
 
   return (
-    <div className="space-y-4">
-      <button onClick={goBack} className="flex items-center gap-2 text-gray-400 hover:text-white mb-4">
+    <div className="space-y-4 md:mb-8 mb-4 md:mx-16 mx-8">
+      <button
+        onClick={goBack}
+        className="flex items-center gap-2 text-gray-400 hover:text-white mb-4"
+      >
         <ArrowLeft className="w-4 h-4" /> Back to accounts
       </button>
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">{selectedAccount.name}</h1>
+          <h1 className="text-2xl font-bold text-white">
+            {selectedAccount.name}
+          </h1>
           <div className="text-gray-400">Register</div>
         </div>
         <div className="text-3xl font-bold text-green-400">
-          ${selectedAccount.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          $
+          {selectedAccount.balance.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+          })}
         </div>
       </div>
 
@@ -125,7 +172,10 @@ export default function TrakPipe() {
         <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
           <Plus className="w-4 h-4" /> Quick Add Transaction
         </h2>
-        <QuickAddForm onSubmit={handleAddTransaction} categories={expenseCategories} />
+        <QuickAddForm
+          onSubmit={handleAddTransaction}
+          categories={expenseCategories}
+        />
       </div>
 
       {/* Transactions table */}
@@ -142,21 +192,35 @@ export default function TrakPipe() {
           </thead>
           <tbody className="divide-y divide-gray-700">
             {transactions.length === 0 ? (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-500">No transactions yet</td></tr>
+              <tr>
+                <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                  No transactions yet
+                </td>
+              </tr>
             ) : (
-              transactions.map(tx => (
+              transactions.map((tx) => (
                 <tr key={tx.id} className="hover:bg-gray-700/30">
-                  <td className="px-4 py-3 text-gray-300">{new Date(tx.date).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-gray-300">
+                    {new Date(tx.date).toLocaleDateString()}
+                  </td>
                   <td className="px-4 py-3 text-white">{tx.payee}</td>
-                  <td className="px-4 py-3 text-gray-400">{tx.category || '-'}</td>
-                  <td className={`px-4 py-3 text-right font-semibold ${tx.amount >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {tx.amount >= 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
+                  <td className="px-4 py-3 text-gray-400">
+                    {tx.category || "-"}
+                  </td>
+                  <td
+                    className={`px-4 py-3 text-right font-semibold ${tx.amount >= 0 ? "text-green-400" : "text-red-400"}`}
+                  >
+                    {tx.amount >= 0 ? "+" : ""}${Math.abs(tx.amount).toFixed(2)}
                   </td>
                   <td className="px-4 py-3">
                     {tx.cleared ? (
-                      <span className="bg-green-900 text-green-300 px-2 py-1 rounded text-xs">Cleared</span>
+                      <span className="bg-green-900 text-green-300 px-2 py-1 rounded text-xs">
+                        Cleared
+                      </span>
                     ) : (
-                      <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">Pending</span>
+                      <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">
+                        Pending
+                      </span>
                     )}
                   </td>
                 </tr>
@@ -169,7 +233,13 @@ export default function TrakPipe() {
   );
 }
 
-function QuickAddForm({ onSubmit, categories }: { onSubmit: (payee: string, amount: number, category?: string) => void; categories: string[] }) {
+function QuickAddForm({
+  onSubmit,
+  categories,
+}: {
+  onSubmit: (payee: string, amount: number, category?: string) => void;
+  categories: string[];
+}) {
   const [payee, setPayee] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState(categories[0] || "");
@@ -186,13 +256,16 @@ function QuickAddForm({ onSubmit, categories }: { onSubmit: (payee: string, amou
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+    <form
+      onSubmit={handleSubmit}
+      className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end"
+    >
       <div>
         <label className="block text-sm text-gray-400 mb-1">Payee</label>
         <input
           type="text"
           value={payee}
-          onChange={e => setPayee(e.target.value)}
+          onChange={(e) => setPayee(e.target.value)}
           placeholder="Who?"
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
           required
@@ -204,7 +277,7 @@ function QuickAddForm({ onSubmit, categories }: { onSubmit: (payee: string, amou
           type="number"
           step="0.01"
           value={amount}
-          onChange={e => setAmount(e.target.value)}
+          onChange={(e) => setAmount(e.target.value)}
           placeholder="0.00"
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
           required
@@ -233,11 +306,13 @@ function QuickAddForm({ onSubmit, categories }: { onSubmit: (payee: string, amou
         <label className="block text-sm text-gray-400 mb-1">Category</label>
         <select
           value={category}
-          onChange={e => setCategory(e.target.value)}
+          onChange={(e) => setCategory(e.target.value)}
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
         >
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
           ))}
         </select>
       </div>
