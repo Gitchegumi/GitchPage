@@ -85,7 +85,7 @@ export interface Account {
 // Backward compatibility: map legacy type to mainCategory/subtype
 function migrateLegacyAccount(legacy: any): Account {
   const base: any = {
-    id: legacy.id,
+    id: String(legacy.id), // Ensure ID is a string for JSON serialization
     name: legacy.name,
     balance: legacy.balance ?? 0,
     institution: legacy.institution,
@@ -217,6 +217,11 @@ export function loadAccounts(): AccountsData {
         // Save migrated data
         localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(parsed));
       }
+      // Ensure all account IDs are strings (defensive: coerce numeric IDs from old data)
+      parsed.accounts = parsed.accounts.map((acc: any) => ({
+        ...acc,
+        id: String(acc.id),
+      }));
       return parsed;
     }
   } catch (error) {
@@ -492,6 +497,14 @@ export function importAccountsFromJSON(json: string): boolean {
     if (!imported.accounts || !Array.isArray(imported.accounts)) {
       return false;
     }
+
+    // Ensure all account IDs are strings
+    imported.accounts = imported.accounts.map((acc: any) => {
+      if (typeof acc.id !== 'string') {
+        acc.id = String(acc.id);
+      }
+      return acc;
+    });
 
     // Migrate if needed
     if (!imported.version || imported.version < 2) {
