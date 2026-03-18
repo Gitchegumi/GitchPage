@@ -23,6 +23,7 @@ import {
   InvestmentSubtype,
   Transaction,
   getTransactionsForAccount,
+  getAccountCurrentBalance,
 } from "@/lib/storage";
 import {
   DEFAULT_BILL_CATEGORIES,
@@ -68,7 +69,7 @@ interface EditingAccount {
   name: string;
   mainCategory: AccountMainCategory;
   subtype: AccountSubtype;
-  balance: string;
+  startingBalance: string;
 
   // Credit card specific
   creditLimit?: string;
@@ -108,7 +109,7 @@ const DEFAULT_EDITING: EditingAccount = {
   name: "",
   mainCategory: "cash",
   subtype: "checking",
-  balance: "",
+  startingBalance: "",
   creditLimit: "",
   apr: "",
   annualFee: "",
@@ -216,17 +217,17 @@ export default function AccountPipe() {
     setHydrated(true);
   }, []);
 
-  // Compute totals
+  // Compute totals using the computed current balance
   const totalAssets = accounts
     .filter(
       (a) =>
         !a.hidden && a.mainCategory !== "debt" && a.mainCategory !== "bill",
     )
-    .reduce((sum, a) => sum + (a.balance || 0), 0);
+    .reduce((sum, a) => sum + getAccountCurrentBalance(a.id), 0);
 
   const totalLiabilities = accounts
     .filter((a) => !a.hidden && a.mainCategory === "debt")
-    .reduce((sum, a) => sum + (a.balance || 0), 0);
+    .reduce((sum, a) => sum + getAccountCurrentBalance(a.id), 0);
 
   const totalBalance = totalAssets - totalLiabilities;
 
@@ -254,7 +255,7 @@ export default function AccountPipe() {
       name: account.name,
       mainCategory: account.mainCategory,
       subtype: account.subtype,
-      balance: account.balance.toString(),
+      startingBalance: (account as any).startingBalance?.toString() || (account as any).balance?.toString() || "0",
       creditLimit: (account as any).creditLimit?.toString() || "",
       apr: (account as any).apr?.toString() || "",
       annualFee: (account as any).annualFee?.toString() || "",
@@ -280,7 +281,7 @@ export default function AccountPipe() {
   }, []);
 
   const handleSave = useCallback(() => {
-    const balance = parseFloat(editing.balance) || 0;
+    const startingBalance = parseFloat(editing.startingBalance) || 0;
     const now = Date.now();
 
     if (!editing.name.trim()) {
@@ -292,7 +293,7 @@ export default function AccountPipe() {
       name: editing.name.trim(),
       mainCategory: editing.mainCategory,
       subtype: editing.subtype,
-      balance,
+      startingBalance,
       institution: editing.institution.trim() || undefined,
       mask: editing.mask.trim() || undefined,
       color: editing.color,
@@ -483,7 +484,7 @@ export default function AccountPipe() {
         name,
         mainCategory: "bill",
         subtype: bill.category as any,
-        balance: 0,
+        startingBalance: 0,
         monthlyAmount: bill.monthlyAmount,
         dueDate: bill.dueBy ?? undefined,
         isActive: true,
@@ -507,7 +508,7 @@ export default function AccountPipe() {
         name,
         mainCategory: "debt",
         subtype,
-        balance: debt.balance || 0,
+        startingBalance: debt.balance || 0,
         showsInBudget: true,
         color: subtype === "credit_card" ? "#EF4444" : "#F59E0B",
         hidden: false,
@@ -1116,18 +1117,21 @@ export default function AccountPipe() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-gray-400 mb-1">
-                      Balance
+                      Starting Balance
                     </label>
                     <input
                       type="number"
                       step="0.01"
-                      value={editing.balance}
+                      value={editing.startingBalance}
                       onChange={(e) =>
-                        setEditing((p) => ({ ...p, balance: e.target.value }))
+                        setEditing((p) => ({ ...p, startingBalance: e.target.value }))
                       }
                       placeholder="0.00"
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      This is the initial balance when the account was opened.
+                    </p>
                   </div>
                 </div>
               )}
@@ -1529,21 +1533,40 @@ export default function AccountPipe() {
                                 )}
                               </>
                             ) : (
-                              <>
-                                <div
-                                  className={`font-semibold ${
-                                    isDebt ? "text-red-400" : "text-green-400"
-                                  }`}
-                                >
-                                  {isDebt ? "-" : ""}
-                                  {formatCurrency(account.balance)}
-                                </div>
-                                {isDebt && account.dueDate && (
-                                  <div className="text-xs text-gray-500">
-                                    Due: {account.dueDate}
-                                  </div>
-                                )}
-                              </>
+                              (() => {
+                                const startingBal = (account as any).startingBalance || 0;
+                                const currentBal = getAccountCurrentBalance(account.id);
+                                const transactionImpact = currentBal - startingBal;
+                                const displayDebt = isDebt;
+                                const effectiveImpact = displayDebt ? -transactionImpact : transactionImpact;
+                                return (
+                                  <>
+                                    <div
+                                      className={`font-semibold ${
+                                        displayDebt ? "text-red-400" : "text-green-400"
+                                      }`}
+                                    >
+                                      {displayDebt ? "-" : ""}
+                                      {formatCurrency(currentBal)}
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                      Starting: {formatCurrency(startingBal)}
+                                      {effectiveImpact !== 0 && (
+                                        <span>
+                                          {" "}
+                                          ({effectiveImpact >= 0 ? "+" : ""}
+                                          {formatCurrency(effectiveImpact)})
+                                        </span>
+                                      )}
+                                    </div>
+                                    {isDebt && account.dueDate && (
+                                      <div className="text-xs text-gray-500">
+                                        Due: {account.dueDate}
+                                      </div>
+                                    )}
+                                  </>
+                                );
+                              })()
                             )}
                           </div>
 
