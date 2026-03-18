@@ -45,8 +45,10 @@ export interface Account {
   name: string;
   mainCategory: AccountMainCategory;
   subtype: AccountSubtype;
-  /** Current balance (positive number). For credit cards, this is the current balance. */
-  balance: number;
+  /** Starting balance - static value when account was created/opened */
+  startingBalance: number;
+  /** Current computed balance = startingBalance + sum(transactions). Not stored, computed on demand. */
+  _balance?: number; // Deprecated: for migration only, remove after migration
 
   // Credit card specific (when mainCategory === 'debt' && subtype === 'credit_card')
   creditLimit?: number;
@@ -87,7 +89,7 @@ function migrateLegacyAccount(legacy: any): Account {
   const base: any = {
     id: String(legacy.id), // Ensure ID is a string for JSON serialization
     name: legacy.name,
-    balance: legacy.balance ?? 0,
+    startingBalance: legacy.balance ?? 0, // Use balance as startingBalance
     institution: legacy.institution,
     mask: legacy.mask,
     color: legacy.color,
@@ -140,7 +142,7 @@ export interface AccountsData {
 
 export const DEFAULT_ACCOUNTS_DATA: AccountsData = {
   accounts: [],
-  version: 3, // bumped after hierarchical schema + showsInBudget
+  version: 4, // bumped after adding startingBalance and computed balances
 };
 
 // Main category labels and colors
@@ -198,14 +200,24 @@ export function loadAccounts(): AccountsData {
     if (saved) {
       const parsed = JSON.parse(saved) as AccountsData;
       // Ensure version field exists
-      if (!parsed.version || parsed.version < 3) {
-        // Migrate legacy accounts to hierarchical schema
+      if (!parsed.version || parsed.version < 4) {
+        // Migrate legacy accounts to hierarchical schema + startingBalance
         parsed.accounts = parsed.accounts.map((acc: any) => {
-          // If already has mainCategory, skip
+          // If already has mainCategory, skip hierarchy migration but check startingBalance
           if (acc.mainCategory) {
-            // Also ensure showsInBudget exists for older v2 accounts
+            // Ensure showsInBudget exists for older v2/v3 accounts
             if (acc.showsInBudget === undefined) {
               acc.showsInBudget = true;
+            }
+            // Migrate balance to startingBalance if startingBalance missing
+            if (acc.startingBalance === undefined) {
+              acc.startingBalance = acc.balance ?? 0;
+              // Remove balance field entirely
+              delete acc.balance;
+            }
+            // Handle deprecated _balance field
+            if (acc._balance !== undefined) {
+              delete acc._balance;
             }
             return acc;
           }
@@ -213,7 +225,7 @@ export function loadAccounts(): AccountsData {
           // ensure showsInBudget exists (migrateLegacyAccount sets it to true)
           return migrated;
         });
-        parsed.version = 3;
+        parsed.version = 4;
         // Save migrated data
         localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(parsed));
       }
@@ -247,8 +259,12 @@ export function addAccount(account: Omit<Account, "id" | "createdAt" | "updatedA
   const data = loadAccounts();
   const now = Date.now();
 
+  // Backwards compatibility: if balance is provided but not startingBalance, use balance as startingBalance
+  const startingBalance = account.startingBalance !== undefined ? account.startingBalance : (account as any).balance ?? 0;
+
   const newAccount: Account = {
     ...account,
+    startingBalance,
     id: generateAccountId(),
     createdAt: now,
     updatedAt: now,
@@ -298,11 +314,12 @@ export function getTotalBalance(includeCredit = false): number {
   return data.accounts
     .filter((a) => !a.hidden)
     .reduce((total, account) => {
+      const currentBal = getAccountCurrentBalance(account.id);
       if (account.mainCategory === 'debt' && !includeCredit) {
         // Credit cards and loans show as negative (what you owe)
-        return total - (account.balance || 0);
+        return total - currentBal;
       }
-      return total + (account.balance || 0);
+      return total + currentBal;
     }, 0);
 }
 
@@ -351,6 +368,33 @@ export function getInvestmentAccounts(): Account[] {
 export function getDebtAccounts(): Account[] {
   const data = loadAccounts();
   return data.accounts.filter((a) => a.mainCategory === 'debt');
+}
+
+/** Get the current balance for an account: startingBalance + sum of all transactions */
+export function getAccountCurrentBalance(accountId: string): number {
+  const account = loadAccounts().accounts.find((a) => a.id === accountId);
+  if (!account) return 0;
+
+  const txs = getTransactionsForAccount(accountId);
+  const transactionSum = txs.reduce((sum, tx) => sum + tx.amount, 0);
+  return (account.startingBalance || 0) + transactionSum;
+}
+
+/** Recalculate all account balances from transactions.
+ * Useful for data integrity checks or after manual edits.
+ * Returns a map of accountId -> new balance. */
+export function recalculateAllBalances(): Record<string, number> {
+  const accountsData = loadAccounts();
+  const results: Record<string, number> = {};
+
+  for (const account of accountsData.accounts) {
+    const txs = getTransactionsForAccount(account.id);
+    const transactionSum = txs.reduce((sum, tx) => sum + tx.amount, 0);
+    const newBalance = (account.startingBalance || 0) + transactionSum;
+    results[account.id] = newBalance;
+  }
+
+  return results;
 }
 
 // ============================================================================
@@ -404,14 +448,7 @@ export function addTransaction(tx: Omit<Transaction, "id" | "createdAt" | "updat
   const data = loadTransactions();
   const now = Date.now();
 
-  // Adjust account balance
-  const accountsData = loadAccounts();
-  const acctIdx = accountsData.accounts.findIndex(a => a.id === tx.accountId);
-  if (acctIdx !== -1) {
-    const currentBal = accountsData.accounts[acctIdx].balance || 0;
-    accountsData.accounts[acctIdx].balance = currentBal + tx.amount;
-    saveAccounts(accountsData);
-  }
+  // No need to adjust account balance - it's computed on demand via getAccountCurrentBalance()
 
   const newTx: Transaction = {
     ...tx,
@@ -429,18 +466,7 @@ export function updateTransaction(id: string, updates: Partial<Transaction>): Tr
   const idx = data.transactions.findIndex(t => t.id === id);
   if (idx === -1) return null;
 
-  const oldTx = data.transactions[idx];
-  const amountDelta = (updates.amount ?? oldTx.amount) - oldTx.amount;
-
-  // Adjust account balance for amount change
-  if (amountDelta !== 0) {
-    const accountsData = loadAccounts();
-    const acctIdx = accountsData.accounts.findIndex(a => a.id === oldTx.accountId);
-    if (acctIdx !== -1) {
-      accountsData.accounts[acctIdx].balance = (accountsData.accounts[acctIdx].balance || 0) + amountDelta;
-      saveAccounts(accountsData);
-    }
-  }
+  // No need to adjust account balance - it's computed on demand via getAccountCurrentBalance()
 
   data.transactions[idx] = {
     ...data.transactions[idx],
@@ -456,14 +482,7 @@ export function deleteTransaction(id: string): boolean {
   const idx = data.transactions.findIndex(t => t.id === id);
   if (idx === -1) return false;
 
-  const tx = data.transactions[idx];
-  // Reverse the account balance adjustment
-  const accountsData = loadAccounts();
-  const acctIdx = accountsData.accounts.findIndex(a => a.id === tx.accountId);
-  if (acctIdx !== -1) {
-    accountsData.accounts[acctIdx].balance = (accountsData.accounts[acctIdx].balance || 0) - tx.amount;
-    saveAccounts(accountsData);
-  }
+  // No need to adjust account balance - it's computed on demand via getAccountCurrentBalance()
 
   data.transactions.splice(idx, 1);
   saveTransactions(data);
