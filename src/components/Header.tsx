@@ -228,6 +228,16 @@ export default function Header() {
                           </NavigationMenuLink>
                           <ul className="z-50 space-y-2">
                             <ListItem
+                              href="/trakpipe"
+                              title="TrakPipe"
+                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
+                            >
+                              <span className="hidden md:block">
+                                Transaction register for cash and investment
+                                accounts.
+                              </span>
+                            </ListItem>
+                            <ListItem
                               href="/accountpipe"
                               title="AccountPipe"
                               className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"

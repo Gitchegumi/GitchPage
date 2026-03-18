@@ -16,13 +16,7 @@ import {
   STORAGE_KEYS,
 } from "@/lib/storage";
 import { BudgetData } from "@/components/budget/types";
-import {
-  Plus,
-  ArrowLeft,
-  Wallet,
-  Edit2,
-  Trash2,
-} from "lucide-react";
+import { Plus, ArrowLeft, Wallet, Edit2, Trash2 } from "lucide-react";
 
 type View = "dashboard" | "register";
 
@@ -37,11 +31,11 @@ export default function TrakPipe() {
   const categories = useMemo(() => {
     const accData = loadAccounts();
     const debtNames = accData.accounts
-      .filter(a => a.mainCategory === "debt" && !a.hidden)
-      .map(a => a.name);
+      .filter((a) => a.mainCategory === "debt" && !a.hidden)
+      .map((a) => a.name);
     const billNames = accData.accounts
-      .filter(a => a.mainCategory === "bill" && !a.hidden)
-      .map(a => a.name);
+      .filter((a) => a.mainCategory === "bill" && !a.hidden)
+      .map((a) => a.name);
     let spend: string[] = [];
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.BUDGET);
@@ -49,23 +43,34 @@ export default function TrakPipe() {
         const bud = JSON.parse(saved) as BudgetData;
         spend = [
           ...new Set([
-            ...bud.debts.map(d => d.category).filter(Boolean),
-            ...bud.bills.map(b => b.category).filter(Boolean),
+            ...bud.debts.map((d) => d.category).filter(Boolean),
+            ...bud.bills.map((b) => b.category).filter(Boolean),
             ...bud.customDebtCategories,
             ...bud.customBillCategories,
           ]),
         ];
       }
     } catch (e) {}
-    return [...new Set([...debtNames, ...billNames, ...spend, "Food", "Transport", "Shopping", "Entertainment", "Utilities", "Other"])].sort();
+    return [
+      ...new Set([
+        ...debtNames,
+        ...billNames,
+        ...spend,
+        "Food",
+        "Transport",
+        "Shopping",
+        "Entertainment",
+        "Utilities",
+        "Other",
+      ]),
+    ].sort();
   }, []);
 
   useEffect(() => {
     // Only load Cash and Investment accounts (not debt or bill)
-    const all = [
-      ...getCashAccounts(),
-      ...getInvestmentAccounts(),
-    ].filter(a => !a.hidden);
+    const all = [...getCashAccounts(), ...getInvestmentAccounts()].filter(
+      (a) => !a.hidden,
+    );
     setAccounts(all);
   }, []);
 
@@ -74,10 +79,9 @@ export default function TrakPipe() {
       setTransactions(getTransactionsForAccount(selectedAccount.id));
     }
     // Only load Cash and Investment accounts
-    const all = [
-      ...getCashAccounts(),
-      ...getInvestmentAccounts(),
-    ].filter(a => !a.hidden);
+    const all = [...getCashAccounts(), ...getInvestmentAccounts()].filter(
+      (a) => !a.hidden,
+    );
     setAccounts(all);
   };
 
@@ -135,15 +139,21 @@ export default function TrakPipe() {
   };
 
   const clearedBalance = useMemo(() => {
-    return (selectedAccount?.balance || 0) + transactions
-      .filter(t => t.cleared)
-      .reduce((sum, t) => sum + t.amount, 0);
+    return (
+      (selectedAccount?.balance || 0) +
+      transactions
+        .filter((t) => t.cleared)
+        .reduce((sum, t) => sum + t.amount, 0)
+    );
   }, [transactions, selectedAccount]);
 
   const unclearedBalance = useMemo(() => {
-    return (selectedAccount?.balance || 0) + transactions
-      .filter(t => !t.cleared)
-      .reduce((sum, t) => sum + t.amount, 0);
+    return (
+      (selectedAccount?.balance || 0) +
+      transactions
+        .filter((t) => !t.cleared)
+        .reduce((sum, t) => sum + t.amount, 0)
+    );
   }, [transactions, selectedAccount]);
 
   const today = new Date().toISOString().split("T")[0];
@@ -198,7 +208,7 @@ export default function TrakPipe() {
 
   if (!selectedAccount) return null;
 
-  const editingTx = transactions.find(t => t.id === editingId);
+  const editingTx = transactions.find((t) => t.id === editingId);
 
   return (
     <div className="space-y-4 md:mb-8 mb-4 md:mx-16 mx-8">
@@ -218,7 +228,7 @@ export default function TrakPipe() {
         </div>
         <div className="flex gap-6">
           <div className="flex flex-col items-end">
-            <div className="text-sm text-gray-400">Uncleared</div>
+            <div className="text-sm text-gray-400">Balance</div>
             <div className="text-2xl font-bold text-yellow-400">
               $
               {unclearedBalance.toLocaleString("en-US", {
@@ -227,7 +237,7 @@ export default function TrakPipe() {
             </div>
           </div>
           <div className="flex flex-col items-end">
-            <div className="text-sm text-gray-400">Cleared</div>
+            <div className="text-sm text-gray-400">Reconciled</div>
             <div className="text-2xl font-bold text-green-400">
               $
               {clearedBalance.toLocaleString("en-US", {
@@ -243,11 +253,16 @@ export default function TrakPipe() {
         <div className="flex items-center justify-between">
           <div>
             <div className="font-medium text-white">Opening Balance</div>
-            <div className="text-sm text-gray-400">Starting balance for this account</div>
+            <div className="text-sm text-gray-400">
+              Starting balance for this account
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-xl font-bold text-blue-400">
-              ${selectedAccount.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              $
+              {selectedAccount.balance.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+              })}
             </div>
             <span className="px-2 py-1 rounded text-xs bg-green-900 text-green-300">
               Cleared
@@ -304,22 +319,36 @@ export default function TrakPipe() {
                     {new Date(tx.date).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3 text-white">{tx.payee}</td>
-                  <td className="px-4 py-3 text-gray-400">{tx.category || "-"}</td>
-                  <td className={`px-4 py-3 text-right font-semibold ${tx.amount >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {tx.amount >= 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
+                  <td className="px-4 py-3 text-gray-400">
+                    {tx.category || "-"}
+                  </td>
+                  <td
+                    className={`px-4 py-3 text-right font-semibold ${tx.amount >= 0 ? "text-green-400" : "text-red-400"}`}
+                  >
+                    {tx.amount >= 0 ? "+" : ""}${Math.abs(tx.amount).toFixed(2)}
                   </td>
                   <td className="px-4 py-3">
                     <button
                       onClick={() => toggleCleared(tx)}
-                      className={`px-2 py-1 rounded text-xs ${tx.cleared ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-300'}`}
+                      className={`px-2 py-1 rounded text-xs ${tx.cleared ? "bg-green-900 text-green-300" : "bg-gray-700 text-gray-300"}`}
                     >
-                      {tx.cleared ? 'Cleared' : 'Pending'}
+                      {tx.cleared ? "Cleared" : "Pending"}
                     </button>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
-                      <button onClick={() => startEdit(tx)} className="text-gray-400 hover:text-white"><Edit2 className="w-4 h-4" /></button>
-                      <button onClick={() => handleDelete(tx.id)} className="text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                      <button
+                        onClick={() => startEdit(tx)}
+                        className="text-gray-400 hover:text-white"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(tx.id)}
+                        className="text-gray-400 hover:text-red-500"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -333,7 +362,9 @@ export default function TrakPipe() {
       {editingId && editingTx && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 max-w-lg w-full mx-4">
-            <h3 className="text-xl font-bold text-white mb-4">Edit Transaction</h3>
+            <h3 className="text-xl font-bold text-white mb-4">
+              Edit Transaction
+            </h3>
             <EditForm
               tx={editingTx}
               onSave={handleUpdateTransaction}
@@ -351,7 +382,20 @@ export default function TrakPipe() {
 // Subcomponents
 // ------------------------------------------------------------------
 
-function QuickAddForm({ onSubmit, categories, defaultDate }: { onSubmit: (date: number, payee: string, amount: number, category?: string) => void; categories: string[]; defaultDate: string; }) {
+function QuickAddForm({
+  onSubmit,
+  categories,
+  defaultDate,
+}: {
+  onSubmit: (
+    date: number,
+    payee: string,
+    amount: number,
+    category?: string,
+  ) => void;
+  categories: string[];
+  defaultDate: string;
+}) {
   const [date, setDate] = useState(defaultDate);
   const [payee, setPayee] = useState("");
   const [amount, setAmount] = useState("");
@@ -370,13 +414,16 @@ function QuickAddForm({ onSubmit, categories, defaultDate }: { onSubmit: (date: 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+    <form
+      onSubmit={handleSubmit}
+      className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end"
+    >
       <div>
         <label className="block text-sm text-gray-400 mb-1">Date</label>
         <input
           type="date"
           value={date}
-          onChange={e => setDate(e.target.value)}
+          onChange={(e) => setDate(e.target.value)}
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
           required
         />
@@ -386,7 +433,7 @@ function QuickAddForm({ onSubmit, categories, defaultDate }: { onSubmit: (date: 
         <input
           type="text"
           value={payee}
-          onChange={e => setPayee(e.target.value)}
+          onChange={(e) => setPayee(e.target.value)}
           placeholder="Who?"
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
           required
@@ -398,7 +445,7 @@ function QuickAddForm({ onSubmit, categories, defaultDate }: { onSubmit: (date: 
           type="number"
           step="0.01"
           value={amount}
-          onChange={e => setAmount(e.target.value)}
+          onChange={(e) => setAmount(e.target.value)}
           placeholder="0.00"
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
           required
@@ -427,11 +474,13 @@ function QuickAddForm({ onSubmit, categories, defaultDate }: { onSubmit: (date: 
         <label className="block text-sm text-gray-400 mb-1">Category</label>
         <select
           value={category}
-          onChange={e => setCategory(e.target.value)}
+          onChange={(e) => setCategory(e.target.value)}
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
         >
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
           ))}
         </select>
       </div>
@@ -445,14 +494,28 @@ function QuickAddForm({ onSubmit, categories, defaultDate }: { onSubmit: (date: 
   );
 }
 
-function EditForm({ tx, onSave, onCancel, categories }: { tx: Transaction; onSave: (updates: Partial<Transaction>) => void; onCancel: () => void; categories: string[]; }) {
-  const [date, setDate] = useState(new Date(tx.date).toISOString().split("T")[0]);
+function EditForm({
+  tx,
+  onSave,
+  onCancel,
+  categories,
+}: {
+  tx: Transaction;
+  onSave: (updates: Partial<Transaction>) => void;
+  onCancel: () => void;
+  categories: string[];
+}) {
+  const [date, setDate] = useState(
+    new Date(tx.date).toISOString().split("T")[0],
+  );
   const [payee, setPayee] = useState(tx.payee);
   const [amount, setAmount] = useState(Math.abs(tx.amount).toString());
   const [category, setCategory] = useState(tx.category || categories[0] || "");
   const [cleared, setCleared] = useState(tx.cleared);
   const [memo, setMemo] = useState(tx.memo || "");
-  const [type, setType] = useState<"income" | "expense">(tx.amount >= 0 ? "income" : "expense");
+  const [type, setType] = useState<"income" | "expense">(
+    tx.amount >= 0 ? "income" : "expense",
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -476,7 +539,7 @@ function EditForm({ tx, onSave, onCancel, categories }: { tx: Transaction; onSav
         <input
           type="date"
           value={date}
-          onChange={e => setDate(e.target.value)}
+          onChange={(e) => setDate(e.target.value)}
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
         />
       </div>
@@ -485,7 +548,7 @@ function EditForm({ tx, onSave, onCancel, categories }: { tx: Transaction; onSav
         <input
           type="text"
           value={payee}
-          onChange={e => setPayee(e.target.value)}
+          onChange={(e) => setPayee(e.target.value)}
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
         />
       </div>
@@ -495,7 +558,7 @@ function EditForm({ tx, onSave, onCancel, categories }: { tx: Transaction; onSav
           type="number"
           step="0.01"
           value={amount}
-          onChange={e => setAmount(e.target.value)}
+          onChange={(e) => setAmount(e.target.value)}
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
         />
       </div>
@@ -503,11 +566,13 @@ function EditForm({ tx, onSave, onCancel, categories }: { tx: Transaction; onSav
         <label className="block text-sm text-gray-400 mb-1">Category</label>
         <select
           value={category}
-          onChange={e => setCategory(e.target.value)}
+          onChange={(e) => setCategory(e.target.value)}
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
         >
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
           ))}
         </select>
       </div>
@@ -516,7 +581,7 @@ function EditForm({ tx, onSave, onCancel, categories }: { tx: Transaction; onSav
         <input
           type="text"
           value={memo}
-          onChange={e => setMemo(e.target.value)}
+          onChange={(e) => setMemo(e.target.value)}
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
         />
       </div>
@@ -524,7 +589,7 @@ function EditForm({ tx, onSave, onCancel, categories }: { tx: Transaction; onSav
         <input
           type="checkbox"
           checked={cleared}
-          onChange={e => setCleared(e.target.checked)}
+          onChange={(e) => setCleared(e.target.checked)}
           className="w-4 h-4"
         />
         <label className="text-white">Cleared</label>
@@ -546,8 +611,19 @@ function EditForm({ tx, onSave, onCancel, categories }: { tx: Transaction; onSav
         </button>
       </div>
       <div className="flex gap-2 justify-end">
-        <button type="button" onClick={onCancel} className="px-4 py-2 bg-gray-700 text-white rounded">Cancel</button>
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 bg-gray-700 text-white rounded"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Save
+        </button>
       </div>
     </form>
   );
