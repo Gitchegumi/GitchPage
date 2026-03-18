@@ -138,22 +138,17 @@ export default function TrakPipe() {
     }
   };
 
-  const clearedBalance = useMemo(() => {
-    return (
-      (selectedAccount?.balance || 0) +
-      transactions
-        .filter((t) => t.cleared)
-        .reduce((sum, t) => sum + t.amount, 0)
-    );
+  // Balance = account.balance + ALL transactions (regardless of cleared status)
+  const balance = useMemo(() => {
+    return (selectedAccount?.balance || 0) + transactions
+      .reduce((sum, t) => sum + t.amount, 0);
   }, [transactions, selectedAccount]);
 
-  const unclearedBalance = useMemo(() => {
-    return (
-      (selectedAccount?.balance || 0) +
-      transactions
-        .filter((t) => !t.cleared)
-        .reduce((sum, t) => sum + t.amount, 0)
-    );
+  // Reconciled = account.balance + cleared transactions only
+  const reconciledBalance = useMemo(() => {
+    return (selectedAccount?.balance || 0) + transactions
+      .filter(t => t.cleared)
+      .reduce((sum, t) => sum + t.amount, 0);
   }, [transactions, selectedAccount]);
 
   const today = new Date().toISOString().split("T")[0];
@@ -231,7 +226,7 @@ export default function TrakPipe() {
             <div className="text-sm text-gray-400">Balance</div>
             <div className="text-2xl font-bold text-yellow-400">
               $
-              {unclearedBalance.toLocaleString("en-US", {
+              {balance.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
               })}
             </div>
@@ -240,7 +235,7 @@ export default function TrakPipe() {
             <div className="text-sm text-gray-400">Reconciled</div>
             <div className="text-2xl font-bold text-green-400">
               $
-              {clearedBalance.toLocaleString("en-US", {
+              {reconciledBalance.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
               })}
             </div>
@@ -265,7 +260,7 @@ export default function TrakPipe() {
               })}
             </div>
             <span className="px-2 py-1 rounded text-xs bg-green-900 text-green-300">
-              Cleared
+              Reconciled
             </span>
           </div>
         </div>
@@ -301,7 +296,7 @@ export default function TrakPipe() {
               <th className="px-4 py-3">Payee</th>
               <th className="px-4 py-3">Category</th>
               <th className="px-4 py-3 text-right">Amount</th>
-              <th className="px-4 py-3">Cleared</th>
+              <th className="px-4 py-3">Reconciled</th>
               <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
@@ -332,7 +327,7 @@ export default function TrakPipe() {
                       onClick={() => toggleCleared(tx)}
                       className={`px-2 py-1 rounded text-xs ${tx.cleared ? "bg-green-900 text-green-300" : "bg-gray-700 text-gray-300"}`}
                     >
-                      {tx.cleared ? "Cleared" : "Pending"}
+                      {tx.cleared ? 'Reconciled' : 'Pending'}
                     </button>
                   </td>
                   <td className="px-4 py-3">
