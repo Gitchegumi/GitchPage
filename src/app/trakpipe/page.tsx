@@ -135,15 +135,16 @@ export default function TrakPipe() {
   };
 
   const clearedBalance = useMemo(() => {
-    return transactions
+    return (selectedAccount?.balance || 0) + transactions
       .filter(t => t.cleared)
       .reduce((sum, t) => sum + t.amount, 0);
-  }, [transactions]);
+  }, [transactions, selectedAccount]);
 
   const unclearedBalance = useMemo(() => {
-    return transactions
+    return (selectedAccount?.balance || 0) + transactions
+      .filter(t => !t.cleared)
       .reduce((sum, t) => sum + t.amount, 0);
-  }, [transactions]);
+  }, [transactions, selectedAccount]);
 
   const today = new Date().toISOString().split("T")[0];
 
