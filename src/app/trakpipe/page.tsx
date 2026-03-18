@@ -61,11 +61,10 @@ export default function TrakPipe() {
   }, []);
 
   useEffect(() => {
+    // Only load Cash and Investment accounts (not debt or bill)
     const all = [
       ...getCashAccounts(),
       ...getInvestmentAccounts(),
-      ...getDebtAccounts(),
-      ...getBillAccounts(),
     ].filter(a => !a.hidden);
     setAccounts(all);
   }, []);
@@ -74,11 +73,10 @@ export default function TrakPipe() {
     if (selectedAccount) {
       setTransactions(getTransactionsForAccount(selectedAccount.id));
     }
+    // Only load Cash and Investment accounts
     const all = [
       ...getCashAccounts(),
       ...getInvestmentAccounts(),
-      ...getDebtAccounts(),
-      ...getBillAccounts(),
     ].filter(a => !a.hidden);
     setAccounts(all);
   };
@@ -142,6 +140,11 @@ export default function TrakPipe() {
       .reduce((sum, t) => sum + t.amount, 0);
   }, [transactions]);
 
+  const unclearedBalance = useMemo(() => {
+    return transactions
+      .reduce((sum, t) => sum + t.amount, 0);
+  }, [transactions]);
+
   const today = new Date().toISOString().split("T")[0];
 
   if (view === "dashboard") {
@@ -149,7 +152,7 @@ export default function TrakPipe() {
       <div className="space-y-6 md:mx-16 mx-8 md:my-8 my-4">
         <h1 className="text-2xl font-bold text-white">TrakPipe</h1>
         <p className="text-gray-400">
-          Transaction register for all accounts (cash, investment, debt, bill).
+          Transaction register for Cash and Investment accounts.
         </p>
 
         {accounts.length === 0 ? (
@@ -212,15 +215,42 @@ export default function TrakPipe() {
           </h1>
           <div className="text-gray-400">Register</div>
         </div>
-        <div className="flex flex-col items-end">
-          <div className="text-3xl font-bold text-green-400">
-            $
-            {selectedAccount.balance.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-            })}
+        <div className="flex gap-6">
+          <div className="flex flex-col items-end">
+            <div className="text-sm text-gray-400">Uncleared</div>
+            <div className="text-2xl font-bold text-yellow-400">
+              $
+              {unclearedBalance.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+              })}
+            </div>
           </div>
-          <div className="text-sm text-gray-400">
-            Cleared: ${clearedBalance.toLocaleString("en-US", {minimumFractionDigits: 2})}
+          <div className="flex flex-col items-end">
+            <div className="text-sm text-gray-400">Cleared</div>
+            <div className="text-2xl font-bold text-green-400">
+              $
+              {clearedBalance.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Opening Balance */}
+      <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="font-medium text-white">Opening Balance</div>
+            <div className="text-sm text-gray-400">Starting balance for this account</div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="text-xl font-bold text-blue-400">
+              ${selectedAccount.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            </div>
+            <span className="px-2 py-1 rounded text-xs bg-green-900 text-green-300">
+              Cleared
+            </span>
           </div>
         </div>
       </div>
