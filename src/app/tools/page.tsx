@@ -31,11 +31,11 @@ const finpipeTools: ToolDef[] = [
     status: "active",
   },
   {
-    name: "LedgerPipe",
+    name: "TrakPipe",
     description:
       "Transaction ledger for tracking all your financial movements across accounts. Import, categorize, and reconcile with ease.",
-    href: "#",
-    status: "coming_soon",
+    href: "/trakpipe",
+    status: "active",
   },
 ];
 
