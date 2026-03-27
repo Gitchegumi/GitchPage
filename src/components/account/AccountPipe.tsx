@@ -21,6 +21,9 @@ import {
   DebtSubtype,
   BillSubtype,
   InvestmentSubtype,
+  Transaction,
+  getTransactionsForAccount,
+  getAccountCurrentBalance,
 } from "@/lib/storage";
 import {
   DEFAULT_BILL_CATEGORIES,
@@ -66,7 +69,7 @@ interface EditingAccount {
   name: string;
   mainCategory: AccountMainCategory;
   subtype: AccountSubtype;
-  balance: string;
+  startingBalance: string;
 
   // Credit card specific
   creditLimit?: string;
@@ -106,7 +109,7 @@ const DEFAULT_EDITING: EditingAccount = {
   name: "",
   mainCategory: "cash",
   subtype: "checking",
-  balance: "",
+  startingBalance: "",
   creditLimit: "",
   apr: "",
   annualFee: "",
@@ -202,6 +205,11 @@ export default function AccountPipe() {
     new Set(),
   );
 
+  // Transaction log modal state
+  const [showTxLog, setShowTxLog] = useState(false);
+  const [txLogAccount, setTxLogAccount] = useState<Account | null>(null);
+  const [txLogTransactions, setTxLogTransactions] = useState<Transaction[]>([]);
+
   // Load accounts on mount
   useEffect(() => {
     const data = loadAccounts();
@@ -209,17 +217,17 @@ export default function AccountPipe() {
     setHydrated(true);
   }, []);
 
-  // Compute totals
+  // Compute totals using the computed current balance
   const totalAssets = accounts
     .filter(
       (a) =>
         !a.hidden && a.mainCategory !== "debt" && a.mainCategory !== "bill",
     )
-    .reduce((sum, a) => sum + (a.balance || 0), 0);
+    .reduce((sum, a) => sum + getAccountCurrentBalance(a.id), 0);
 
   const totalLiabilities = accounts
     .filter((a) => !a.hidden && a.mainCategory === "debt")
-    .reduce((sum, a) => sum + (a.balance || 0), 0);
+    .reduce((sum, a) => sum + getAccountCurrentBalance(a.id), 0);
 
   const totalBalance = totalAssets - totalLiabilities;
 
@@ -247,7 +255,7 @@ export default function AccountPipe() {
       name: account.name,
       mainCategory: account.mainCategory,
       subtype: account.subtype,
-      balance: account.balance.toString(),
+      startingBalance: (account as any).startingBalance?.toString() || (account as any).balance?.toString() || "0",
       creditLimit: (account as any).creditLimit?.toString() || "",
       apr: (account as any).apr?.toString() || "",
       annualFee: (account as any).annualFee?.toString() || "",
@@ -273,7 +281,7 @@ export default function AccountPipe() {
   }, []);
 
   const handleSave = useCallback(() => {
-    const balance = parseFloat(editing.balance) || 0;
+    const startingBalance = parseFloat(editing.startingBalance) || 0;
     const now = Date.now();
 
     if (!editing.name.trim()) {
@@ -285,7 +293,7 @@ export default function AccountPipe() {
       name: editing.name.trim(),
       mainCategory: editing.mainCategory,
       subtype: editing.subtype,
-      balance,
+      startingBalance,
       institution: editing.institution.trim() || undefined,
       mask: editing.mask.trim() || undefined,
       color: editing.color,
@@ -376,6 +384,20 @@ export default function AccountPipe() {
     [accounts],
   );
 
+  // Transaction log handlers
+  const handleViewTransactions = useCallback((account: Account) => {
+    const txs = getTransactionsForAccount(account.id);
+    setTxLogAccount(account);
+    setTxLogTransactions(txs);
+    setShowTxLog(true);
+  }, []);
+
+  const closeTxLog = useCallback(() => {
+    setShowTxLog(false);
+    setTxLogAccount(null);
+    setTxLogTransactions([]);
+  }, []);
+
   const handleExport = useCallback(() => {
     const data = loadAccounts();
     const json = JSON.stringify(data, null, 2);
@@ -462,7 +484,7 @@ export default function AccountPipe() {
         name,
         mainCategory: "bill",
         subtype: bill.category as any,
-        balance: 0,
+        startingBalance: 0,
         monthlyAmount: bill.monthlyAmount,
         dueDate: bill.dueBy ?? undefined,
         isActive: true,
@@ -486,7 +508,7 @@ export default function AccountPipe() {
         name,
         mainCategory: "debt",
         subtype,
-        balance: debt.balance || 0,
+        startingBalance: debt.balance || 0,
         showsInBudget: true,
         color: subtype === "credit_card" ? "#EF4444" : "#F59E0B",
         hidden: false,
@@ -1095,18 +1117,21 @@ export default function AccountPipe() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-gray-400 mb-1">
-                      Balance
+                      Starting Balance
                     </label>
                     <input
                       type="number"
                       step="0.01"
-                      value={editing.balance}
+                      value={editing.startingBalance}
                       onChange={(e) =>
-                        setEditing((p) => ({ ...p, balance: e.target.value }))
+                        setEditing((p) => ({ ...p, startingBalance: e.target.value }))
                       }
                       placeholder="0.00"
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      This is the initial balance when the account was opened.
+                    </p>
                   </div>
                 </div>
               )}
@@ -1508,25 +1533,52 @@ export default function AccountPipe() {
                                 )}
                               </>
                             ) : (
-                              <>
-                                <div
-                                  className={`font-semibold ${
-                                    isDebt ? "text-red-400" : "text-green-400"
-                                  }`}
-                                >
-                                  {isDebt ? "-" : ""}
-                                  {formatCurrency(account.balance)}
-                                </div>
-                                {isDebt && account.dueDate && (
-                                  <div className="text-xs text-gray-500">
-                                    Due: {account.dueDate}
-                                  </div>
-                                )}
-                              </>
+                              (() => {
+                                const startingBal = (account as any).startingBalance || 0;
+                                const currentBal = getAccountCurrentBalance(account.id);
+                                const transactionImpact = currentBal - startingBal;
+                                const displayDebt = isDebt;
+                                const effectiveImpact = displayDebt ? -transactionImpact : transactionImpact;
+                                return (
+                                  <>
+                                    <div
+                                      className={`font-semibold ${
+                                        displayDebt ? "text-red-400" : "text-green-400"
+                                      }`}
+                                    >
+                                      {displayDebt ? "-" : ""}
+                                      {formatCurrency(currentBal)}
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                      Starting: {formatCurrency(startingBal)}
+                                      {effectiveImpact !== 0 && (
+                                        <span>
+                                          {" "}
+                                          ({effectiveImpact >= 0 ? "+" : ""}
+                                          {formatCurrency(effectiveImpact)})
+                                        </span>
+                                      )}
+                                    </div>
+                                    {isDebt && account.dueDate && (
+                                      <div className="text-xs text-gray-500">
+                                        Due: {account.dueDate}
+                                      </div>
+                                    )}
+                                  </>
+                                );
+                              })()
                             )}
                           </div>
 
                           <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handleViewTransactions(account)}
+                              className="p-2 text-gray-400 hover:text-green-400 transition-colors"
+                              title="View Register"
+                            >
+                              <FileText className="w-4 h-4" />
+                            </button>
                             <button
                               type="button"
                               onClick={() => handleToggleHidden(account.id)}
@@ -1562,6 +1614,86 @@ export default function AccountPipe() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Transaction Log Modal */}
+      {showTxLog && txLogAccount && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-xl font-bold text-white">
+                  {txLogAccount.name} - Register
+                </h3>
+                <p className="text-sm text-gray-400">
+                  Transaction history for this account
+                </p>
+              </div>
+              <button
+                onClick={closeTxLog}
+                className="p-2 text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
+              {txLogTransactions.length === 0 ? (
+                <div className="text-center text-gray-500 py-8">
+                  No transactions yet
+                </div>
+              ) : (
+                <table className="w-full text-left">
+                  <thead className="bg-gray-900 text-gray-400 text-sm sticky top-0">
+                    <tr>
+                      <th className="px-3 py-2">Date</th>
+                      <th className="px-3 py-2">Payee</th>
+                      <th className="px-3 py-2">Category</th>
+                      <th className="px-3 py-2 text-right">Amount</th>
+                      <th className="px-3 py-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-700">
+                    {txLogTransactions
+                      .sort((a, b) => b.date - a.date)
+                      .map((tx) => (
+                        <tr key={tx.id} className="hover:bg-gray-700/30">
+                          <td className="px-3 py-2 text-gray-300">
+                            {new Date(tx.date).toLocaleDateString()}
+                          </td>
+                          <td className="px-3 py-2 text-white">{tx.payee}</td>
+                          <td className="px-3 py-2 text-gray-400">
+                            {tx.category || "-"}
+                          </td>
+                          <td
+                            className={`px-3 py-2 text-right font-semibold ${
+                              tx.amount >= 0
+                                ? "text-green-400"
+                                : "text-red-400"
+                            }`}
+                          >
+                            {tx.amount >= 0 ? "+" : ""}$
+                            {Math.abs(tx.amount).toFixed(2)}
+                          </td>
+                          <td className="px-3 py-2">
+                            <span
+                              className={`px-2 py-1 rounded text-xs ${
+                                tx.cleared
+                                  ? "bg-green-900 text-green-300"
+                                  : "bg-gray-700 text-gray-300"
+                              }`}
+                            >
+                              {tx.cleared ? "Reconciled" : "Pending"}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

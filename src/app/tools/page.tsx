@@ -1,4 +1,15 @@
 import Link from "next/link";
+import {
+  isTopN,
+  TOP_N_TOOL_SLUGS,
+  TOOLS,
+  TOP_N_COUNT,
+} from "@/lib/top-n-tools";
+import LazyToolSection from "@/components/tools/LazyToolSection";
+
+// ============================================================================
+// Tool Definitions (using centralized config)
+// ============================================================================
 
 type ToolDef = {
   name: string;
@@ -8,47 +19,33 @@ type ToolDef = {
   external?: boolean;
 };
 
-const finpipeTools: ToolDef[] = [
-  {
-    name: "DebtPipe",
-    description:
-      "Debt snowball calculator with PDF exports. Track and eliminate your debt with a proven strategy.",
-    href: "/debtpipe",
-    status: "active",
-  },
-  {
-    name: "SpendPipe",
-    description:
-      "Monthly budgeting - track income, expenses, and cash flow. Includes template download and Excel import.",
-    href: "/budget",
-    status: "active",
-  },
-  {
-    name: "AccountPipe",
-    description:
-      "Manage all your accounts in one place - checking, savings, credit cards, investments. Integrates with DebtPipe and SpendPipe.",
-    href: "/accountpipe",
-    status: "active",
-  },
-  {
-    name: "LedgerPipe",
-    description:
-      "Transaction ledger for tracking all your financial movements across accounts. Import, categorize, and reconcile with ease.",
-    href: "#",
-    status: "coming_soon",
-  },
-];
+// Build tool arrays from centralized config
+const finpipeToolsConfig = TOOLS.filter((t) => t.category === "finpipe");
+const tradingToolsConfig = TOOLS.filter((t) => t.category === "quant");
 
-const tradingTools: ToolDef[] = [
-  {
-    name: "QuantPipe",
-    description:
-      "Institutional-grade backtesting and strategy development for forex and CFD traders. Powered by VectorBT and DuckDB.",
-    href: "https://github.com/Gitchegumi/quantpipe",
-    status: "coming_soon",
-    external: true,
-  },
-];
+const finpipeTools: ToolDef[] = finpipeToolsConfig.map((t) => ({
+  name: t.name,
+  description: t.description,
+  href: t.route,
+  status: t.status,
+  external: t.external,
+}));
+
+const tradingTools: ToolDef[] = tradingToolsConfig.map((t) => ({
+  name: t.name,
+  description: t.description,
+  href: t.route,
+  status: t.status,
+  external: t.external,
+}));
+
+// Split tools into top-N (static) and rest (lazy-loaded)
+const finpipeTopN = finpipeTools.filter((t) => isTopN(t.href.replace("/", "")));
+const finpipeLazy = finpipeTools.filter((t) => !isTopN(t.href.replace("/", "")));
+
+// ============================================================================
+// Static ToolCard (for top-N tools, rendered at build time)
+// ============================================================================
 
 function ToolCard({ tool }: { tool: ToolDef }) {
   return (
@@ -137,6 +134,54 @@ function ToolCard({ tool }: { tool: ToolDef }) {
   );
 }
 
+// ============================================================================
+// Tool Section Component
+// ============================================================================
+
+interface ToolSectionProps {
+  title: string;
+  badge: string;
+  badgeColor: string;
+  staticTools?: ToolDef[];
+  lazyTools?: ToolDef[];
+}
+
+function ToolSection({
+  title,
+  badge,
+  badgeColor,
+  staticTools = [],
+  lazyTools = [],
+}: ToolSectionProps) {
+  const hasTools = staticTools.length > 0 || lazyTools.length > 0;
+  if (!hasTools) return null;
+
+  return (
+    <section className="mb-12">
+      <h2 className="text-2xl font-bold mb-4 flex items-center">
+        <span
+          className={`${badgeColor} text-gray-900 px-3 py-1 rounded-lg mr-3 text-sm font-bold`}
+        >
+          {badge}
+        </span>
+        <span className="text-gray-400 text-lg font-normal">{title}</span>
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Static ToolCards - pre-rendered at build time */}
+        {staticTools.map((tool) => (
+          <ToolCard key={tool.name} tool={tool} />
+        ))}
+        {/* Lazy-loaded tools - loaded on client via LazyToolSection */}
+        {lazyTools.length > 0 && <LazyToolSection tools={lazyTools} />}
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// Main Page
+// ============================================================================
+
 export default function ToolsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
@@ -144,43 +189,30 @@ export default function ToolsPage() {
         <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
           Tools Hub
         </h1>
-        <p className="text-gray-400 mb-8">
+        <p className="text-gray-400 mb-2">
           A collection of mini-apps and utilities to help with your workflow.
+        </p>
+        <p className="text-gray-500 text-sm mb-8">
+          Top {TOP_N_COUNT} tools pre-loaded:{" "}
+          {TOP_N_TOOL_SLUGS.join(", ")}
         </p>
 
         {/* FinPipe Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
-            <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-gray-900 px-3 py-1 rounded-lg mr-3 text-sm font-bold">
-              FinPipe
-            </span>
-            <span className="text-gray-400 text-lg font-normal">
-              Financial Tools
-            </span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {finpipeTools.map((tool) => (
-              <ToolCard key={tool.name} tool={tool} />
-            ))}
-          </div>
-        </section>
+        <ToolSection
+          title="Financial Tools"
+          badge="FinPipe"
+          badgeColor="bg-gradient-to-r from-green-400 to-emerald-500"
+          staticTools={finpipeTopN}
+          lazyTools={finpipeLazy}
+        />
 
-        {/* Trading Tools Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
-            <span className="bg-gradient-to-r from-blue-500 to-cyan-400 text-gray-900 px-3 py-1 rounded-lg mr-3 text-sm font-bold">
-              Quant
-            </span>
-            <span className="text-gray-400 text-lg font-normal">
-              Trading Tools
-            </span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tradingTools.map((tool) => (
-              <ToolCard key={tool.name} tool={tool} />
-            ))}
-          </div>
-        </section>
+        {/* Trading Tools Section - all lazy-loaded */}
+        <ToolSection
+          title="Trading Tools"
+          badge="Quant"
+          badgeColor="bg-gradient-to-r from-blue-500 to-cyan-400"
+          lazyTools={tradingTools}
+        />
       </div>
     </div>
   );
