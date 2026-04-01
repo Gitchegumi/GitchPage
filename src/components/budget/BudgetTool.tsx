@@ -13,7 +13,7 @@ import {
   type IncomeFrequency,
   DEBTPIPE_TO_BUDGET_KEY,
 } from "./types";
-import { loadAccounts, Account } from "@/lib/storage";
+import { loadAccounts, getAccountCurrentBalance, Account } from "@/lib/storage";
 import IncomeSection from "./IncomeSection";
 import DebtSection from "./DebtSection";
 import BillsSection from "./BillsSection";
@@ -131,7 +131,7 @@ export default function BudgetTool() {
                 hasMatches.debts = true;
                 return {
                   ...debt,
-                  balance: matchedAcc._balance,
+                  balance: getAccountCurrentBalance(matchedAcc.id) ?? null,
                   ...(matchedAcc.dueDate !== undefined
                     ? { dueDay: matchedAcc.dueDate }
                     : {}),
