@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Building2, CreditCard, Wallet } from "lucide-react";
+import { Building2, CreditCard, Wallet, BookOpen } from "lucide-react";
 
 interface FinPipeMenuProps {
-  current: "accountpipe" | "debtpipe" | "spendpipe";
+  current: "accountpipe" | "debtpipe" | "spendpipe" | "trakpipe";
 }
 
 export function FinPipeMenu({ current }: FinPipeMenuProps) {
@@ -13,6 +13,13 @@ export function FinPipeMenu({ current }: FinPipeMenuProps) {
       href: "/accountpipe",
       icon: Building2,
       description: "Manage Ledger",
+    },
+    {
+      id: "trakpipe",
+      name: "TrakPipe",
+      href: "/trakpipe",
+      icon: BookOpen,
+      description: "Transaction Register",
     },
     {
       id: "spendpipe",
