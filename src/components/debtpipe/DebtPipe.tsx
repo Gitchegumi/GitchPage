@@ -15,7 +15,7 @@ import {
   CheckCircle2,
   ChevronRight
 } from "lucide-react";
-import { loadAccounts } from "@/lib/storage";
+import { loadAccounts, getAccountCurrentBalance } from "@/lib/storage";
 
 // Types
 interface DebtItem {
@@ -179,7 +179,7 @@ export default function DebtPipe() {
       if (matchingAccount) {
         updatedCount++;
         // Keep name, update balance, keep others as fallback
-        parts[1] = matchingAccount.balance.toString();
+        parts[1] = getAccountCurrentBalance(matchingAccount.id).toString();
         // optionally update interestRate if it's there
         if ((matchingAccount as any).apr) parts[2] = (matchingAccount as any).apr.toString();
         else if ((matchingAccount as any).interestRate) parts[2] = (matchingAccount as any).interestRate.toString();
