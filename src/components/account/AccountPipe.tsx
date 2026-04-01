@@ -333,7 +333,7 @@ export default function AccountPipe() {
       baseAccount.originalAmount = editing.originalAmount
         ? parseFloat(editing.originalAmount)
         : undefined;
-      baseAccount.currentBalance = balance; // sync
+      baseAccount.currentBalance = startingBalance; // sync
       baseAccount.interestRate = editing.interestRate
         ? parseFloat(editing.interestRate)
         : undefined;
