@@ -17,6 +17,8 @@ import {
   STORAGE_KEYS,
 } from "@/lib/storage";
 import { BudgetData } from "@/components/budget/types";
+import { FinPipeMenu } from "@/components/utilities/FinPipeMenu";
+import { CsvExportButton, CsvImportButton } from "@/components/trakpipe/CsvImportExport";
 import { Plus, ArrowLeft, Wallet, Edit2, Trash2 } from "lucide-react";
 
 type View = "dashboard" | "register";
@@ -27,6 +29,7 @@ export default function TrakPipe() {
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
   // Category options: union of debt/bill account names and SpendPipe categories
   const categories = useMemo(() => {
@@ -84,6 +87,7 @@ export default function TrakPipe() {
       (a) => !a.hidden,
     );
     setAccounts(all);
+    window.dispatchEvent(new Event("trakpipe-tx-change"));
   };
 
   const loadRegister = (account: Account) => {
@@ -99,21 +103,57 @@ export default function TrakPipe() {
     setEditingId(null);
   };
 
+  // Find a debt or bill account whose name matches the given category string
+  const findLinkedAccount = (category: string): Account | null => {
+    const all = loadAccounts().accounts;
+    return (
+      all.find(
+        (a) =>
+          (a.mainCategory === "debt" || a.mainCategory === "bill") &&
+          a.name === category &&
+          !a.hidden,
+      ) ?? null
+    );
+  };
+
   const handleAddTransaction = (
     date: number,
     payee: string,
     amount: number,
     category?: string,
+    memo?: string,
   ) => {
     if (!selectedAccount) return;
-    addTransaction({
+
+    // Create the primary transaction on the cash/investment account
+    const mainTx = addTransaction({
       accountId: selectedAccount.id,
       date,
       payee,
       amount,
       category,
+      memo,
       cleared: false,
     });
+
+    // Double-entry: if the category matches a debt/bill account, create a
+    // counter transaction on that account (same amount — reduces its balance)
+    if (category) {
+      const linked = findLinkedAccount(category);
+      if (linked) {
+        const counterTx = addTransaction({
+          accountId: linked.id,
+          date,
+          payee,
+          amount,
+          category: "Payment",
+          cleared: false,
+          linkedTransactionId: mainTx.id,
+        });
+        updateTransaction(mainTx.id, { linkedTransactionId: counterTx.id });
+      }
+    }
+
     refreshAll();
   };
 
@@ -121,23 +161,70 @@ export default function TrakPipe() {
   const cancelEdit = () => setEditingId(null);
 
   const handleUpdateTransaction = (updates: Partial<Transaction>) => {
-    if (!editingId) return;
-    updateTransaction(editingId, updates);
+    if (!editingId || !editingTx) return;
+
+    const newCategory = updates.category;
+    const newLinked = newCategory ? findLinkedAccount(newCategory) : null;
+    const mainUpdates: Partial<Transaction> = { ...updates };
+
+    if (editingTx.linkedTransactionId) {
+      if (newLinked) {
+        // Counter transaction still needed — update it (handles account change too)
+        updateTransaction(editingTx.linkedTransactionId, {
+          accountId: newLinked.id,
+          date: updates.date,
+          payee: updates.payee,
+          amount: updates.amount,
+          cleared: updates.cleared,
+        });
+      } else {
+        // Category no longer maps to a debt/bill account — remove counter transaction
+        deleteTransaction(editingTx.linkedTransactionId);
+        mainUpdates.linkedTransactionId = undefined;
+      }
+    } else if (newLinked) {
+      // Category newly maps to a debt/bill account — create counter transaction
+      const counterTx = addTransaction({
+        accountId: newLinked.id,
+        date: updates.date ?? editingTx.date,
+        payee: updates.payee ?? editingTx.payee,
+        amount: updates.amount ?? editingTx.amount,
+        category: "Payment",
+        cleared: updates.cleared ?? editingTx.cleared,
+        linkedTransactionId: editingId,
+      });
+      mainUpdates.linkedTransactionId = counterTx.id;
+    }
+
+    updateTransaction(editingId, mainUpdates);
     setEditingId(null);
     refreshAll();
   };
 
   const toggleCleared = (tx: Transaction) => {
     updateTransaction(tx.id, { cleared: !tx.cleared });
+    if (tx.linkedTransactionId) {
+      updateTransaction(tx.linkedTransactionId, { cleared: !tx.cleared });
+    }
     refreshAll();
   };
 
   const handleDelete = (id: string) => {
     if (confirm("Delete this transaction?")) {
+      const tx = transactions.find((t) => t.id === id);
+      if (tx?.linkedTransactionId) {
+        deleteTransaction(tx.linkedTransactionId);
+      }
       deleteTransaction(id);
       refreshAll();
     }
   };
+
+  const sortedTransactions = useMemo(() => {
+    return [...transactions].sort((a, b) =>
+      sortOrder === "newest" ? b.date - a.date : a.date - b.date,
+    );
+  }, [transactions, sortOrder]);
 
   // Balance = startingBalance + ALL transactions (regardless of cleared status)
   const balance = useMemo(() => {
@@ -162,6 +249,7 @@ export default function TrakPipe() {
         <p className="text-gray-400">
           Transaction register for Cash and Investment accounts.
         </p>
+        <FinPipeMenu current="trakpipe" />
 
         {accounts.length === 0 ? (
           <div className="text-gray-400">
@@ -216,6 +304,8 @@ export default function TrakPipe() {
         <ArrowLeft className="w-4 h-4" /> Back to accounts
       </button>
 
+      <FinPipeMenu current="trakpipe" />
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">
@@ -223,7 +313,14 @@ export default function TrakPipe() {
           </h1>
           <div className="text-gray-400">Register</div>
         </div>
-        <div className="flex gap-6">
+        <div className="flex items-center gap-6">
+          <div className="flex gap-2">
+            <CsvImportButton onImport={handleAddTransaction} />
+            <CsvExportButton
+              transactions={transactions}
+              accountName={selectedAccount.name}
+            />
+          </div>
           <div className="flex flex-col items-end">
             <div className="text-sm text-gray-400">Balance</div>
             <div className="text-2xl font-bold text-yellow-400">
@@ -294,7 +391,20 @@ export default function TrakPipe() {
         <table className="w-full text-left">
           <thead className="bg-gray-900 text-gray-400 text-sm">
             <tr>
-              <th className="px-4 py-3">Date</th>
+              <th className="px-4 py-3">
+                <button
+                  onClick={() =>
+                    setSortOrder((o) => (o === "newest" ? "oldest" : "newest"))
+                  }
+                  className="flex items-center gap-1 hover:text-white transition-colors"
+                  title="Toggle sort order"
+                >
+                  Date
+                  <span className="text-xs">
+                    {sortOrder === "newest" ? "↓" : "↑"}
+                  </span>
+                </button>
+              </th>
               <th className="px-4 py-3">Payee</th>
               <th className="px-4 py-3">Category</th>
               <th className="px-4 py-3 text-right">Amount</th>
@@ -303,14 +413,14 @@ export default function TrakPipe() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
-            {transactions.length === 0 ? (
+            {sortedTransactions.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                   No transactions yet
                 </td>
               </tr>
             ) : (
-              transactions.map((tx) => (
+              sortedTransactions.map((tx) => (
                 <tr key={tx.id} className="hover:bg-gray-700/30">
                   <td className="px-4 py-3 text-gray-300">
                     {new Date(tx.date).toLocaleDateString()}
@@ -403,7 +513,8 @@ function QuickAddForm({
     e.preventDefault();
     const amt = parseFloat(amount);
     if (!payee || isNaN(amt)) return;
-    const dateMs = new Date(date).getTime();
+    const [y, m, d] = date.split("-").map(Number);
+    const dateMs = new Date(y, m - 1, d).getTime();
     const signedAmt = type === "income" ? amt : -amt;
     onSubmit(dateMs, payee, signedAmt, category);
     setPayee("");
@@ -502,8 +613,9 @@ function EditForm({
   onCancel: () => void;
   categories: string[];
 }) {
+  const txDate = new Date(tx.date);
   const [date, setDate] = useState(
-    new Date(tx.date).toISOString().split("T")[0],
+    `${txDate.getFullYear()}-${String(txDate.getMonth() + 1).padStart(2, "0")}-${String(txDate.getDate()).padStart(2, "0")}`,
   );
   const [payee, setPayee] = useState(tx.payee);
   const [amount, setAmount] = useState(Math.abs(tx.amount).toString());
@@ -519,8 +631,9 @@ function EditForm({
     const amt = parseFloat(amount);
     if (!payee || isNaN(amt)) return;
     const signedAmt = type === "income" ? amt : -amt;
+    const [y, m, d] = date.split("-").map(Number);
     onSave({
-      date: new Date(date).getTime(),
+      date: new Date(y, m - 1, d).getTime(),
       payee,
       amount: signedAmt,
       category,

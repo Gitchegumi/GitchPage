@@ -119,30 +119,44 @@ export default function BudgetTool() {
           const accData = loadAccounts();
           if (accData && accData.accounts.length > 0) {
             const hasMatches = { debts: false, bills: false };
-            
+
             // Sync Debts
-            parsed.debts = parsed.debts.map(debt => {
-              const matchedAcc = accData.accounts.find(a => a.mainCategory === 'debt' && a.name.toLowerCase() === debt.name.toLowerCase());
+            parsed.debts = parsed.debts.map((debt) => {
+              const matchedAcc = accData.accounts.find(
+                (a) =>
+                  a.mainCategory === "debt" &&
+                  a.name.toLowerCase() === debt.name.toLowerCase(),
+              );
               if (matchedAcc) {
                 hasMatches.debts = true;
-                return { 
-                  ...debt, 
-                  balance: matchedAcc.balance,
-                  ...(matchedAcc.dueDate !== undefined ? { dueDay: matchedAcc.dueDate } : {})
+                return {
+                  ...debt,
+                  balance: matchedAcc._balance,
+                  ...(matchedAcc.dueDate !== undefined
+                    ? { dueDay: matchedAcc.dueDate }
+                    : {}),
                 };
               }
               return debt;
             });
 
             // Sync Bills
-            parsed.bills = parsed.bills.map(bill => {
-              const matchedAcc = accData.accounts.find(a => a.mainCategory === 'bill' && a.name.toLowerCase() === bill.name.toLowerCase());
+            parsed.bills = parsed.bills.map((bill) => {
+              const matchedAcc = accData.accounts.find(
+                (a) =>
+                  a.mainCategory === "bill" &&
+                  a.name.toLowerCase() === bill.name.toLowerCase(),
+              );
               if (matchedAcc) {
                 hasMatches.bills = true;
-                return { 
-                  ...bill, 
-                  ...(matchedAcc.monthlyAmount !== undefined ? { monthlyAmount: matchedAcc.monthlyAmount } : {}),
-                  ...(matchedAcc.dueDate !== undefined ? { dueBy: matchedAcc.dueDate } : {})
+                return {
+                  ...bill,
+                  ...(matchedAcc.monthlyAmount !== undefined
+                    ? { monthlyAmount: matchedAcc.monthlyAmount }
+                    : {}),
+                  ...(matchedAcc.dueDate !== undefined
+                    ? { dueBy: matchedAcc.dueDate }
+                    : {}),
                 };
               }
               return bill;

@@ -217,6 +217,20 @@ export default function AccountPipe() {
     setHydrated(true);
   }, []);
 
+  // Refresh balances when transactions change (cross-tab via storage event,
+  // or same-tab via the custom event dispatched by TrakPipe)
+  useEffect(() => {
+    const refresh = () => {
+      setAccounts(loadAccounts().accounts);
+    };
+    window.addEventListener("storage", refresh);
+    window.addEventListener("trakpipe-tx-change", refresh);
+    return () => {
+      window.removeEventListener("storage", refresh);
+      window.removeEventListener("trakpipe-tx-change", refresh);
+    };
+  }, []);
+
   // Compute totals using the computed current balance
   const totalAssets = accounts
     .filter(

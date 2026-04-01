@@ -410,6 +410,7 @@ export interface Transaction {
   amount: number; // signed: positive income, negative expense
   memo?: string;
   cleared: boolean;
+  linkedTransactionId?: string; // double-entry: ID of the counter transaction on the other account
   createdAt: number;
   updatedAt: number;
 }
