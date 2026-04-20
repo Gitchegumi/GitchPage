@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getAllPosts } from "@/lib/getAllPosts";
 import ProseLayout from "@/components/ProseLayout";
 import Remark42 from "@/components/Remark42";
+import { SubscribeForm } from "@/components/SubscribeForm";
 import type { PostMeta } from "@/lib/types";
 
 type Props = {
@@ -90,10 +91,15 @@ export default async function BlogPostPage({ params }: Props) {
         }}
       />
       <ProseLayout title={metadata.title}>
-        <article>
-          {/* Post content */}
-          <Post />
-        </article>
+        <div className="grid gap-8 md:grid-cols-[1fr_300px]">
+          <article>
+            {/* Post content */}
+            <Post />
+          </article>
+          <aside className="space-y-6">
+            <SubscribeForm />
+          </aside>
+        </div>
         <hr className="border-muted" />
 
         <Remark42 slug={slug} title={metadata.title} category={category} />
