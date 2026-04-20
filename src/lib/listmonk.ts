@@ -126,31 +126,38 @@ export async function subscribeEmail(email: string): Promise<ListmonkSubscriber>
 }
 
 /**
- * Create a new campaign
+ * Get campaign by ID
  */
-export async function createCampaign(
-  listId: string,
+export async function getCampaign(campaignId: string): Promise<ListmonkCampaign | null> {
+  try {
+    const data = await listmonkRequest<{ data: ListmonkCampaign }>(`/campaigns/${campaignId}`);
+    return data.data;
+  } catch (error) {
+    console.error("Failed to get campaign:", error);
+    return null;
+  }
+}
+
+/**
+ * Update campaign content and subject
+ */
+export async function updateCampaign(
+  campaignId: string,
   subject: string,
   content: string
 ): Promise<ListmonkCampaign> {
   try {
-    const data = await listmonkRequest<{ data: ListmonkCampaign }>("/campaigns", {
-      method: "POST",
+    const data = await listmonkRequest<{ data: ListmonkCampaign }>(`/campaigns/${campaignId}`, {
+      method: "PUT",
       body: JSON.stringify({
-        name: subject,
         subject,
-        from_email: "noreply@gitchegumi.com",
-        type: "regular",
-        content_type: "html",
         body: content,
-        list_ids: [listId],
-        template_id: 1, // Default template
       }),
     });
 
     return data.data;
   } catch (error) {
-    console.error("Failed to create campaign:", error);
+    console.error("Failed to update campaign:", error);
     throw error;
   }
 }

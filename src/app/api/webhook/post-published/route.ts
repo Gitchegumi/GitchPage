@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getListByName,
-  createCampaign,
+  getCampaign,
+  updateCampaign,
   sendCampaign,
   generatePostEmailTemplate,
 } from "@/lib/listmonk";
@@ -13,6 +13,9 @@ const webhookSchema = z.object({
   url: z.string().url("Invalid URL"),
   publishedAt: z.string().optional(),
 });
+
+// Pre-configured campaign for blog alerts
+const BLOG_CAMPAIGN_ID = "98aad89d-6ee8-46eb-bbc1-7f609ee48e0b";
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,16 +34,14 @@ export async function POST(request: NextRequest) {
 
     const { title, excerpt, url } = validation.data;
 
-    // Get the blog subscribers list
-    const list = await getListByName(
-      process.env.LISTMONK_BLOG_LIST_NAME || "Blog Subscribers"
-    );
+    // Verify campaign exists
+    const campaign = await getCampaign(BLOG_CAMPAIGN_ID);
 
-    if (!list) {
+    if (!campaign) {
       return NextResponse.json(
         {
           success: false,
-          error: "Blog Subscribers list not found",
+          error: "Blog campaign not found",
         },
         { status: 500 }
       );
@@ -49,20 +50,20 @@ export async function POST(request: NextRequest) {
     // Generate email content
     const emailContent = generatePostEmailTemplate(title, excerpt, url);
 
-    // Create campaign
-    const campaign = await createCampaign(
-      list.id,
+    // Update campaign with new post content
+    await updateCampaign(
+      BLOG_CAMPAIGN_ID,
       `New Post: ${title}`,
       emailContent
     );
 
     // Send campaign
-    await sendCampaign(campaign.id);
+    await sendCampaign(BLOG_CAMPAIGN_ID);
 
     return NextResponse.json({
       success: true,
-      campaignId: campaign.id,
-      message: "Campaign created and sent successfully",
+      campaignId: BLOG_CAMPAIGN_ID,
+      message: "Blog alert sent successfully",
     });
   } catch (error) {
     console.error("Webhook error:", error);
