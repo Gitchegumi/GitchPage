@@ -4,6 +4,7 @@
  */
 
 const LISTMONK_URL = process.env.LISTMONK_URL || "https://monk.gitchegumi.com";
+const LISTMONK_API_USER = process.env.LISTMONK_API_USER || "";
 const LISTMONK_API_KEY = process.env.LISTMONK_API_KEY || "";
 
 interface ListmonkList {
@@ -46,7 +47,7 @@ async function listmonkRequest<T>(
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Token ${LISTMONK_API_KEY}`,
+      "Authorization": `token ${LISTMONK_API_USER}:${LISTMONK_API_KEY}`,
       ...options.headers,
     },
   });
