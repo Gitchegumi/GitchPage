@@ -109,7 +109,7 @@ export async function subscribeEmail(email: string): Promise<ListmonkSubscriber>
         email,
         name: "",
         status: "enabled",
-        lists: [LIST_ID],
+        list_ids: [LIST_ID],
       }),
     });
 
