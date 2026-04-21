@@ -98,7 +98,14 @@ export default function Header() {
                     Work & Content
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="md:-translate-x-1/2">
-                    <div className="rounded-lg text-soft-white bg-brand-dark">
+                    <div
+                      className="rounded-xl text-soft-white backdrop-blur-xl"
+                      style={{
+                        background: "rgba(44,44,44,0.75)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
+                      }}
+                    >
                       <div className="grid w-60 md:grid-cols-2 max-h-[calc(100vh-100px)] md:w-[600px] lg:w-[800px]">
                         <div>
                           <NavigationMenuLink asChild>
@@ -177,7 +184,14 @@ export default function Header() {
                           </ul>
                         </div>
                       </div>
-                      <div className="p-6 m-4 rounded-lg dark:bg-gray-800 bg-brand-blue font-oswald text-brand-orange">
+                      <div
+                        className="p-6 m-4 rounded-xl font-oswald text-brand-orange backdrop-blur-xl"
+                        style={{
+                          background: "rgba(65,102,245,0.3)",
+                          border: "1px solid rgba(255,255,255,0.12)",
+                          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12)",
+                        }}
+                      >
                         <NavigationMenuLink asChild>
                           <div className="mb-2 text-2xl font-bold text-center md:mb-4 hover:bg-transparent hover:text-brand-orange">
                             Socials
@@ -225,7 +239,14 @@ export default function Header() {
                     <Link href="/tools">Tools</Link>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="md:-translate-x-1/2">
-                    <div className="rounded-lg text-soft-white bg-brand-dark">
+                    <div
+                      className="rounded-xl text-soft-white backdrop-blur-xl"
+                      style={{
+                        background: "rgba(44,44,44,0.75)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
+                      }}
+                    >
                       <div className="grid w-60">
                         <div>
                           <NavigationMenuLink asChild>
@@ -299,7 +320,14 @@ export default function Header() {
                     Shops
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="md:-translate-x-4/5">
-                    <div className="z-50 p-4 w-60 rounded-lg bg-brand-dark font-oswald text-brand-orange md:w-[500px]">
+                    <div
+                      className="z-50 p-4 w-60 rounded-xl font-oswald text-brand-orange backdrop-blur-xl md:w-[500px]"
+                      style={{
+                        background: "rgba(44,44,44,0.75)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
+                      }}
+                    >
                       <ul className="grid gap-6 md:grid-cols-2">
                         <ListItem
                           href="https://store.gitchegumi.com/"
