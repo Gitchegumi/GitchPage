@@ -1,0 +1,50 @@
+name: Notify Blog Subscribers
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "src/app/blog/**/*.mdx"
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Find newly added blog posts
+        id: new-posts
+        run: |
+          NEW_POSTS=$(git diff --name-only --diff-filter=A HEAD~1 HEAD -- 'src/app/blog/**/*.mdx' | tr '\n' ' ')
+          echo "files=$NEW_POSTS" >> $GITHUB_OUTPUT
+          if [ -z "$NEW_POSTS" ]; then
+            echo "No new blog posts detected."
+          else
+            echo "New posts: $NEW_POSTS"
+          fi
+
+      - name: Send subscriber notifications
+        if: steps.new-posts.outputs.files != ''
+        env:
+          LISTMONK_URL: ${{ secrets.LISTMONK_URL }}
+          LISTMONK_API_USER: ${{ secrets.LISTMONK_API_USER }}
+          LISTMONK_API_KEY: ${{ secrets.LISTMONK_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+          LISTMONK_CAMPAIGN_TEMPLATE_ID: ${{ secrets.LISTMONK_CAMPAIGN_TEMPLATE_ID }}
+        run: |
+          for file in ${{ steps.new-posts.outputs.files }}; do
+            echo "Processing $file..."
+            node scripts/notify-new-post.mjs "$file"
+          done
