@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MagicCard } from "@/components/magicui/magic-card";
 
 export function SubscribeForm() {
   const [email, setEmail] = useState("");
@@ -18,9 +16,7 @@ export function SubscribeForm() {
     try {
       const response = await fetch("/api/subscribe", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
@@ -42,47 +38,69 @@ export function SubscribeForm() {
   };
 
   return (
-    <Card className="border-muted bg-card bg-soft-white/30">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold">Stay Updated</CardTitle>
-        <CardDescription className="text-sm text-muted-foreground">
-          Get notified when new posts are published
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="space-y-2">
-            <Input
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={status === "loading" || status === "success"}
-              required
-              className="h-10"
-            />
-          </div>
-          <Button
-            type="submit"
-            className="w-full"
+    <MagicCard
+      className="rounded-2xl"
+      gradientFrom="#4166f5"
+      gradientTo="#afe0ce"
+      gradientColor="rgba(65,102,245,0.08)"
+      gradientSize={250}
+      gradientOpacity={1}
+    >
+      <div
+        className="rounded-2xl px-5 py-5 space-y-4 backdrop-blur-md"
+        style={{
+          background: "rgba(44,44,44,0.45)",
+          border: "1px solid rgba(175,224,206,0.15)",
+        }}
+      >
+        <div>
+          <h3 className="font-semibold text-base" style={{ color: "#f0f0f0" }}>
+            Stay Updated
+          </h3>
+          <p className="text-xs mt-1" style={{ color: "#afe0ce" }}>
+            Get notified when new posts are published
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-2.5">
+          <input
+            type="email"
+            placeholder="your@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             disabled={status === "loading" || status === "success"}
+            required
+            className="w-full rounded-lg px-3 h-9 text-sm outline-none transition-colors disabled:opacity-50"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(204,219,220,0.25)",
+              color: "#f0f0f0",
+            }}
+            onFocus={(e) => (e.target.style.borderColor = "rgba(65,102,245,0.7)")}
+            onBlur={(e) => (e.target.style.borderColor = "rgba(204,219,220,0.25)")}
+          />
+
+          <button
+            type="submit"
+            disabled={status === "loading" || status === "success"}
+            className="w-full h-9 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-60"
+            style={{ background: "#fca311", color: "#2c2c2c" }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
           >
-            {status === "loading" ? "Subscribing..." : "Subscribe"}
-          </Button>
+            {status === "loading" ? "Subscribing…" : status === "success" ? "Subscribed!" : "Subscribe"}
+          </button>
+
           {message && (
             <p
-              className={`text-sm ${status === "success"
-                ? "text-green-600 dark:text-green-400"
-                : status === "error"
-                  ? "text-red-600 dark:text-red-400"
-                  : "text-muted-foreground"
-                }`}
+              className="text-xs text-center"
+              style={{ color: status === "success" ? "#afe0ce" : "#fca311" }}
             >
               {message}
             </p>
           )}
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </MagicCard>
   );
 }
