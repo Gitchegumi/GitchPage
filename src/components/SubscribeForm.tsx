@@ -5,6 +5,7 @@ import { MagicCard } from "@/components/magicui/magic-card";
 
 export function SubscribeForm() {
   const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
@@ -14,10 +15,10 @@ export function SubscribeForm() {
     setMessage("");
 
     try {
-      const response = await fetch("/api/subscribe", {
+      const response = await fetch(process.env.NEXT_PUBLIC_N8N_SUBSCRIBE_URL!, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, honeypot }),
       });
 
       const data = await response.json();
@@ -63,6 +64,17 @@ export function SubscribeForm() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-2.5">
+          {/* Honeypot — hidden from real users, bots fill it in */}
+          <input
+            type="text"
+            name="website"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            style={{ display: "none" }}
+          />
           <input
             type="email"
             placeholder="your@email.com"
