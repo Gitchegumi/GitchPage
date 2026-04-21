@@ -6,6 +6,28 @@
 const LISTMONK_URL = process.env.LISTMONK_URL || "https://monk.gitchegumi.com";
 const LISTMONK_API_USER = process.env.LISTMONK_API_USER || "";
 const LISTMONK_API_KEY = process.env.LISTMONK_API_KEY || "";
+const LISTMONK_BLOG_LIST_ID = parseInt(process.env.LISTMONK_BLOG_LIST_ID || "3", 10);
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
+function safeUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+      throw new Error("Invalid URL scheme");
+    }
+    return parsed.href;
+  } catch {
+    return "#";
+  }
+}
 
 interface ListmonkList {
   id: number;
@@ -79,7 +101,7 @@ export async function getListById(listId: number): Promise<ListmonkList | null> 
  * Subscribe an email to the blog subscribers list
  */
 export async function subscribeEmail(email: string): Promise<ListmonkSubscriber> {
-  const LIST_ID = 3; // Blog Subscribers list ID
+  const LIST_ID = LISTMONK_BLOG_LIST_ID;
 
   try {
     // Check if subscriber already exists
@@ -212,16 +234,19 @@ export function generatePostEmailTemplate(
   excerpt: string,
   url: string
 ): string {
-  const truncatedExcerpt =
-    excerpt.length > 200 ? excerpt.substring(0, 200) + "..." : excerpt;
+  const safeTitle = escapeHtml(title);
+  const safeExcerpt = escapeHtml(
+    excerpt.length > 200 ? excerpt.substring(0, 200) + "..." : excerpt
+  );
+  const safePostUrl = escapeHtml(safeUrl(url));
 
   return `
 <h2 style="font-size:22px;margin-bottom:12px;">
-  <a href="${url}" style="color:#667eea;text-decoration:none;">${title}</a>
+  <a href="${safePostUrl}" style="color:#667eea;text-decoration:none;">${safeTitle}</a>
 </h2>
-<p style="color:#666;line-height:1.6;margin-bottom:24px;">${truncatedExcerpt}</p>
+<p style="color:#666;line-height:1.6;margin-bottom:24px;">${safeExcerpt}</p>
 <p>
-  <a href="${url}"
+  <a href="${safePostUrl}"
      style="display:inline-block;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
             color:white;padding:12px 30px;text-decoration:none;border-radius:5px;font-weight:600;">
     Read Full Post

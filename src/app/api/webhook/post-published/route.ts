@@ -13,15 +13,13 @@ const webhookSchema = z.object({
   publishedAt: z.string().optional(),
 });
 
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || "";
 const CAMPAIGN_TEMPLATE_ID = parseInt(process.env.LISTMONK_CAMPAIGN_TEMPLATE_ID || "2", 10);
 
 export async function POST(request: NextRequest) {
-  if (WEBHOOK_SECRET) {
-    const authHeader = request.headers.get("authorization");
-    if (authHeader !== `Bearer ${WEBHOOK_SECRET}`) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-    }
+  const authHeader = request.headers.get("authorization");
+  if (!WEBHOOK_SECRET || authHeader !== `Bearer ${WEBHOOK_SECRET}`) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
   try {
