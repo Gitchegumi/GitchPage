@@ -42,16 +42,16 @@ export function SubscribeForm() {
   };
 
   return (
-    <Card className="border-muted bg-card">
+    <Card className="border-muted bg-card bg-soft-white/30">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold">Stay Updated</CardTitle>
-        <CardDescription className="text-sm text-muted-foreground">
+        <CardDescription className="text-sm text-muted-foreground text-white">
           Get notified when new posts are published
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="space-y-2">
+          <div className="space-y-2 text-white">
             <Input
               type="email"
               placeholder="your@email.com"
@@ -71,13 +71,12 @@ export function SubscribeForm() {
           </Button>
           {message && (
             <p
-              className={`text-sm ${
-                status === "success"
-                  ? "text-green-600 dark:text-green-400"
-                  : status === "error"
+              className={`text-sm ${status === "success"
+                ? "text-green-600 dark:text-green-400"
+                : status === "error"
                   ? "text-red-600 dark:text-red-400"
                   : "text-muted-foreground"
-              }`}
+                }`}
             >
               {message}
             </p>
