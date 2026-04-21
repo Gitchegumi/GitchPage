@@ -62,15 +62,15 @@ async function listmonkRequest<T>(
 }
 
 /**
- * Get list by name
+ * Get list by ID
  */
-export async function getListByName(name: string): Promise<ListmonkList | null> {
+export async function getListById(listId: number): Promise<ListmonkList | null> {
   try {
-    const data = await listmonkRequest<{ data: ListmonkList[] }>("/lists");
-    return data.data.find((list) => list.name === name) || null;
+    const data = await listmonkRequest<{ data: ListmonkList }>(`/lists/${listId}`);
+    return data.data;
   } catch (error) {
-    console.error("Failed to get list by name:", error);
-    throw error;
+    console.error("Failed to get list by ID:", error);
+    return null;
   }
 }
 
@@ -78,15 +78,9 @@ export async function getListByName(name: string): Promise<ListmonkList | null> 
  * Subscribe an email to the blog subscribers list
  */
 export async function subscribeEmail(email: string): Promise<ListmonkSubscriber> {
+  const LIST_ID = 2; // Blog Subscribers list ID
+
   try {
-    const list = await getListByName(
-      process.env.LISTMONK_BLOG_LIST_NAME || "Blog Subscribers"
-    );
-
-    if (!list) {
-      throw new Error("Blog Subscribers list not found");
-    }
-
     // Check if subscriber already exists
     const existingSubscribers = await listmonkRequest<{ data: ListmonkSubscriber[] }>(
       `/subscribers?query=subscribers.email='${encodeURIComponent(email)}'`
@@ -95,12 +89,12 @@ export async function subscribeEmail(email: string): Promise<ListmonkSubscriber>
     if (existingSubscribers.data.length > 0) {
       const subscriber = existingSubscribers.data[0];
       // Add to list if not already subscribed
-      if (!subscriber.lists.includes(list.id)) {
+      if (!subscriber.lists.includes(String(LIST_ID))) {
         await listmonkRequest<ListmonkSubscriber>(`/subscribers/${subscriber.id}/lists`, {
           method: "POST",
           body: JSON.stringify({
             action: "add",
-            list_ids: [list.id],
+            list_ids: [LIST_ID],
           }),
         });
       }
@@ -114,7 +108,7 @@ export async function subscribeEmail(email: string): Promise<ListmonkSubscriber>
         email,
         name: "",
         status: "enabled",
-        lists: [list.id],
+        lists: [LIST_ID],
       }),
     });
 
@@ -126,31 +120,38 @@ export async function subscribeEmail(email: string): Promise<ListmonkSubscriber>
 }
 
 /**
- * Create a new campaign
+ * Get campaign by ID
  */
-export async function createCampaign(
-  listId: string,
+export async function getCampaign(campaignId: string): Promise<ListmonkCampaign | null> {
+  try {
+    const data = await listmonkRequest<{ data: ListmonkCampaign }>(`/campaigns/${campaignId}`);
+    return data.data;
+  } catch (error) {
+    console.error("Failed to get campaign:", error);
+    return null;
+  }
+}
+
+/**
+ * Update campaign content and subject
+ */
+export async function updateCampaign(
+  campaignId: string,
   subject: string,
   content: string
 ): Promise<ListmonkCampaign> {
   try {
-    const data = await listmonkRequest<{ data: ListmonkCampaign }>("/campaigns", {
-      method: "POST",
+    const data = await listmonkRequest<{ data: ListmonkCampaign }>(`/campaigns/${campaignId}`, {
+      method: "PUT",
       body: JSON.stringify({
-        name: subject,
         subject,
-        from_email: "noreply@gitchegumi.com",
-        type: "regular",
-        content_type: "html",
         body: content,
-        list_ids: [listId],
-        template_id: 1, // Default template
       }),
     });
 
     return data.data;
   } catch (error) {
-    console.error("Failed to create campaign:", error);
+    console.error("Failed to update campaign:", error);
     throw error;
   }
 }
