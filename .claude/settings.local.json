@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:listmonk.app)"
+      "WebFetch(domain:listmonk.app)",
+      "WebFetch(domain:www.reddit.com)"
     ]
   }
 }
