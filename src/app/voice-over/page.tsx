@@ -55,7 +55,14 @@ export default async function VoiceOverPage() {
             className="hidden rounded-lg shadow-lg md:block shadow-brand-blue/50"
           />
           <div className="w-full md:w-1/2">
-            <div className="mb-8">
+            <div
+              className="mb-8 p-6 rounded-2xl backdrop-blur-xl"
+              style={{
+                background: "rgba(44,44,44,0.45)",
+                border: "1px solid rgba(175,224,206,0.15)",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)",
+              }}
+            >
               <h2 className="mb-6 text-3xl font-bold text-center">
                 Why Choose Me?
               </h2>
