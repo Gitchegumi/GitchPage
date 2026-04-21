@@ -8,18 +8,18 @@ const LISTMONK_API_USER = process.env.LISTMONK_API_USER || "";
 const LISTMONK_API_KEY = process.env.LISTMONK_API_KEY || "";
 
 interface ListmonkList {
-  id: string;
+  id: number;
   name: string;
   type: string;
   status: string;
 }
 
 interface ListmonkSubscriber {
-  id: string;
+  id: number;
   email: string;
   name: string;
   status: string;
-  lists: string[];
+  lists: Array<{ id: number; name: string; subscription_status: string }>;
 }
 
 interface ListmonkCampaign {
@@ -79,23 +79,26 @@ export async function getListById(listId: number): Promise<ListmonkList | null> 
  * Subscribe an email to the blog subscribers list
  */
 export async function subscribeEmail(email: string): Promise<ListmonkSubscriber> {
-  const LIST_ID = 2; // Blog Subscribers list ID
+  const LIST_ID = 3; // Blog Subscribers list ID
 
   try {
     // Check if subscriber already exists
-    const existingSubscribers = await listmonkRequest<{ data: ListmonkSubscriber[] }>(
-      `/subscribers?query=subscribers.email='${encodeURIComponent(email)}'`
+    const existingSubscribers = await listmonkRequest<{ data: { results: ListmonkSubscriber[] } }>(
+      `/subscribers?query=${encodeURIComponent(`subscribers.email='${email}'`)}`
     );
 
-    if (existingSubscribers.data.length > 0) {
-      const subscriber = existingSubscribers.data[0];
-      // Add to list if not already subscribed
-      if (!subscriber.lists.includes(String(LIST_ID))) {
-        await listmonkRequest<ListmonkSubscriber>(`/subscribers/${subscriber.id}/lists`, {
-          method: "POST",
+    const results = existingSubscribers.data?.results ?? [];
+    if (results.length > 0) {
+      const subscriber = results[0];
+      const alreadyOnList = subscriber.lists.some((l) => l.id === LIST_ID);
+      if (!alreadyOnList) {
+        await listmonkRequest<void>("/subscribers/lists", {
+          method: "PUT",
           body: JSON.stringify({
+            ids: [subscriber.id],
             action: "add",
-            list_ids: [LIST_ID],
+            target_list_ids: [LIST_ID],
+            status: "confirmed",
           }),
         });
       }
@@ -109,7 +112,8 @@ export async function subscribeEmail(email: string): Promise<ListmonkSubscriber>
         email,
         name: "",
         status: "enabled",
-        list_ids: [LIST_ID],
+        lists: [LIST_ID],
+        preconfirm_subscriptions: true,
       }),
     });
 
@@ -158,6 +162,27 @@ export async function updateCampaign(
 }
 
 /**
+ * Clone a template campaign then update its subject and body
+ */
+export async function cloneCampaign(
+  templateId: number,
+  name: string,
+  subject: string,
+  body: string
+): Promise<ListmonkCampaign> {
+  const cloned = await listmonkRequest<{ data: ListmonkCampaign }>(
+    `/campaigns/${templateId}/clone`,
+    { method: "POST" }
+  );
+  const id = cloned.data.id;
+  const updated = await listmonkRequest<{ data: ListmonkCampaign }>(`/campaigns/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ name, subject, body, content_type: "html" }),
+  });
+  return updated.data;
+}
+
+/**
  * Send a campaign
  */
 export async function sendCampaign(campaignId: string): Promise<ListmonkCampaign> {
@@ -191,98 +216,16 @@ export function generatePostEmailTemplate(
     excerpt.length > 200 ? excerpt.substring(0, 200) + "..." : excerpt;
 
   return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 30px;
-      text-align: center;
-      border-radius: 8px 8px 0 0;
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-    .content {
-      background: #f9f9f9;
-      padding: 30px;
-      border: 1px solid #e0e0e0;
-      border-top: none;
-    }
-    .post-title {
-      font-size: 22px;
-      margin-bottom: 15px;
-    }
-    .post-title a {
-      color: #667eea;
-      text-decoration: none;
-    }
-    .post-title a:hover {
-      text-decoration: underline;
-    }
-    .excerpt {
-      color: #666;
-      margin-bottom: 25px;
-    }
-    .button {
-      display: inline-block;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 12px 30px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: 600;
-    }
-    .button:hover {
-      opacity: 0.9;
-    }
-    .footer {
-      background: #f0f0f0;
-      padding: 20px;
-      text-align: center;
-      font-size: 12px;
-      color: #888;
-      border-radius: 0 0 8px 8px;
-      border: 1px solid #e0e0e0;
-      border-top: none;
-    }
-    .footer a {
-      color: #667eea;
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1>New Post on GitchPage</h1>
-  </div>
-  <div class="content">
-    <h2 class="post-title">
-      <a href="${url}">${title}</a>
-    </h2>
-    <p class="excerpt">${truncatedExcerpt}</p>
-    <p>
-      <a href="${url}" class="button">Read Full Post</a>
-    </p>
-  </div>
-  <div class="footer">
-    <p>You received this email because you subscribed to GitchPage blog updates.</p>
-    <p><a href="{{ .UnsubscribeURL }}">Unsubscribe</a></p>
-    <p>&copy; ${new Date().getFullYear()} Gitchegumi Media</p>
-  </div>
-</body>
-</html>
+<h2 style="font-size:22px;margin-bottom:12px;">
+  <a href="${url}" style="color:#667eea;text-decoration:none;">${title}</a>
+</h2>
+<p style="color:#666;line-height:1.6;margin-bottom:24px;">${truncatedExcerpt}</p>
+<p>
+  <a href="${url}"
+     style="display:inline-block;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+            color:white;padding:12px 30px;text-decoration:none;border-radius:5px;font-weight:600;">
+    Read Full Post
+  </a>
+</p>
   `.trim();
 }

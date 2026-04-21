@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getCampaign,
-  updateCampaign,
+  cloneCampaign,
   sendCampaign,
   generatePostEmailTemplate,
 } from "@/lib/listmonk";
@@ -14,10 +13,17 @@ const webhookSchema = z.object({
   publishedAt: z.string().optional(),
 });
 
-// Pre-configured campaign for blog alerts
-const BLOG_CAMPAIGN_ID = "98aad89d-6ee8-46eb-bbc1-7f609ee48e0b";
+const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+const CAMPAIGN_TEMPLATE_ID = parseInt(process.env.LISTMONK_CAMPAIGN_TEMPLATE_ID || "2", 10);
 
 export async function POST(request: NextRequest) {
+  if (WEBHOOK_SECRET) {
+    const authHeader = request.headers.get("authorization");
+    if (authHeader !== `Bearer ${WEBHOOK_SECRET}`) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
   try {
     const body = await request.json();
     const validation = webhookSchema.safeParse(body);
@@ -34,54 +40,23 @@ export async function POST(request: NextRequest) {
 
     const { title, excerpt, url } = validation.data;
 
-    // Verify campaign exists
-    const campaign = await getCampaign(BLOG_CAMPAIGN_ID);
-
-    if (!campaign) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Blog campaign not found",
-        },
-        { status: 500 }
-      );
-    }
-
-    // Generate email content
     const emailContent = generatePostEmailTemplate(title, excerpt, url);
+    const subject = `New Post: ${title}`;
 
-    // Update campaign with new post content
-    await updateCampaign(
-      BLOG_CAMPAIGN_ID,
-      `New Post: ${title}`,
-      emailContent
-    );
-
-    // Send campaign
-    await sendCampaign(BLOG_CAMPAIGN_ID);
+    const campaign = await cloneCampaign(CAMPAIGN_TEMPLATE_ID, subject, subject, emailContent);
+    await sendCampaign(campaign.id);
 
     return NextResponse.json({
       success: true,
-      campaignId: BLOG_CAMPAIGN_ID,
+      campaignId: campaign.id,
       message: "Blog alert sent successfully",
     });
   } catch (error) {
     console.error("Webhook error:", error);
-
-    if (error instanceof Error) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: error.message,
-        },
-        { status: 500 }
-      );
-    }
-
     return NextResponse.json(
       {
         success: false,
-        error: "An unexpected error occurred",
+        error: error instanceof Error ? error.message : "An unexpected error occurred",
       },
       { status: 500 }
     );
