@@ -31,40 +31,20 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Subscription error:", error);
-
-    if (error instanceof Error) {
-      // Handle specific error cases
-      if (error.message.includes("already exists")) {
-        return NextResponse.json(
-          {
-            success: true,
-            message: "Email already subscribed",
-          },
-          { status: 200 }
-        );
-      }
-
-      if (error.message.includes("Listmonk API error")) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: "Failed to process subscription. Please try again later.",
-          },
-          { status: 503 }
-        );
-      }
-    }
-
     return NextResponse.json(
-      {
-        success: false,
-        error: "An unexpected error occurred",
-      },
-      { status: 500 }
+      { success: false, error: "Failed to process subscription. Please try again later." },
+      { status: 503 }
     );
   }
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, { status: 204 });
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_SITE_URL || "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
 }

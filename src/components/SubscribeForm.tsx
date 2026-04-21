@@ -45,13 +45,13 @@ export function SubscribeForm() {
     <Card className="border-muted bg-card bg-soft-white/30">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold">Stay Updated</CardTitle>
-        <CardDescription className="text-sm text-muted-foreground text-white">
+        <CardDescription className="text-sm text-muted-foreground">
           Get notified when new posts are published
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="space-y-2 text-white">
+          <div className="space-y-2">
             <Input
               type="email"
               placeholder="your@email.com"

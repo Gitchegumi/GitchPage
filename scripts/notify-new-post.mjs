@@ -31,12 +31,25 @@ if (!LISTMONK_API_USER || !LISTMONK_API_KEY) {
   process.exit(1);
 }
 
-// Extract metadata from MDX — parses the exported metadata object
+// Extract metadata from MDX — finds the metadata object by counting braces
+// to correctly handle nested objects inside the metadata block
 function extractMetadata(content) {
-  const match = content.match(/export\s+const\s+metadata\s*=\s*(\{[\s\S]*?\n\})/);
-  if (!match) return null;
+  const start = content.search(/export\s+const\s+metadata\s*=\s*\{/);
+  if (start === -1) return null;
 
-  const block = match[1];
+  const braceStart = content.indexOf("{", start);
+  let depth = 0;
+  let end = -1;
+  for (let i = braceStart; i < content.length; i++) {
+    if (content[i] === "{") depth++;
+    else if (content[i] === "}") {
+      depth--;
+      if (depth === 0) { end = i; break; }
+    }
+  }
+  if (end === -1) return null;
+
+  const block = content.slice(braceStart, end + 1);
   const get = (key) => {
     const m = block.match(new RegExp(`${key}\\s*:\\s*["'\`]([^"'\`\\n]+)["'\`]`));
     return m ? m[1] : null;

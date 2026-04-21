@@ -51,10 +51,6 @@ interface ListmonkCampaign {
   status: string;
 }
 
-interface ApiError {
-  message: string;
-  code?: string;
-}
 
 /**
  * Make authenticated request to Listmonk API
