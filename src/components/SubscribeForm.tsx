@@ -21,7 +21,8 @@ export function SubscribeForm() {
         body: JSON.stringify({ email, honeypot }),
       });
 
-      const data = await response.json();
+      const text = await response.text();
+      const data = text ? JSON.parse(text) : { success: true };
 
       if (data.success) {
         setStatus("success");
