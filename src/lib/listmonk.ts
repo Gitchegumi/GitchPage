@@ -46,7 +46,8 @@ async function listmonkRequest<T>(
     ...options,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Basic ${Buffer.from(`admin:${LISTMONK_API_KEY}`).toString("base64")}`,
+      "X-Requested-With": "XMLHttpRequest",
+      Cookie: `api_key=${LISTMONK_API_KEY}`,
       ...options.headers,
     },
   });
