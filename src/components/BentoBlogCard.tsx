@@ -38,7 +38,7 @@ const BentoBlogCard = ({ post, className }: BentoBlogCardProps) => {
       }
       Icon={EmptyIcon}
       description={post.description || ""}
-      href={`/blog/${post.category || "general"}/${post.slug}`}
+      href={post.erpUrl || `/blog/${post.category || "general"}/${post.slug}`}
       cta="Read More"
     />
   );

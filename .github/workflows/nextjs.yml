@@ -32,6 +32,7 @@ jobs:
     env:
       NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
       NEXT_PUBLIC_N8N_SUBSCRIBE_URL: ${{ vars.NEXT_PUBLIC_N8N_SUBSCRIBE_URL }}
+      NEXT_PUBLIC_ERP_URL: ${{ vars.NEXT_PUBLIC_ERP_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
