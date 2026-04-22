@@ -18,9 +18,9 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <a href="https://erp.gitchegumi.com/blog" className="hover:underline">
+                  <Link href="/blog" className="hover:underline">
                     Blog
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <Link

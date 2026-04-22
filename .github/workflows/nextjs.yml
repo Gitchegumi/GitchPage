@@ -33,6 +33,8 @@ jobs:
       NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
       NEXT_PUBLIC_N8N_SUBSCRIBE_URL: ${{ vars.NEXT_PUBLIC_N8N_SUBSCRIBE_URL }}
       NEXT_PUBLIC_ERP_URL: ${{ vars.NEXT_PUBLIC_ERP_URL }}
+      ERP_API_KEY: ${{ secrets.ERP_API_KEY }}
+      ERP_API_SECRET: ${{ secrets.ERP_API_SECRET }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
