@@ -153,8 +153,9 @@ export default function Header() {
                               </span>
                             </ListItem>
                             <ListItem
-                              href="/blog"
+                              href="https://erp.gitchegumi.com/blog"
                               title="Blog"
+                              target="_blank"
                               className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
                             >
                               <span className="hidden md:block">
