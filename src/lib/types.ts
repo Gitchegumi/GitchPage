@@ -8,4 +8,5 @@ export type PostMeta = {
   tags?: string[];
   keywords?: string[];
   featureImage?: string;
+  erpUrl?: string; // Full ERPNext URL for posts hosted on ERPNext
 };

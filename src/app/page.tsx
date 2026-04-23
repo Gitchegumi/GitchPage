@@ -1,8 +1,8 @@
 import Image from "next/image";
 import BlogCard from "@/components/BlogCard";
-import { getAllPosts } from "@/lib/getAllPosts";
+import { getERPNextPosts } from "@/lib/getERPNextPosts";
 
-const allPosts = await getAllPosts();
+const allPosts = await getERPNextPosts();
 const recentPosts = allPosts.slice(0, 3);
 
 export default function Home() {
