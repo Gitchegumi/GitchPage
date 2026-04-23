@@ -65,9 +65,9 @@ _Goal: Visitor reads a full post without ERPNext header or footer ever appearing
 
 ## Phase 5: Polish & Wrap-up
 
-- [ ] T016 Run `npm run build` final clean pass — confirm zero errors and no regressions
-- [ ] T017 Commit all changes with message: `feat: constrain blog iframes and surface tiered subscribe form`
-- [ ] T018 Push branch `002-constrain-blog-iframe` to remote and open PR
+- [x] T016 Run `npm run build` final clean pass — confirm zero errors and no regressions
+- [x] T017 Commit all changes with message: `feat: constrain blog iframes and surface tiered subscribe form`
+- [x] T018 Push branch `002-constrain-blog-iframe` to remote and open PR
 
 ---
 
