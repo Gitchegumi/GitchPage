@@ -25,13 +25,13 @@ Both the main blog listing page (`/blog`) and individual post pages (`/blog/[cat
 
 ## Constitution Check
 
-| Principle | Status | Notes |
-| --------- | ------ | ----- |
-| I. Content Authenticity | ✅ Pass | No content changes |
-| II. Sustainable Static Foundation | ✅ Pass | New component in static layer; no new API routes in Next.js |
-| III. Design & Accessibility | ✅ Pass | New form must meet a11y standards; smoke check required pre-merge |
+| Principle                                 | Status             | Notes                                                                              |
+| ----------------------------------------- | ------------------ | ---------------------------------------------------------------------------------- |
+| I. Content Authenticity                   | ✅ Pass            | No content changes                                                                 |
+| II. Sustainable Static Foundation         | ✅ Pass            | New component in static layer; no new API routes in Next.js                        |
+| III. Design & Accessibility               | ✅ Pass            | New form must meet a11y standards; smoke check required pre-merge                  |
 | IV. Build Integrity & Manual Verification | ⚠️ Requires action | Structural + new component → `npx tsc --noEmit` + manual a11y + visual smoke check |
-| V. Lean Evolution | ✅ Pass | New component is minimal; n8n change is additive; no new Next.js dependencies |
+| V. Lean Evolution                         | ✅ Pass            | New component is minimal; n8n change is additive; no new Next.js dependencies      |
 
 **Gate**: PASS — `npx tsc --noEmit` clean + manual a11y + visual smoke check before merge.
 
@@ -126,6 +126,7 @@ n8n.gitchegumi.com
 **Decision**: Update the existing n8n subscribe workflow to read a `tier` field from the incoming webhook payload and route to the appropriate ERPNext email group.
 
 **Routing logic**:
+
 - `tier === "blog"` → add subscriber to ERPNext "Blog Subscribers" email group
 - `tier === "all"` (or any other value) → add subscriber to ERPNext "Website" email group
 
@@ -249,7 +250,7 @@ No Next.js change required. ERPNext CSS fix handles constraint on all embedded p
 
 ---
 
-## Phase 2: Task Planning Approach *(described only — executed by /tasks)*
+## Phase 2: Task Planning Approach _(described only — executed by /tasks)_
 
 **Task generation strategy**:
 
@@ -295,4 +296,4 @@ No constitution violations requiring justification.
 
 ---
 
-*Based on GitchPage Constitution v1.1.1 — See `.specify/memory/constitution.md`*
+_Based on GitchPage Constitution v1.1.1 — See `.specify/memory/constitution.md`_
