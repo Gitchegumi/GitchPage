@@ -1,19 +1,16 @@
 <!--
 Sync Impact Report
-Version change: 1.0.0 → 1.1.0
-Modified principles:
-  - IV. Measurable Quality & Testing → IV. Build Integrity & Manual Verification
-    (Removed automated test / TDD mandate; replaced with build gate + manual a11y check)
+Version change: 1.1.0 → 1.1.1
+Modified principles: None
 Added sections: None
 Removed sections: None
-Platform Constraints: Added ERPNext suite (blog CMS, newsletter, future eCommerce)
+Formatting: Applied Prettier markdown standards throughout (language tags on code blocks,
+  blank lines after headings); added code style mandate to Documentation expectations.
 Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ updated (Constitution Check gate wording)
-  - .specify/templates/spec-template.md ✅ no change required
-  - .specify/templates/tasks-template.md ⚠ pending (remove test-first task ordering mandate)
-Follow-up TODOs:
-  - Update tasks-template.md to remove TDD ordering assumption.
-  - Update amendment history table when next amendment occurs.
+  - .specify/templates/plan-template.md ✅ updated (language tags on code blocks)
+  - .specify/templates/spec-template.md ✅ updated (language tag on code block)
+  - .specify/templates/tasks-template.md ✅ updated (language tags + TDD references removed)
+Follow-up TODOs: None outstanding.
 -->
 
 # GitchPage Constitution
@@ -127,10 +124,13 @@ Documentation expectations:
 
 - Any new script or npm command MUST be documented in `README.md`.
 - Non-trivial architectural decisions SHOULD append an ADR entry (ADR log TBD; placeholder for future adoption).
+- All `.specify` markdown files MUST follow Prettier markdown standards: blank line after every heading,
+  language designation on all fenced code blocks (use `text` for plain prose/pseudo-code blocks).
 
 ## Governance
 
 Authority & scope:
+
 This constitution governs technical quality, content integrity, and evolutionary constraints for GitchPage. It
 supersedes ad hoc preferences. Deviations require an amendment.
 
@@ -154,14 +154,15 @@ Compliance review:
 
 Record keeping:
 
-| Version | Date       | Change Summary                                              |
-|---------|------------|-------------------------------------------------------------|
-| 1.0.0   | 2025-09-21 | Initial constitution                                        |
-| 1.1.0   | 2026-04-22 | Replace TDD mandate with build + manual verification gate; add ERPNext to platform stack |
+| Version | Date       | Change Summary                                                                              |
+| ------- | ---------- | ------------------------------------------------------------------------------------------- |
+| 1.0.0   | 2025-09-21 | Initial constitution                                                                        |
+| 1.1.0   | 2026-04-22 | Replace TDD mandate with build + manual verification gate; add ERPNext to platform stack    |
+| 1.1.1   | 2026-04-22 | Apply Prettier markdown standards; add code style mandate to Documentation expectations     |
 
 Enforcement:
 
 - If a change violates a principle, it MUST be reverted or amended before next publish.
 - The build gate (`npm run build`) is the first line of enforcement; a failing build blocks merge.
 
-**Version**: 1.1.0 | **Ratified**: 2025-09-21 | **Last Amended**: 2026-04-22
+**Version**: 1.1.1 | **Ratified**: 2025-09-21 | **Last Amended**: 2026-04-22

@@ -5,7 +5,8 @@
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
 ## Execution Flow (/plan command scope)
-```
+
+```text
 1. Load feature spec from Input path
    → If not found: ERROR "No feature spec at {path}"
 2. Fill Technical Context (scan for NEEDS CLARIFICATION)
@@ -58,7 +59,8 @@ Key gates from GitchPage Constitution v1.1.0:
 ## Project Structure
 
 ### Documentation (this feature)
-```
+
+```text
 specs/[###-feature]/
 ├── plan.md              # This file (/plan command output)
 ├── research.md          # Phase 0 output (/plan command)
@@ -69,7 +71,8 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-```
+
+```text
 # Option 1: Single project (DEFAULT)
 src/
 ├── models/
