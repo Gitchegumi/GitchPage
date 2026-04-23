@@ -20,11 +20,11 @@
 
 _All four config tasks (T001–T004) and the new component (T005) can proceed in parallel — they touch different systems and files._
 
-- [ ] T001 [P] Create "Blog Subscribers" email group in ERPNext admin at `erp.gitchegumi.com/app/email-group` — Name: "Blog Subscribers", Group Type: Newsletter
-- [ ] T002 [P] Add embed detection script to ERPNext Website Settings → Website Script tab at `erp.gitchegumi.com/app/website-settings` (JS snippet from plan.md Phase 1)
-- [ ] T003 [P] Add embed suppression CSS to ERPNext Website Settings → Website Style tab at `erp.gitchegumi.com/app/website-settings` (CSS rules from plan.md Phase 1)
-- [ ] T004 [P] Update n8n subscribe workflow at `n8n.gitchegumi.com` — add IF/Switch node after webhook trigger: `tier === "blog"` → add to "Blog Subscribers" email group; else → add to "Website" email group
-- [ ] T005 [P] Create `src/components/TieredSubscribeForm.tsx` — `"use client"` component with: two selectable option cards ("Blog only" / "Tell me everything" with plain-language descriptions), email input, hidden honeypot field, submit disabled until both tier and valid email are provided; POST `{ email, tier, honeypot }` to `process.env.NEXT_PUBLIC_N8N_SUBSCRIBE_URL`; success/error feedback; wrap in `MagicCard` with same gradient settings as `SubscribeForm`
+- [x] T001 [P] Create "Blog Subscribers" email group in ERPNext admin at `erp.gitchegumi.com/app/email-group` — Name: "Blog Subscribers", Group Type: Newsletter
+- [x] T002 [P] Add embed detection script to ERPNext Website Settings → Website Script tab at `erp.gitchegumi.com/app/website-settings` (JS snippet from plan.md Phase 1)
+- [x] T003 [P] Add embed suppression CSS to ERPNext Website Settings → Website Style tab at `erp.gitchegumi.com/app/website-settings` (CSS rules from plan.md Phase 1)
+- [x] T004 [P] Update n8n subscribe workflow at `n8n.gitchegumi.com` — add IF/Switch node after webhook trigger: `tier === "blog"` → add to "Blog Subscribers" email group; else → add to "Website" email group
+- [x] T005 [P] Create `src/components/TieredSubscribeForm.tsx` — `"use client"` component with: two selectable option cards ("Blog only" / "Tell me everything" with plain-language descriptions), email input, hidden honeypot field, submit disabled until both tier and valid email are provided; POST `{ email, tier, honeypot }` to `process.env.NEXT_PUBLIC_N8N_SUBSCRIBE_URL`; success/error feedback; wrap in `MagicCard` with same gradient settings as `SubscribeForm`
 
 ---
 
@@ -32,7 +32,7 @@ _All four config tasks (T001–T004) and the new component (T005) can proceed in
 
 _Verify ERPNext embed fix before proceeding to user story phases. Depends on T002 + T003._
 
-- [ ] T006 Verify ERPNext embed fix on blog listing — open `erp.gitchegumi.com/blog?embed=1` directly in browser, scroll up and down, confirm no navbar or footer visible at any scroll position
+- [x] T006 Verify ERPNext embed fix on blog listing — open `erp.gitchegumi.com/blog?embed=1` directly in browser, scroll up and down, confirm no navbar or footer visible at any scroll position
 
 ---
 
@@ -42,13 +42,13 @@ _Goal: Visitor sees a fully constrained blog listing iframe with a tiered subscr
 
 **Independent test criteria**: `/blog` loads with `TieredSubscribeForm` visible without page-level scrolling on 375px+ viewports; both subscription tiers route to the correct ERPNext email group; ERPNext chrome does not appear on scroll.
 
-- [ ] T007 [US1] Update `src/app/blog/page.tsx` — replace single full-height iframe with a `flex flex-col h-[calc(100vh-90px)]` layout: iframe with `flex-1 min-h-0 w-full border-0` and `?embed=1`; `TieredSubscribeForm` wrapped in a `shrink-0 px-4 py-3` container below (import from `@/components/TieredSubscribeForm`)
-- [ ] T008 [US1] Run `npx tsc --noEmit` from repo root — confirm zero TypeScript errors after adding `TieredSubscribeForm` to `src/app/blog/page.tsx`
-- [ ] T009 [US1] Manual visual check on `localhost` — open `/blog` at full desktop width, confirm `TieredSubscribeForm` is fully visible in the initial viewport without any page-level scrolling
-- [ ] T010 [US1] Manual visual check on `localhost` — resize browser to 375px width, confirm `TieredSubscribeForm` is visible in the initial viewport without page-level scrolling
-- [ ] T011 [US1] A11y smoke check on `/blog` — tab through the page: confirm iframe title is announced, both option cards are reachable and selectable by keyboard, email input is labelled, submit button is disabled before tier selection and activatable after
-- [ ] T012 [US1] End-to-end "Blog only" — submit a test email with "Blog only" selected, confirm success message, then verify the email appears in ERPNext "Blog Subscribers" group at `erp.gitchegumi.com/app/email-group/Blog%20Subscribers`
-- [ ] T013 [US1] End-to-end "Tell me everything" — submit a different test email with "Tell me everything" selected, confirm success message, then verify the email appears in ERPNext "Website" group at `erp.gitchegumi.com/app/email-group/Website`
+- [x] T007 [US1] Update `src/app/blog/page.tsx` — replace single full-height iframe with a `flex flex-col h-[calc(100vh-90px)]` layout: iframe with `flex-1 min-h-0 w-full border-0` and `?embed=1`; `TieredSubscribeForm` wrapped in a `shrink-0 px-4 py-3` container below (import from `@/components/TieredSubscribeForm`)
+- [x] T008 [US1] Run `npx tsc --noEmit` from repo root — confirm zero TypeScript errors after adding `TieredSubscribeForm` to `src/app/blog/page.tsx`
+- [x] T009 [US1] Manual visual check on `localhost` — open `/blog` at full desktop width, confirm `TieredSubscribeForm` is fully visible in the initial viewport without any page-level scrolling
+- [x] T010 [US1] Manual visual check on `localhost` — resize browser to 375px width, confirm `TieredSubscribeForm` is visible in the initial viewport without page-level scrolling
+- [x] T011 [US1] A11y smoke check on `/blog` — tab through the page: confirm iframe title is announced, both option cards are reachable and selectable by keyboard, email input is labelled, submit button is disabled before tier selection and activatable after
+- [x] T012 [US1] End-to-end "Blog only" — submit a test email with "Blog only" selected, confirm success message, then verify the email appears in ERPNext "Blog Subscribers" group at `erp.gitchegumi.com/app/email-group/Blog%20Subscribers`
+- [x] T013 [US1] End-to-end "Tell me everything" — submit a different test email with "Tell me everything" selected, confirm success message, then verify the email appears in ERPNext "Website" group at `erp.gitchegumi.com/app/email-group/Website`
 
 ---
 
@@ -58,8 +58,8 @@ _Goal: Visitor reads a full post without ERPNext header or footer ever appearing
 
 **Independent test criteria**: On any `/blog/[category]/[slug]` page, scrolling to the very top and bottom does not reveal the ERPNext navbar or footer under any circumstance.
 
-- [ ] T014 [US2] Verify ERPNext embed on individual post — open `erp.gitchegumi.com/blog/[any-category]/[any-slug]?embed=1` directly, scroll to bottom, confirm ERPNext footer is not visible
-- [ ] T015 [US2] Manual visual check on `localhost` — open any `/blog/[category]/[slug]` page, scroll to top and bottom, confirm no ERPNext header or footer appears at any scroll position
+- [x] T014 [US2] Verify ERPNext embed on individual post — open `erp.gitchegumi.com/blog/[any-category]/[any-slug]?embed=1` directly, scroll to bottom, confirm ERPNext footer is not visible
+- [x] T015 [US2] Manual visual check on `localhost` — open any `/blog/[category]/[slug]` page, scroll to top and bottom, confirm no ERPNext header or footer appears at any scroll position
 
 ---
 

@@ -1,4 +1,5 @@
 import { getERPNextPosts } from "@/lib/getERPNextPosts";
+import { TieredSubscribeForm } from "@/components/TieredSubscribeForm";
 
 const ERP_URL = process.env.NEXT_PUBLIC_ERP_URL || "https://erp.gitchegumi.com";
 
@@ -40,13 +41,15 @@ export default async function BlogPostPage({ params }: Props) {
   const embedUrl = `${ERP_URL}/blog/${category}/${slug}?embed=1`;
 
   return (
-    <iframe
-      src={embedUrl}
-      title={slug}
-      className="w-full border-0"
-      style={{ height: "calc(100vh - 90px)" }}
-      loading="lazy"
-    />
+    <div className="relative" style={{ height: "calc(100vh - 90px)" }}>
+      <iframe
+        src={embedUrl}
+        title={slug}
+        className="w-full h-full border-0"
+        loading="lazy"
+      />
+      <TieredSubscribeForm />
+    </div>
   );
 }
 

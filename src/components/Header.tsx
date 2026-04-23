@@ -155,7 +155,6 @@ export default function Header() {
                             <ListItem
                               href="/blog"
                               title="Blog"
-                              target="_blank"
                               className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
                             >
                               <span className="hidden md:block">
