@@ -70,7 +70,7 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.template.json
-.claude/
+.claude/*.json
 
 ### Generated Assets (optional – uncomment if regenerated each build) ###
 public/sitemap.xml

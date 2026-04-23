@@ -1,17 +1,16 @@
 <!--
 Sync Impact Report
-Version change: (none) → 1.0.0
-Modified principles: N/A (initial creation)
-Added sections: Core Principles, Platform Constraints, Delivery & Quality Workflow, Governance
+Version change: 1.1.0 → 1.1.1
+Modified principles: None
+Added sections: None
 Removed sections: None
-Templates requiring updates (no template directory found in repo, marking pending):
- - /.specify/templates/plan-template.md ⚠ pending (directory not present)
- - /.specify/templates/spec-template.md ⚠ pending
- - /.specify/templates/tasks-template.md ⚠ pending
- - /.specify/templates/commands/* ⚠ pending
-Follow-up TODOs:
- - Create template scaffolding if constitution-based automation desired.
- - Add amendment history section if growth warrants.
+Formatting: Applied Prettier markdown standards throughout (language tags on code blocks,
+  blank lines after headings); added code style mandate to Documentation expectations.
+Templates requiring updates:
+  - .specify/templates/plan-template.md ✅ updated (language tags on code blocks)
+  - .specify/templates/spec-template.md ✅ updated (language tag on code block)
+  - .specify/templates/tasks-template.md ✅ updated (language tags + TDD references removed)
+Follow-up TODOs: None outstanding.
 -->
 
 # GitchPage Constitution
@@ -22,13 +21,13 @@ Follow-up TODOs:
 
 All published content (blog posts, portfolio entries, voice-over demos) MUST be original, attributable, and
 truthfully represent skills, experience, or creative perspective. AI-assisted generation may be used for
-draft acceleration but final narrative, claims, and attributions MUST be human‑reviewed. No filler, no
+draft acceleration but final narrative, claims, and attributions MUST be human-reviewed. No filler, no
 traffic-bait posts. Removal or correction is mandatory within 48h if inaccuracies are found.
 
 ### II. Sustainable Static Foundation (Progressive Enhancement)
 
 Primary delivery uses static generation (Next.js App Router SSG) for reliability, performance, and low
-operational overhead. Dynamic capabilities (future e‑commerce, interactive dashboards) MUST layer on via
+operational overhead. Dynamic capabilities (future e-commerce, interactive dashboards) MUST layer on via
 isolated, opt-in API routes or edge functions without degrading existing static paths. Core pages must
 remain deployable as pure static export unless a deliberate architectural migration is ratified.
 
@@ -39,33 +38,40 @@ structure (headings, landmarks, aria roles where appropriate). Media (audio demo
 textual context (alt text, captions/description). Any theme or component refactor requires a manual a11y
 smoke checklist before merge.
 
-### IV. Measurable Quality & Testing
+### IV. Build Integrity & Manual Verification
 
-Every structural or rendering change affecting blog listing, MDX rendering, or portfolio components MUST
-have at least one automated test (integration or snapshot + semantic assertion). Critical content parsing
-(frontmatter metadata, routing) MUST maintain 100% test coverage for parsing logic. Tests MUST run green
-in CI before deployment. Broken tests block publish—no "temporary skips" without a linked TODO and
-scheduled follow-up.
+`npm run build` MUST succeed with zero type errors before any merge. Structural changes (layout, routing,
+component logic) MUST pass a manual visual and accessibility smoke check across the affected pages.
+Automated test suites are not required; human verification of the rendered result is the quality gate.
+Broken builds block publish — no exceptions.
 
 ### V. Lean Evolution & Future-Proofing
 
-New capabilities (e‑commerce, user accounts) MUST start as a minimal vertical slice (walking skeleton) with
+New capabilities (e-commerce, user accounts) MUST start as a minimal vertical slice (walking skeleton) with
 explicit rollback criteria. Complexity (state management libraries, ORM, background workers) MUST appear
 only after a concrete scaling or maintainability trigger is documented. Prefer deleting unused code over
 generalizing for hypothetical reuse. Version increments reflect meaningful governance or scope shifts.
 
 ## Platform Constraints
 
-The site is a personal portfolio and knowledge hub built with Next.js (TypeScript, MDX) deploying as a
-static-first artifact. Current functional domains:
+The site is a personal portfolio and knowledge hub. The delivery stack is:
 
-- Blog (MDX categories)
+- **Next.js** (TypeScript) — static export deployed to GitHub Pages (`gitchegumi.com`)
+- **ERPNext** (`erp.gitchegumi.com`) — blog CMS (posts served as iframes), newsletter via Email Groups,
+  and future eCommerce (digital products, invoicing, inventory) once that phase begins
+- **n8n** (`n8n.gitchegumi.com`) — automation middleware (subscribe flows, publish triggers, CRM leads)
+- **Homelab** (TrueNAS + Docker Compose + Nginx Proxy Manager) — self-hosted infrastructure for all
+  services above
+
+Current functional domains:
+
+- Blog (ERPNext CMS, embedded via iframe at `/blog`)
 - Portfolio / CV
 - Voice-over demo reels (audio streaming)
 
-Forward-looking (not yet implemented) domain: lightweight e‑commerce (digital products or booking). Any
-commerce introduction MUST isolate payment handling, avoid storing raw PII locally, and undergo a security
-review (dependency audit + threat sketch) prior to launch.
+Forward-looking domain: eCommerce via ERPNext (digital products or booking). Any commerce introduction
+MUST isolate payment handling, avoid storing raw PII locally, and undergo a security review
+(dependency audit + threat sketch) prior to launch.
 
 Performance budgets:
 
@@ -75,9 +81,9 @@ Performance budgets:
 
 Content governance:
 
-- All MDX frontmatter MUST include: title, description, category, published date (ISO), draft flag optional.
-- Feature images MUST live under `public/images/blog/` and use descriptive, kebab-case filenames.
-- Deleting a post requires redirect strategy or explicit acceptance of 404 with note logged in CHANGELOG (future).
+- ERPNext blog posts MUST include: title, description, category, and published date before going live.
+- Feature images MUST use descriptive, kebab-case filenames.
+- Deleting a post requires a redirect strategy or explicit acceptance of 404 with a note logged.
 
 Security & privacy:
 
@@ -90,23 +96,24 @@ Security & privacy:
 Workflow stages:
 
 1. Draft (content or feature)
-2. Local test pass
-3. PR with checklist
-4. Preview build review
-5. Main merge
+2. Local build pass (`npm run build`)
+3. Manual smoke check (visual + a11y on affected pages)
+4. PR with checklist
+5. Preview build review
+6. Main merge
 
 Quality gates (mandatory before merge):
 
 - `npm run build` succeeds with zero type errors.
-- Integration tests for blog metadata & rendering pass.
+- Manual visual check: affected pages render correctly on desktop and mobile.
 - Accessibility spot check: keyboard nav across header, blog index, single post.
-- Lighthouse (or similar) sample run recorded for major layout shifts (manual for now).
+- Lighthouse (or similar) sample run recorded for major layout shifts (manual, as needed).
 
 Change classification:
 
-- Content-only: markdown/MDX + images (no code logic) → skip snapshot updates unless rendering differs.
-- Structural: component/layout logic or routing → requires tests & manual a11y pass.
-- Platform expansion (new domain like commerce) → requires governance amendment PR.
+- Content-only: ERPNext post edits (no code logic) → no build step required; publish directly.
+- Structural: component/layout logic or routing → requires build pass + manual a11y smoke check.
+- Platform expansion (new domain like eCommerce) → requires governance amendment PR.
 
 Rollbacks:
 
@@ -117,19 +124,22 @@ Documentation expectations:
 
 - Any new script or npm command MUST be documented in `README.md`.
 - Non-trivial architectural decisions SHOULD append an ADR entry (ADR log TBD; placeholder for future adoption).
+- All `.specify` markdown files MUST follow Prettier markdown standards: blank line after every heading,
+  language designation on all fenced code blocks (use `text` for plain prose/pseudo-code blocks).
 
 ## Governance
 
 Authority & scope:
+
 This constitution governs technical quality, content integrity, and evolutionary constraints for GitchPage. It
 supersedes ad hoc preferences. Deviations require an amendment.
 
 Amendments:
 
 - Proposed via PR labeled `governance` with summary, rationale, version bump type (MAJOR/MINOR/PATCH).
-- MUST include impact review: principles affected, tests/templates needing updates, migration/rollback notes.
-- Approval: single maintainer (self-review) with documented rationale is acceptable for this personal project; future
-  collaborators would require at least one additional reviewer.
+- MUST include impact review: principles affected, templates needing updates, migration/rollback notes.
+- Approval: single maintainer (self-review) with documented rationale is acceptable for this personal project;
+  future collaborators would require at least one additional reviewer.
 
 Versioning policy:
 
@@ -144,11 +154,15 @@ Compliance review:
 
 Record keeping:
 
-- Future: Maintain amendment history table once first amendment occurs (v1.0.0 is initial baseline).
+| Version | Date       | Change Summary                                                                              |
+| ------- | ---------- | ------------------------------------------------------------------------------------------- |
+| 1.0.0   | 2025-09-21 | Initial constitution                                                                        |
+| 1.1.0   | 2026-04-22 | Replace TDD mandate with build + manual verification gate; add ERPNext to platform stack    |
+| 1.1.1   | 2026-04-22 | Apply Prettier markdown standards; add code style mandate to Documentation expectations     |
 
 Enforcement:
 
 - If a change violates a principle, it MUST be reverted or amended before next publish.
-- Tests are the first line of enforcement; missing required tests is a failed gate.
+- The build gate (`npm run build`) is the first line of enforcement; a failing build blocks merge.
 
-**Version**: 1.0.0 | **Ratified**: 2025-09-21 | **Last Amended**: 2025-09-21
+**Version**: 1.1.1 | **Ratified**: 2025-09-21 | **Last Amended**: 2026-04-22
