@@ -16,8 +16,15 @@ interface ERPNextBlogPost {
 
 export async function getERPNextPosts(): Promise<PostMeta[]> {
   try {
+    const params = new URLSearchParams({
+      filters: JSON.stringify([["published", "=", 1]]),
+      fields: JSON.stringify(["name", "title", "published_on", "blog_intro", "blog_category", "route", "meta_image"]),
+      order_by: "published_on desc",
+      limit: "20",
+    });
+
     const res = await fetch(
-      `${ERP_URL}/api/resource/Blog Post?filters=[["published","=",1]]&fields=["name","title","published_on","blog_intro","blog_category","route","meta_image"]&order_by=published_on desc&limit=20`,
+      `${ERP_URL}/api/v2/document/Blog%20Post?${params}`,
       {
         headers: {
           Authorization: `token ${ERP_API_KEY}:${ERP_API_SECRET}`,
