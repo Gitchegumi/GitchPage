@@ -18,7 +18,7 @@ A visitor arrives at the blog listing page (`/blog`) or opens an individual blog
 2. **Given** a visitor is on the main blog page (`/blog`), **When** they scroll down inside the iframe, **Then** the ERPNext footer does not come into view.
 3. **Given** a visitor is on an individual blog post (`/blog/[category]/[slug]`), **When** they scroll up, **Then** the ERPNext header does not come into view.
 4. **Given** a visitor is on an individual blog post (`/blog/[category]/[slug]`), **When** they scroll down to the end of the post, **Then** the ERPNext footer does not come into view.
-5. **Given** a visitor is on the main blog page (`/blog`), **When** the page loads, **Then** a subscribe form is visible without scrolling (or with minimal scrolling on any device size).
+5. **Given** a visitor is on the main blog page (`/blog`), **When** the page loads, **Then** a subscribe form is visible within the initial viewport on any screen width of 375px or wider, without requiring any page-level scrolling.
 6. **Given** a visitor submits their email in the subscribe form, **When** the form is submitted, **Then** they are added to the ERPNext "Website" email group and receive confirmation feedback.
 
 ### Edge Cases

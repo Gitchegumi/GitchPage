@@ -32,9 +32,9 @@ _Goal: Visitor sees a constrained blog listing iframe with a subscribe form visi
 **Independent test criteria**: `/blog` loads with subscribe form visible without page scrolling; iframe does not show ERPNext chrome on scroll in either direction.
 
 - [ ] T004 [US1] Update `src/app/blog/page.tsx` — replace single full-height iframe with a flex column layout: iframe at `calc(100vh - 90px - 220px)` on top, `SubscribeForm` component below (import from `@/components/SubscribeForm`)
-- [ ] T005 [US1] Run `npm run build` from repo root — confirm zero TypeScript errors
-- [ ] T006 [US1] Manual visual check on `localhost` — open `/blog`, confirm subscribe form is visible below the iframe without scrolling the page (test desktop width)
-- [ ] T007 [US1] Manual visual check on `localhost` — resize browser to mobile width (375px), confirm subscribe form is accessible and readable below the iframe
+- [ ] T005 [US1] Run `npx tsc --noEmit` from repo root — confirm zero TypeScript errors after layout change in `src/app/blog/page.tsx`
+- [ ] T006 [US1] Manual visual check on `localhost` — open `/blog`, confirm subscribe form is visible below the iframe within the initial viewport without page-level scrolling (test desktop width)
+- [ ] T007 [US1] Manual visual check on `localhost` — resize browser to mobile width (375px), confirm subscribe form is visible in the initial viewport without page-level scrolling
 - [ ] T008 [US1] A11y smoke check on `/blog` — tab through the page, confirm iframe title is announced, subscribe form email field has a label, subscribe button is reachable and activated by keyboard
 
 ---
@@ -52,9 +52,10 @@ _Goal: Visitor reads a full post without ERPNext header or footer ever appearing
 
 ## Phase 4: Polish & Wrap-up
 
-- [ ] T011 Run `npm run build` final clean pass — confirm zero errors and no regressions
-- [ ] T012 Commit all changes with message: `feat: constrain blog iframes and surface subscribe form`
-- [ ] T013 Push branch `002-constrain-blog-iframe` to remote and open PR
+- [ ] T011 End-to-end subscribe verification — submit a test email in the subscribe form on `/blog`, confirm success message appears, then verify the email appears in ERPNext "Website" email group at `erp.gitchegumi.com/app/email-group/Website`
+- [ ] T012 Run `npm run build` final clean pass — confirm zero errors and no regressions
+- [ ] T013 Commit all changes with message: `feat: constrain blog iframes and surface subscribe form`
+- [ ] T014 Push branch `002-constrain-blog-iframe` to remote and open PR
 
 ---
 
@@ -67,11 +68,12 @@ T002 ──┘
 
 T004 ──→ T005 ──→ T006 ──→ T007 ──→ T008
 
-T008 + T010 ──→ T011 ──→ T012 ──→ T013
+T008 + T010 ──→ T011 ──→ T012 ──→ T013 ──→ T014
 ```
 
 T001/T002 (ERPNext config) are prerequisites for T003, T009, T010 (verification).
 T004–T008 (Next.js layout) are independent of the ERPNext tasks and can proceed in parallel.
+T011 (subscribe e2e) requires both T008 (form on page) and T010 (ERPNext embed working).
 
 ---
 
@@ -92,8 +94,8 @@ Task: "Update src/app/blog/page.tsx with two-row layout and SubscribeForm"
 
 **MVP (minimum to unblock merge)**: Complete T001–T008. This delivers a fully working blog listing page with constrained iframe and visible subscribe form. Individual post constraint (T009–T010) requires only ERPNext verification — no code change — so it completes quickly once T001/T002 are done.
 
-**Total tasks**: 13
+**Total tasks**: 14
 **Parallelizable**: T001 ‖ T002 ‖ T004 (3 tasks can start simultaneously)
 **ERPNext config tasks**: T001, T002, T003, T009 (done in ERPNext admin UI, not in code)
 **Code tasks**: T004 only (single file change in Next.js)
-**Verification tasks**: T003, T005–T010 (manual checks)
+**Verification tasks**: T003, T005–T011 (type-check + manual checks)
