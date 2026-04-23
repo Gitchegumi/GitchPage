@@ -1,130 +1,176 @@
 # Implementation Plan: Constrain Blog Iframe & Surface Subscribe Form
 
-**Branch**: `002-constrain-blog-iframe` | **Date**: 2026-04-22 | **Spec**: [spec.md](./spec.md)
+**Branch**: `002-constrain-blog-iframe` | **Date**: 2026-04-23 | **Spec**: [spec.md](./spec.md)
+**Supersedes**: plan.md dated 2026-04-22 (spec amended to add two-tier subscription model)
 
 ## Summary
 
-Both the main blog listing page (`/blog`) and individual post pages (`/blog/[category]/[slug]`) embed ERPNext content via iframe with `?embed=1`. The listing page already constrains scrolling correctly. Individual post pages allow users to scroll past the blog content and into the ERPNext header/footer because the post content is taller than the fixed iframe height. Additionally, the subscribe form is only accessible in the ERPNext footer (reachable on individual posts by scrolling) and invisible on the main listing page.
-
-The fix has two parts: (1) ensure ERPNext fully suppresses its header and footer on all embedded page types, and (2) surface the existing `SubscribeForm` component natively in the Next.js `/blog` page layout outside the iframe.
+Both the main blog listing page (`/blog`) and individual post pages (`/blog/[category]/[slug]`) embed ERPNext content via iframe with `?embed=1`. The listing page already constrains scrolling correctly; individual post pages allow users to scroll into the ERPNext header/footer. The subscribe form in the ERPNext footer is inaccessible on the listing page and, once surfaced in Next.js, needs to offer a meaningful subscription tier choice: blog posts only ("Blog Subscribers" email group) or all communications ("Website" email group). A new ERPNext email group and a new Next.js component are required.
 
 ---
 
 ## Technical Context
 
 **Language/Version**: TypeScript / Next.js 14+ (App Router, static export)
-**Primary Dependencies**: React, Tailwind CSS, ERPNext (external, CSS-only touch)
+**Primary Dependencies**: React, Tailwind CSS, ERPNext (CSS/config + new email group), n8n (workflow update)
 **Storage**: N/A
-**Testing**: Manual a11y smoke check; build type-check (`npm run build`)
-**Target Platform**: Static site on GitHub Pages; ERPNext on `erp.gitchegumi.com`
-**Project Type**: Web (Next.js frontend, ERPNext as headless CMS via iframe)
-**Performance Goals**: No regression on LCP; iframe layout shift should not increase CLS
-**Constraints**: Cross-origin iframe — no JS messaging into ERPNext; changes to ERPNext must be CSS/config only
-**Scale/Scope**: Two Next.js page files + one ERPNext CSS/config change
+**Testing**: Manual smoke check; `npx tsc --noEmit`
+**Target Platform**: Static site on GitHub Pages; ERPNext on `erp.gitchegumi.com`; n8n on `n8n.gitchegumi.com`
+**Project Type**: Web (Next.js frontend, ERPNext as headless CMS, n8n as automation middleware)
+**Performance Goals**: No regression on LCP; form interactions complete within 5 seconds
+**Constraints**: Cross-origin iframe — no JS messaging into ERPNext; Next.js is static export (no server-side logic)
+**Scale/Scope**: One new Next.js component, one updated `/blog` page, one n8n workflow change, two ERPNext config changes, one new ERPNext email group
 
 ---
 
 ## Constitution Check
 
 | Principle | Status | Notes |
-|-----------|--------|-------|
+| --------- | ------ | ----- |
 | I. Content Authenticity | ✅ Pass | No content changes |
-| II. Sustainable Static Foundation | ✅ Pass | Layering onto existing iframe pattern; no new API routes |
-| III. Design & Accessibility | ✅ Pass | Subscribe form already accessible; iframe titles retained; a11y smoke check required pre-merge |
-| IV. Measurable Quality & Testing | ⚠️ Requires action | Structural layout change → manual a11y smoke check + `npm run build` must pass |
-| V. Lean Evolution | ✅ Pass | Reuses existing `SubscribeForm` component; no new dependencies |
+| II. Sustainable Static Foundation | ✅ Pass | New component in static layer; no new API routes in Next.js |
+| III. Design & Accessibility | ✅ Pass | New form must meet a11y standards; smoke check required pre-merge |
+| IV. Build Integrity & Manual Verification | ⚠️ Requires action | Structural + new component → `npx tsc --noEmit` + manual a11y + visual smoke check |
+| V. Lean Evolution | ✅ Pass | New component is minimal; n8n change is additive; no new Next.js dependencies |
 
-**Gate**: PASS — with the requirement that an a11y smoke check and clean build are completed before merge.
+**Gate**: PASS — `npx tsc --noEmit` clean + manual a11y + visual smoke check before merge.
 
 ---
 
 ## Project Structure
 
 ### Documentation (this feature)
-```
+
+```text
 specs/002-constrain-blog-iframe/
 ├── plan.md              ← this file
-├── research.md          ← Phase 0 output
-├── data-model.md        ← N/A (no new data entities)
+├── research.md          ← Phase 0 output (embedded below)
 └── tasks.md             ← Phase 2 output (/tasks command)
 ```
 
 ### Source Changes (repository root)
-```
+
+```text
 src/app/blog/
-├── page.tsx                        ← modify: add SubscribeForm, adjust layout
-└── [category]/[slug]/page.tsx      ← no change needed (ERPNext CSS fix handles it)
+├── page.tsx                        ← modify: two-row layout, add TieredSubscribeForm
+└── [category]/[slug]/page.tsx      ← no change (ERPNext CSS fix handles it)
 
 src/components/
-└── SubscribeForm.tsx               ← no change needed (reused as-is)
+├── SubscribeForm.tsx               ← no change (left intact for other uses)
+└── TieredSubscribeForm.tsx         ← new component
 ```
 
-### ERPNext Changes (out-of-repo, config only)
-```
+### Out-of-repo Changes
+
+```text
 erp.gitchegumi.com
-└── Website Settings → Custom CSS   ← add embed suppression rules for all page types
+├── Website Settings → Script       ← embed detection JS (unchanged from original plan)
+├── Website Settings → Style        ← embed suppression CSS (unchanged from original plan)
+└── Email Group → "Blog Subscribers" ← new, must be created before form goes live
+
+n8n.gitchegumi.com
+└── Subscribe workflow              ← add tier routing (IF node: "blog" → Blog Subscribers, else → Website)
 ```
 
 ---
 
 ## Phase 0: Research
 
-### Finding 1 — Why individual post iframes are not constrained
+### Finding 1 — Why individual post iframes are not constrained (unchanged)
 
-**Decision**: ERPNext's `?embed=1` works for the blog listing page because the listing content fits within `calc(100vh - 90px)`. On individual posts the content is taller, so the iframe becomes internally scrollable. As the user scrolls down, they reach the ERPNext footer — which `?embed=1` may hide visually but likely does not `display: none`, leaving it as scrollable dead space (or worse, partially visible).
+**Decision**: ERPNext's `?embed=1` works for the blog listing page because the content fits within `calc(100vh - 90px)`. On individual posts the content is taller, so the iframe becomes internally scrollable and the user can reach the ERPNext footer.
 
-**Rationale**: The fix must live in ERPNext's CSS, not in the iframe element itself. Adding `scrolling="no"` or `overflow: hidden` to the Next.js iframe would prevent all content scrolling — unusable for long posts.
+**Resolution**: Add a JS snippet to ERPNext Website Settings that detects `?embed=1` and adds `erpnext-embedded` class to `<html>`, combined with CSS that `display: none !important` on all header/footer selectors.
 
-**Alternatives considered**:
-- `scrolling="no"` on iframe → rejected (breaks post readability)
-- Dynamic iframe height resize via `postMessage` → rejected (cross-origin; adds complexity; against Principle V)
-- ERPNext Jinja template override per page type → rejected (fragile; over-engineered)
-
-**Resolution**: Add custom CSS in ERPNext Website Settings that applies `display: none !important` to navbar and footer whenever the `embed` query param is present. ERPNext sets a `data-path` attribute and processes query params at render time; the cleanest hook is a JS snippet in ERPNext's Website Script that adds a CSS class to `<body>` when `?embed=1` is detected, combined with CSS rules targeting that class.
+**Alternatives rejected**: `scrolling="no"` on iframe (breaks post readability); `postMessage` resize (cross-origin complexity); Jinja template overrides (fragile).
 
 ---
 
-### Finding 2 — Subscribe form placement
+### Finding 2 — Subscribe form: new component required
 
-**Decision**: Render the existing `SubscribeForm` component natively in the Next.js `/blog` page, **below** the iframe. The iframe height is reduced from `calc(100vh - 90px)` to `calc(100vh - 90px - 220px)` (desktop) with a responsive cap, leaving room for the subscribe form beneath without page-level scroll.
+**Decision**: Create `src/components/TieredSubscribeForm.tsx` as a new component. Do not modify the existing `SubscribeForm` — it may be used elsewhere on the site and has a different, simpler purpose.
 
-**Rationale**: The `SubscribeForm` already posts to n8n → ERPNext "Website" email group. No new integration needed. Placing it outside the iframe avoids all cross-origin concerns and keeps it in the statically-rendered Next.js layer.
+**Rationale**: The new form requires tier selection UI (two option cards), a `tier` field in the payload, and a different heading/description. Modifying `SubscribeForm` would add conditional logic and reduce its clarity. A separate component is cleaner and aligns with Principle V (lean, purposeful components).
 
-**Alternatives considered**:
-- New ERPNext Web Form inside the iframe → rejected (requires cross-origin form submission handling, harder to brand-match)
-- Sticky/fixed overlay subscribe bar → rejected (adds complexity; hides content)
-- Sidebar layout with subscribe form alongside iframe → viable on desktop but complex responsive breakpoint handling; deferred unless simple two-row layout proves inadequate
+**Component design**:
+
+```text
+┌──────────────────────────────────────────┐
+│  Stay in the loop                        │
+│  Choose what you'd like to hear about:   │
+│                                          │
+│  ┌─────────────────┐ ┌─────────────────┐ │
+│  │ ✦ Blog only     │ │ ✦ Tell me       │ │
+│  │                 │ │   everything    │ │
+│  │ New posts only. │ │ Posts + shop    │ │
+│  │ That's it.      │ │ launches and    │ │
+│  │                 │ │ announcements.  │ │
+│  └─────────────────┘ └─────────────────┘ │
+│                                          │
+│  [ your@email.com              ]         │
+│  [        Subscribe            ]         │
+└──────────────────────────────────────────┘
+```
+
+- Tier selection is **required** — submit button is disabled until both a tier and a valid email are provided.
+- Option cards use a selected/unselected visual state consistent with brand colors.
+- Honeypot field retained (hidden, same pattern as `SubscribeForm`).
+- Posts to `NEXT_PUBLIC_N8N_SUBSCRIBE_URL` with payload `{ email, tier, honeypot }`.
+
+**Alternatives rejected**: Modifying `SubscribeForm` (adds conditional complexity); ERPNext Web Form inside iframe (cross-origin, harder to brand-match); radio buttons without cards (less readable on mobile).
+
+---
+
+### Finding 3 — n8n subscribe workflow routing
+
+**Decision**: Update the existing n8n subscribe workflow to read a `tier` field from the incoming webhook payload and route to the appropriate ERPNext email group.
+
+**Routing logic**:
+- `tier === "blog"` → add subscriber to ERPNext "Blog Subscribers" email group
+- `tier === "all"` (or any other value) → add subscriber to ERPNext "Website" email group
+
+**Implementation**: Add a Switch or IF node in n8n after the webhook trigger, before the ERPNext API call. The ERPNext "add to email group" step is duplicated for each branch (or parameterised if n8n supports it cleanly). The existing webhook URL (`NEXT_PUBLIC_N8N_SUBSCRIBE_URL`) does not need to change.
+
+**Alternatives rejected**: Two separate n8n webhook URLs (requires two env vars and complicates the component); client-side ERPNext API call (exposes API key in browser).
+
+---
+
+### Finding 4 — "Blog Subscribers" email group
+
+**Decision**: Create a new ERPNext email group named exactly **"Blog Subscribers"** via the ERPNext admin UI before the form goes live.
+
+**Rationale**: This group will receive blog post notifications only, keeping it cleanly separated from "Website" which will eventually include ecommerce announcements.
+
+**Setup**: ERPNext → Email Group → New → Name: "Blog Subscribers", Group Type: Newsletter. No subscribers need to be migrated — existing 3 subscribers in "Website" chose that before the two-tier model existed and can remain there.
+
+---
+
+### Finding 5 — Updated height budget for `/blog` layout
+
+**Decision**: Reserve `320px` (up from `220px`) for the `TieredSubscribeForm`, adjusting the iframe height to `calc(100vh - 90px - 320px)`.
+
+**Rationale**: Two option cards + description text + email input + submit button + padding require approximately 300–320px at desktop widths. On mobile (< 640px) the layout stacks naturally; a `min-height: 0` on the iframe with `flex-shrink: 1` prevents overflow.
 
 ---
 
 ## Phase 1: Design & Contracts
 
-### No API contracts
+### ERPNext Config (Website Settings)
 
-This feature makes no changes to external-facing APIs. There are no new endpoints, webhooks, or data schemas. Contracts section is omitted per template guidance.
-
-### Data Model
-
-No new data entities. The `SubscribeForm` continues to use the existing pattern (email + honeypot → n8n webhook → ERPNext "Website" email group).
-
-### ERPNext CSS Change (Website Settings → Custom CSS / Website Script)
-
-Add to **Website Settings → Script** (JavaScript, runs on all ERPNext web pages):
+**Script tab** — detect embed mode (unchanged from original plan):
 
 ```javascript
-// Hide navbar and footer when rendered in embedded mode
-(function() {
+(function () {
   var params = new URLSearchParams(window.location.search);
-  if (params.get('embed') === '1') {
-    document.documentElement.classList.add('erpnext-embedded');
+  if (params.get("embed") === "1") {
+    document.documentElement.classList.add("erpnext-embedded");
   }
 })();
 ```
 
-Add to **Website Settings → Style** (CSS):
+**Style tab** — suppress chrome in embed mode (unchanged from original plan):
 
 ```css
-/* Fully suppress ERPNext chrome when embedded in an iframe */
 html.erpnext-embedded .navbar,
 html.erpnext-embedded nav,
 html.erpnext-embedded footer,
@@ -139,51 +185,87 @@ html.erpnext-embedded body {
 }
 ```
 
-### Next.js `/blog` Page Layout Change
+### New "Blog Subscribers" Email Group
 
-Restructure `src/app/blog/page.tsx` from a single full-height iframe to a two-row flex layout:
+Create via ERPNext admin UI. No migration of existing subscribers required.
 
-```
+### TieredSubscribeForm Component (`src/components/TieredSubscribeForm.tsx`)
+
+- `"use client"` directive (client component, same as `SubscribeForm`)
+- State: `email`, `tier: "blog" | "all" | null`, `honeypot`, `status`, `message`
+- Two option cards — selected card highlighted with brand blue border/glow
+- Submit disabled until `tier !== null && email valid`
+- On submit: POST `{ email, tier, honeypot }` to `NEXT_PUBLIC_N8N_SUBSCRIBE_URL`
+- Success/error feedback using same pattern as `SubscribeForm`
+- Wraps in `MagicCard` with same gradient settings as `SubscribeForm`
+
+### Updated `/blog` Page Layout (`src/app/blog/page.tsx`)
+
+```text
 ┌─────────────────────────────────┐
-│  iframe (ERPNext blog listing)  │  height: calc(100vh - 90px - 220px)
+│  iframe (ERPNext blog listing)  │  flex-1, min-height: 0; approx calc(100vh - 90px - 320px)
 │  ?embed=1                       │
 ├─────────────────────────────────┤
-│  SubscribeForm (Next.js)        │  ~220px
+│  TieredSubscribeForm            │  ~320px
 └─────────────────────────────────┘
 ```
 
-On mobile (< 640px), allow the form to stack naturally below the iframe with appropriate padding.
+Parent: `flex flex-col` with `height: calc(100vh - 90px)`.
+Iframe: `flex-1 min-h-0` (takes remaining space after form).
+Form wrapper: `shrink-0` with appropriate horizontal padding.
+
+This approach is more resilient than a hard-coded iframe height subtraction — the flex layout absorbs any height discrepancy naturally.
+
+### n8n Workflow Update
+
+Add after webhook trigger, before ERPNext call:
+
+```text
+IF node: {{ $json.tier === "blog" }}
+  → TRUE branch: Add to ERPNext "Blog Subscribers" email group
+  → FALSE branch: Add to ERPNext "Website" email group
+```
+
+Honeypot check (already present) remains before the IF node.
 
 ### Individual Post Pages
 
-No Next.js code change required. The ERPNext CSS fix (above) removes the footer from the scrollable document height on all embedded pages, including individual posts. The iframe at `calc(100vh - 90px)` remains correct.
+No Next.js change required. ERPNext CSS fix handles constraint on all embedded page types.
 
 ### Quickstart (manual verification steps)
 
-1. Deploy ERPNext Website Settings changes (Script + Style)
-2. Open `https://erp.gitchegumi.com/blog?embed=1` directly — confirm no navbar or footer visible
-3. Open `https://erp.gitchegumi.com/blog/[category]/[slug]?embed=1` directly — scroll to bottom — confirm no footer visible
-4. Open `https://gitchegumi.com/blog` — confirm iframe shows listing, subscribe form is visible below without page scrolling
-5. Open `https://gitchegumi.com/blog/[category]/[slug]` — scroll down — confirm no ERPNext chrome appears
-6. Submit a test email in the subscribe form — confirm success message and ERPNext email group receipt
-7. Run `npm run build` — confirm zero type errors
-8. A11y smoke: keyboard-tab through `/blog` page — confirm iframe title is announced, subscribe form fields are reachable and labelled
+1. In ERPNext admin, create "Blog Subscribers" email group.
+2. Deploy ERPNext Website Settings (Script + Style changes).
+3. Open `erp.gitchegumi.com/blog?embed=1` — scroll up and down — confirm no navbar or footer visible.
+4. Open `erp.gitchegumi.com/blog/[category]/[slug]?embed=1` — scroll to bottom — confirm no footer visible.
+5. Update n8n subscribe workflow with tier routing IF node.
+6. Open `gitchegumi.com/blog` — confirm `TieredSubscribeForm` is visible in the initial viewport (375px+ widths).
+7. Submit with "Blog only" tier — confirm success message; verify email appears in ERPNext "Blog Subscribers" group.
+8. Submit with "Tell me everything" tier — confirm success message; verify email appears in ERPNext "Website" group.
+9. Attempt to submit without selecting a tier — confirm submit button is disabled.
+10. Run `npx tsc --noEmit` — confirm zero errors.
+11. Open `gitchegumi.com/blog/[category]/[slug]` — scroll to top and bottom — confirm no ERPNext chrome.
+12. A11y smoke: keyboard-tab through `/blog` — iframe title announced, option cards reachable and selectable, email field labelled, submit button activatable.
 
 ---
 
 ## Phase 2: Task Planning Approach *(described only — executed by /tasks)*
 
 **Task generation strategy**:
-- Task 1: ERPNext Website Settings — add embed detection JS snippet
-- Task 2: ERPNext Website Settings — add embed suppression CSS
-- Task 3: Verify ERPNext embed fix on blog listing and individual post pages
-- Task 4: Update `src/app/blog/page.tsx` — two-row layout with reduced iframe height + `SubscribeForm`
-- Task 5: Verify subscribe form visible without scrolling on `/blog` (desktop + mobile)
-- Task 6: Run `npm run build` and confirm zero errors
-- Task 7: A11y smoke check per quickstart
-- Task 8: Commit and push; open PR
 
-**Ordering**: ERPNext config (Tasks 1–3) before Next.js changes (Task 4), since the CSS fix is the dependency for individual post constraint. Tasks 1–2 can be done in parallel. Task 4 is independent of Tasks 1–3 and can proceed in parallel.
+1. Create "Blog Subscribers" email group in ERPNext admin (foundational — must exist before n8n or form goes live)
+2. ERPNext Website Settings — embed detection JS
+3. ERPNext Website Settings — embed suppression CSS
+4. Verify ERPNext embed fix (blog listing + individual post)
+5. Update n8n subscribe workflow — add tier IF node
+6. Build `TieredSubscribeForm` component in `src/components/TieredSubscribeForm.tsx`
+7. Update `src/app/blog/page.tsx` — flex layout + `TieredSubscribeForm`
+8. Type-check (`npx tsc --noEmit`)
+9. Visual + a11y smoke check per quickstart
+10. End-to-end subscription verification (both tiers)
+11. Final build pass + commit + PR
+
+**Ordering**: ERPNext email group (step 1) and n8n update (step 5) are prerequisites for end-to-end verification. ERPNext config (steps 2–3) and n8n (step 5) and component build (step 6) can all proceed in parallel. Step 7 depends on step 6.
 
 ---
 
@@ -196,6 +278,7 @@ No constitution violations requiring justification.
 ## Progress Tracking
 
 **Phase Status**:
+
 - [x] Phase 0: Research complete
 - [x] Phase 1: Design complete
 - [x] Phase 2: Task planning approach described
@@ -204,10 +287,12 @@ No constitution violations requiring justification.
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
+
 - [x] Initial Constitution Check: PASS
 - [x] Post-Design Constitution Check: PASS
 - [x] All NEEDS CLARIFICATION resolved
 - [x] Complexity deviations documented (none)
 
 ---
-*Based on GitchPage Constitution v1.0.0 — See `/.specify/memory/constitution.md`*
+
+*Based on GitchPage Constitution v1.1.1 — See `.specify/memory/constitution.md`*
