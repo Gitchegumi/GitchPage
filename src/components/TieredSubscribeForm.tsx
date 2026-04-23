@@ -5,6 +5,8 @@ import { MagicCard } from "@/components/magicui/magic-card";
 
 type Tier = "blog" | "all";
 
+const N8N_URL = process.env.NEXT_PUBLIC_N8N_SUBSCRIBE_URL;
+
 const TIERS: {
   id: Tier;
   label: string;
@@ -23,6 +25,15 @@ const TIERS: {
 ];
 
 export function TieredSubscribeForm() {
+  if (!N8N_URL) {
+    console.warn("[TieredSubscribeForm] NEXT_PUBLIC_N8N_SUBSCRIBE_URL not set — disabled");
+    return null;
+  }
+
+  return <TieredSubscribeFormInner n8nUrl={N8N_URL} />;
+}
+
+function TieredSubscribeFormInner({ n8nUrl }: { n8nUrl: string }) {
   const [expanded, setExpanded] = useState(false);
   const [email, setEmail] = useState("");
   const [tier, setTier] = useState<Tier | null>(null);
@@ -40,7 +51,7 @@ export function TieredSubscribeForm() {
     setMessage("");
 
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_N8N_SUBSCRIBE_URL!, {
+      const response = await fetch(n8nUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, tier, honeypot }),
@@ -72,9 +83,9 @@ export function TieredSubscribeForm() {
           className="rounded-2xl w-72"
           gradientFrom="#4166f5"
           gradientTo="#afe0ce"
-          gradientColor="rgba(65,102,245,0.08)"
+          gradientColor="#4166f5"
           gradientSize={250}
-          gradientOpacity={1}
+          gradientOpacity={0.08}
         >
           <div
             className="rounded-2xl px-5 py-5 space-y-4 backdrop-blur-md"
@@ -166,26 +177,20 @@ export function TieredSubscribeForm() {
                 disabled={status === "loading" || status === "success"}
                 required
                 aria-label="Email address"
-                className="w-full rounded-lg px-3 h-9 text-sm outline-none transition-colors disabled:opacity-50"
+                className="w-full rounded-lg px-3 h-9 text-sm outline-none transition-colors disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[rgba(65,102,245,0.7)]"
                 style={{
                   background: "rgba(255,255,255,0.06)",
                   border: "1px solid rgba(204,219,220,0.25)",
                   color: "#f0f0f0",
                 }}
-                onFocus={(e) => (e.target.style.borderColor = "rgba(65,102,245,0.7)")}
-                onBlur={(e) => (e.target.style.borderColor = "rgba(204,219,220,0.25)")}
               />
 
               {/* Submit */}
               <button
                 type="submit"
                 disabled={!isSubmittable}
-                className="w-full h-9 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-40"
+                className="w-full h-9 rounded-lg text-sm font-semibold transition-opacity disabled:opacity-40 disabled:pointer-events-none hover:[opacity:0.85]"
                 style={{ background: "#fca311", color: "#2c2c2c" }}
-                onMouseEnter={(e) => {
-                  if (isSubmittable) e.currentTarget.style.opacity = "0.85";
-                }}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
               >
                 {status === "loading"
                   ? "Subscribing…"
@@ -196,6 +201,7 @@ export function TieredSubscribeForm() {
 
               {message && (
                 <p
+                  role="alert"
                   className="text-xs text-center"
                   style={{ color: status === "success" ? "#afe0ce" : "#fca311" }}
                 >

@@ -47,6 +47,7 @@ export default async function BlogPostPage({ params }: Props) {
         title={slug}
         className="w-full h-full border-0"
         loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-forms"
       />
       <TieredSubscribeForm />
     </div>

@@ -14,6 +14,8 @@ export default function BlogPage() {
         src={`${ERP_URL}/blog?embed=1`}
         title="Gitchegumi Blog"
         className="w-full h-full border-0"
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-forms"
       />
       <TieredSubscribeForm />
     </div>
