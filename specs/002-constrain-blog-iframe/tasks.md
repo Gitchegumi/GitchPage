@@ -8,15 +8,16 @@
 
 ## User Stories
 
-| ID   | Story                                                                 | Priority |
-|------|-----------------------------------------------------------------------|----------|
-| US1  | Blog listing page — iframe constrained + subscribe form visible       | P1       |
-| US2  | Individual post page — iframe fully constrained (no ERPNext chrome)   | P1       |
+| ID  | Story                                                               | Priority |
+| --- | ------------------------------------------------------------------- | -------- |
+| US1 | Blog listing page — iframe constrained + subscribe form visible     | P1       |
+| US2 | Individual post page — iframe fully constrained (no ERPNext chrome) | P1       |
 
 ---
 
 ## Phase 1: Foundational — ERPNext Embed Fix
-*Blocks both user stories. T001 and T002 can be done in parallel.*
+
+_Blocks both user stories. T001 and T002 can be done in parallel._
 
 - [ ] T001 [P] Add embed detection script to ERPNext Website Settings → Website Script tab at `erp.gitchegumi.com/app/website-settings` (JS snippet from plan.md Phase 1)
 - [ ] T002 [P] Add embed suppression CSS to ERPNext Website Settings → Website Theme/Style at `erp.gitchegumi.com/app/website-settings` (CSS rules from plan.md Phase 1)
@@ -26,7 +27,7 @@
 
 ## Phase 2: User Story 1 — Blog Listing Page
 
-*Goal: Visitor sees a constrained blog listing iframe with a subscribe form visible below it.*
+_Goal: Visitor sees a constrained blog listing iframe with a subscribe form visible below it._
 
 **Independent test criteria**: `/blog` loads with subscribe form visible without page scrolling; iframe does not show ERPNext chrome on scroll in either direction.
 
@@ -40,7 +41,7 @@
 
 ## Phase 3: User Story 2 — Individual Post Pages
 
-*Goal: Visitor reads a full post without ERPNext header or footer ever appearing on scroll.*
+_Goal: Visitor reads a full post without ERPNext header or footer ever appearing on scroll._
 
 **Independent test criteria**: On any `/blog/[category]/[slug]` page, scrolling to the very bottom does not reveal the ERPNext footer; scrolling to the top does not reveal the ERPNext navbar.
 
@@ -59,7 +60,7 @@
 
 ## Dependencies
 
-```
+```text
 T001 ──┐
        ├──→ T003 ──→ T009 ──→ T010
 T002 ──┘
@@ -76,7 +77,7 @@ T004–T008 (Next.js layout) are independent of the ERPNext tasks and can procee
 
 ## Parallel Execution
 
-```
+```text
 # T001 and T002 simultaneously:
 Task: "Add embed detection JS to ERPNext Website Script tab"
 Task: "Add embed suppression CSS to ERPNext Website Style tab"
