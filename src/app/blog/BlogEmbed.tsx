@@ -5,7 +5,12 @@ import { TieredSubscribeForm } from "@/components/TieredSubscribeForm";
 
 const ERP_URL = process.env.NEXT_PUBLIC_ERP_URL || "https://erp.gitchegumi.com";
 
-export function BlogEmbed() {
+interface BlogEmbedProps {
+  src?: string;
+  title?: string;
+}
+
+export function BlogEmbed({ src, title = "Gitchegumi Blog" }: BlogEmbedProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeHeight, setIframeHeight] = useState(600);
 
@@ -24,8 +29,8 @@ export function BlogEmbed() {
     <div className="relative">
       <iframe
         ref={iframeRef}
-        src={`${ERP_URL}/blog?embed=1`}
-        title="Gitchegumi Blog"
+        src={src ?? `${ERP_URL}/blog?embed=1`}
+        title={title}
         className="w-full border-0"
         style={{ height: iframeHeight, overflow: "hidden" }}
         scrolling="no"
