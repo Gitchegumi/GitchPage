@@ -76,7 +76,7 @@ function TieredSubscribeFormInner({ n8nUrl }: { n8nUrl: string }) {
   };
 
   return (
-    <div className="fixed top-36 right-16 z-40 flex flex-col items-end gap-2">
+    <div className="fixed top-28 right-20 z-40 flex flex-col items-end gap-2">
       {/* Collapsed pill — always visible when form is closed */}
       {!expanded && (
         <button
