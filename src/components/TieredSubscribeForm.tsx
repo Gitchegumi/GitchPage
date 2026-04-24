@@ -76,8 +76,27 @@ function TieredSubscribeFormInner({ n8nUrl }: { n8nUrl: string }) {
   };
 
   return (
-    <div className="absolute bottom-4 right-6 flex flex-col items-end gap-2">
-      {/* Expanded form — floats above the pill */}
+    <div className="fixed top-20 right-6 z-40 flex flex-col items-end gap-2">
+      {/* Collapsed pill — always visible when form is closed */}
+      {!expanded && (
+        <button
+          type="button"
+          onClick={() => setExpanded(true)}
+          className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-lg transition-all hover:scale-105 active:scale-95"
+          style={{
+            background: "rgba(30,30,30,0.92)",
+            border: "1px solid rgba(175,224,206,0.35)",
+            color: status === "success" ? "#afe0ce" : "#f0f0f0",
+            backdropFilter: "blur(8px)",
+          }}
+          aria-label={status === "success" ? "Subscribed" : "Open subscribe form"}
+        >
+          <span aria-hidden="true">{status === "success" ? "✓" : "✉"}</span>
+          <span>{status === "success" ? "Subscribed!" : "Subscribe"}</span>
+        </button>
+      )}
+
+      {/* Expanded form — drops below the pill */}
       {expanded && (
         <MagicCard
           className="rounded-2xl w-72"
@@ -213,24 +232,6 @@ function TieredSubscribeFormInner({ n8nUrl }: { n8nUrl: string }) {
         </MagicCard>
       )}
 
-      {/* Collapsed pill — always visible when form is closed */}
-      {!expanded && (
-        <button
-          type="button"
-          onClick={() => setExpanded(true)}
-          className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-lg transition-all hover:scale-105 active:scale-95"
-          style={{
-            background: "rgba(30,30,30,0.92)",
-            border: "1px solid rgba(175,224,206,0.35)",
-            color: status === "success" ? "#afe0ce" : "#f0f0f0",
-            backdropFilter: "blur(8px)",
-          }}
-          aria-label={status === "success" ? "Subscribed" : "Open subscribe form"}
-        >
-          <span aria-hidden="true">{status === "success" ? "✓" : "✉"}</span>
-          <span>{status === "success" ? "Subscribed!" : "Subscribe"}</span>
-        </button>
-      )}
     </div>
   );
 }
