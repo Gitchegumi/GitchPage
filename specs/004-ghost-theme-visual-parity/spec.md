@@ -16,6 +16,7 @@ The Gitchegumi Media blog is currently split across three incomplete surfaces: a
 ## Clarifications
 
 ### Session 2026-04-26
+
 - Q: For legacy URL redirects, is the slug mapping strictly 1:1 (identical slugs), or is a custom mapping needed? → A: 1:1 slug mapping (e.g., `/blog/tech/my-post` -> `blog.gitchegumi.com/my-post`).
 - Q: Should redirects be handled at the application level (Next.js) or infrastructure level? → A: Next.js level (`next.config.ts` or `middleware.ts`).
 - Q: Should visual parity be achieved via custom theme modification or Ghost Code Injection? → A: Custom Ghost Theme (Handlebars/CSS repo).
@@ -128,4 +129,4 @@ As a visitor on `gitchegumi.com`, when I click "Blog" in the navigation I am tak
 - Replacing the homepage latest-posts data fetching pipeline (the links must point to Ghost, but the data source change is a separate feature).
 - Cross-browser rendering parity beyond standard modern browsers.
 - Performance benchmarking between platforms.
-e benchmarking between platforms.
+  e benchmarking between platforms.
