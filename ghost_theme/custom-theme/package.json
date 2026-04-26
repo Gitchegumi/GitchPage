@@ -1,0 +1,38 @@
+{
+    "name": "gitchegumi",
+    "description": "Custom Ghost theme for Gitchegumi Media — matches the main gitchegumi.com design",
+    "version": "1.0.0",
+    "engines": {
+        "ghost": ">=5.0.0"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "Gitchegumi Media",
+        "email": "mat@gitchegumi.com",
+        "url": "https://www.gitchegumi.com"
+    },
+    "keywords": [
+        "ghost",
+        "theme",
+        "ghost-theme"
+    ],
+    "config": {
+        "posts_per_page": 12,
+        "image_sizes": {
+            "xs": { "width": 150 },
+            "s":  { "width": 400 },
+            "m":  { "width": 720 },
+            "l":  { "width": 960 },
+            "xl": { "width": 1200 },
+            "xxl":{ "width": 2000 }
+        },
+        "card_assets": true
+    },
+    "scripts": {
+        "test": "gscan .",
+        "zip": "zip -r gitchegumi.zip . --exclude '*.zip' --exclude 'node_modules/*'"
+    },
+    "devDependencies": {
+        "gscan": "5.4.3"
+    }
+}

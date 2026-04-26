@@ -1,0 +1,38 @@
+{{#if prev}}
+{{#if next}}
+<nav class="gm-post-nav" aria-label="Post navigation">
+    <a class="gm-post-nav-item gm-post-nav-prev" href="{{prev.url}}">
+        <span class="gm-post-nav-label">&#8592; Previous</span>
+        <span class="gm-post-nav-title">{{prev.title}}</span>
+    </a>
+    <a class="gm-post-nav-item gm-post-nav-next" href="{{next.url}}">
+        <span class="gm-post-nav-label">Next &#8594;</span>
+        <span class="gm-post-nav-title">{{next.title}}</span>
+    </a>
+</nav>
+{{/if}}
+{{/if}}
+
+{{#if prev}}
+{{^if next}}
+<nav class="gm-post-nav" aria-label="Post navigation">
+    <a class="gm-post-nav-item gm-post-nav-prev" href="{{prev.url}}">
+        <span class="gm-post-nav-label">&#8592; Previous</span>
+        <span class="gm-post-nav-title">{{prev.title}}</span>
+    </a>
+    <span></span>
+</nav>
+{{/if}}
+{{/if}}
+
+{{^if prev}}
+{{#if next}}
+<nav class="gm-post-nav" aria-label="Post navigation">
+    <span></span>
+    <a class="gm-post-nav-item gm-post-nav-next" href="{{next.url}}">
+        <span class="gm-post-nav-label">Next &#8594;</span>
+        <span class="gm-post-nav-title">{{next.title}}</span>
+    </a>
+</nav>
+{{/if}}
+{{/if}}

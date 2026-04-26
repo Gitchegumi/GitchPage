@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="{{@site.locale}}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{meta_title}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{asset "css/screen.css"}}">
+    {{ghost_head}}
+</head>
+
+<body class="{{body_class}}">
+<div class="gm-site">
+
+    <!-- ================================================
+         HEADER
+         ================================================ -->
+    <div class="gm-header-wrapper">
+        <nav class="gm-nav" role="navigation" aria-label="Main navigation">
+
+            <!-- Brand / Logo -->
+            <div class="gm-nav-brand">
+                <a href="https://www.gitchegumi.com/" aria-label="Gitchegumi Media home">
+                    <img
+                        class="gm-nav-logo"
+                        src="https://www.gitchegumi.com/images/Mascot.png"
+                        alt="Gitchegumi Media mascot"
+                        width="70"
+                        height="70"
+                    >
+                </a>
+                <a href="https://www.gitchegumi.com/" class="gm-nav-brand-name">Gitchegumi Media</a>
+
+                <!-- Mobile burger -->
+                <button class="gm-burger" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Nav menu -->
+            <div class="gm-nav-menu" id="gm-nav-menu">
+                <ul class="gm-nav-list">
+
+                    <!-- Home -->
+                    <li class="gm-nav-item">
+                        <a class="gm-nav-link" href="https://www.gitchegumi.com/">Home</a>
+                    </li>
+
+                    <!-- Work & Content -->
+                    <li class="gm-nav-item gm-nav-item--work" data-dropdown>
+                        <button class="gm-nav-trigger" aria-haspopup="true" aria-expanded="false">
+                            Work &amp; Content
+                        </button>
+                        <div class="gm-dropdown" role="menu">
+                            <div class="gm-dropdown-inner">
+                                <div class="gm-dropdown-grid gm-dropdown-grid--2col">
+                                    <!-- Work column -->
+                                    <div>
+                                        <div class="gm-dropdown-heading">Work</div>
+                                        <ul class="gm-dropdown-list">
+                                            <li>
+                                                <a class="gm-dropdown-item" href="https://www.gitchegumi.com/portfolio" role="menuitem">
+                                                    <div class="gm-dropdown-item-title">Technical CV</div>
+                                                    <p class="gm-dropdown-item-desc">A list of the tech credentials of Gitchegumi.</p>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="gm-dropdown-item" href="https://github.com/Gitchegumi" target="_blank" rel="noopener noreferrer" role="menuitem">
+                                                    <div class="gm-dropdown-item-title">GitHub Profile</div>
+                                                    <p class="gm-dropdown-item-desc">The GitHub Profile for Gitchegumi</p>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- Content column -->
+                                    <div>
+                                        <div class="gm-dropdown-heading">Content</div>
+                                        <ul class="gm-dropdown-list">
+                                            <li>
+                                                <a class="gm-dropdown-item" href="https://www.gitchegumi.com/voice-over" role="menuitem">
+                                                    <div class="gm-dropdown-item-title">Voice Over</div>
+                                                    <p class="gm-dropdown-item-desc">Listen to Gitchegumi's VO Demos and schedule him for your next project!</p>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="gm-dropdown-item" href="/" role="menuitem">
+                                                    <div class="gm-dropdown-item-title">Blog</div>
+                                                    <p class="gm-dropdown-item-desc">Read the latest from Gitchegumi!</p>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="gm-dropdown-item" href="https://www.youtube.com/@Gitche_Gumi" target="_blank" rel="noopener noreferrer" role="menuitem">
+                                                    <div class="gm-dropdown-item-title">YouTube</div>
+                                                    <p class="gm-dropdown-item-desc">Join Gitchegumi on YouTube!</p>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="gm-dropdown-item" href="https://www.twitch.tv/gitchegumi" target="_blank" rel="noopener noreferrer" role="menuitem">
+                                                    <div class="gm-dropdown-item-title">Twitch</div>
+                                                    <p class="gm-dropdown-item-desc">Join Gitchegumi on Twitch!</p>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Socials card -->
+                            <div class="gm-dropdown-socials">
+                                <div class="gm-dropdown-socials-heading">
+                                    Socials
+                                    <hr>
+                                </div>
+                                <ul class="gm-dropdown-socials-grid">
+                                    <li>
+                                        <a class="gm-dropdown-item" href="https://www.instagram.com/gitchegumi" target="_blank" rel="noopener noreferrer" role="menuitem">
+                                            <div class="gm-dropdown-item-title">Instagram</div>
+                                            <p class="gm-dropdown-item-desc">Follow on Instagram</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="gm-dropdown-item" href="https://x.com/GitchegumiGames" target="_blank" rel="noopener noreferrer" role="menuitem">
+                                            <div class="gm-dropdown-item-title">X</div>
+                                            <p class="gm-dropdown-item-desc">Follow on X</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="gm-dropdown-item" href="https://www.facebook.com/GitchegumiGaming" target="_blank" rel="noopener noreferrer" role="menuitem">
+                                            <div class="gm-dropdown-item-title">Facebook</div>
+                                            <p class="gm-dropdown-item-desc">Join FB Community</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Tools -->
+                    <li class="gm-nav-item gm-nav-item--tools" data-dropdown>
+                        <button class="gm-nav-trigger" aria-haspopup="true" aria-expanded="false">
+                            Tools
+                        </button>
+                        <div class="gm-dropdown" role="menu">
+                            <div class="gm-dropdown-inner">
+                                <div class="gm-dropdown-heading">FinPipe</div>
+                                <ul class="gm-dropdown-list">
+                                    <li>
+                                        <a class="gm-dropdown-item" href="https://www.gitchegumi.com/trakpipe" role="menuitem">
+                                            <div class="gm-dropdown-item-title">TrakPipe</div>
+                                            <p class="gm-dropdown-item-desc">Transaction register for cash and investment accounts.</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="gm-dropdown-item" href="https://www.gitchegumi.com/accountpipe" role="menuitem">
+                                            <div class="gm-dropdown-item-title">AccountPipe</div>
+                                            <p class="gm-dropdown-item-desc">The source of truth for your accounts across FinPipe.</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="gm-dropdown-item" href="https://www.gitchegumi.com/budget" role="menuitem">
+                                            <div class="gm-dropdown-item-title">SpendPipe</div>
+                                            <p class="gm-dropdown-item-desc">A simple budget tracking tool.</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="gm-dropdown-item" href="https://www.gitchegumi.com/debtpipe" role="menuitem">
+                                            <div class="gm-dropdown-item-title">DebtPipe</div>
+                                            <p class="gm-dropdown-item-desc">A simple debt tracking tool.</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="gm-dropdown-heading" style="margin-top:1rem;">Trading</div>
+                                <ul class="gm-dropdown-list">
+                                    <li>
+                                        <a class="gm-dropdown-item" href="https://github.com/Gitchegumi/quantpipe" target="_blank" rel="noopener noreferrer" role="menuitem">
+                                            <div class="gm-dropdown-item-title">QuantPipe</div>
+                                            <p class="gm-dropdown-item-desc">Backtesting, forwardtesting, and trading bot in development.</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Shops -->
+                    <li class="gm-nav-item gm-nav-item--shops" data-dropdown>
+                        <button class="gm-nav-trigger" aria-haspopup="true" aria-expanded="false">
+                            Shops
+                        </button>
+                        <div class="gm-dropdown" role="menu">
+                            <div class="gm-dropdown-inner" style="font-family:var(--font-oswald);">
+                                <ul class="gm-dropdown-list" style="display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;">
+                                    <li>
+                                        <a class="gm-dropdown-item" href="https://store.gitchegumi.com/" target="_blank" rel="noopener noreferrer" role="menuitem" style="color:var(--color-brand-orange);">
+                                            <div class="gm-dropdown-item-title">Gitchegumi Store</div>
+                                            <p class="gm-dropdown-item-desc" style="color:var(--color-soft-white);">Check out the Gitchegumi Merch Store!</p>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="gm-dropdown-item" href="https://www.etsy.com/shop/GitchPrints" target="_blank" rel="noopener noreferrer" role="menuitem" style="color:var(--color-brand-orange);">
+                                            <div class="gm-dropdown-item-title">Etsy Store</div>
+                                            <p class="gm-dropdown-item-desc" style="color:var(--color-soft-white);">Check out the GitchPrints Etsy Store!</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div><!-- /.gm-nav-menu -->
+
+        </nav>
+    </div><!-- /.gm-header-wrapper -->
+
+    <!-- ================================================
+         PAGE CONTENT
+         ================================================ -->
+    <div class="gm-content">
+        {{{body}}}
+    </div>
+
+    <!-- ================================================
+         FOOTER
+         ================================================ -->
+    <footer class="gm-footer">
+        <div class="gm-footer-container">
+            <hr class="gm-footer-line">
+            <div class="gm-footer-grid">
+
+                <!-- Site map -->
+                <div>
+                    <h5 class="gm-footer-heading">Site Map</h5>
+                    <ul class="gm-footer-links">
+                        <li><a href="https://www.gitchegumi.com/">Home</a></li>
+                        <li><a href="/">Blog</a></li>
+                        <li><a href="https://www.gitchegumi.com/portfolio">Portfolio</a></li>
+                        <li><a href="https://www.gitchegumi.com/voice-over">Voice Over</a></li>
+                        <li><a href="https://www.gitchegumi.com/tools">Tools</a></li>
+                        <li><a href="https://store.gitchegumi.com" target="_blank" rel="noopener noreferrer">Merch</a></li>
+                    </ul>
+                </div>
+
+                <!-- Social media -->
+                <div>
+                    <h5 class="gm-footer-heading">Social Media</h5>
+                    <ul class="gm-footer-links">
+                        <li><a href="https://www.facebook.com/GitchegumiGaming" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+                        <li><a href="https://www.instagram.com/gitchegumi" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                        <li><a href="https://twitter.com/GitchegumiGames" target="_blank" rel="noopener noreferrer">Twitter</a></li>
+                        <li><a href="https://www.twitch.tv/gitchegumi" target="_blank" rel="noopener noreferrer">Twitch</a></li>
+                    </ul>
+                </div>
+
+                <!-- About -->
+                <div class="gm-footer-about">
+                    <p>&copy; 2024 GitcheGumi Media LLC. All rights reserved.</p>
+                    <p>Designed and developed by Mathew Lindholm</p>
+                    <img
+                        class="gm-footer-logo"
+                        src="https://www.gitchegumi.com/images/Media%20Text.png"
+                        alt="GitcheGumi Media LLC"
+                        width="450"
+                        height="250"
+                        loading="lazy"
+                    >
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+</div><!-- /.gm-site -->
+
+<script src="{{asset "js/main.js"}}"></script>
+{{ghost_foot}}
+
+</body>
+</html>

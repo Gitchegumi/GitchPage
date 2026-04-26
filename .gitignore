@@ -92,6 +92,7 @@ extra-documentation/
 ### Workspace / Project Files ###
 GitchPage.code-workspace
 example-theme/
+*.zip
 
 ### Design / Binary Sources ###
 Feature Image Template/

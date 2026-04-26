@@ -1,0 +1,22 @@
+{{!< default}}
+
+<div class="gm-page-header">
+    <h1 class="gm-page-header-title">{{@site.title}}</h1>
+    {{#if @site.description}}<p class="gm-page-header-desc">{{@site.description}}</p>{{/if}}
+</div>
+
+<section class="gm-post-feed">
+    {{#if posts}}
+        <div class="gm-bento-grid">
+            {{#foreach posts}}
+                {{> "loop"}}
+            {{/foreach}}
+        </div>
+        {{pagination}}
+    {{else}}
+        <div class="gm-empty">
+            <h2 class="gm-empty-title">No posts yet</h2>
+            <p>Check back soon for new content!</p>
+        </div>
+    {{/if}}
+</section>

@@ -1,0 +1,28 @@
+{{!< default}}
+
+{{#tag}}
+<div class="gm-page-header">
+    {{#if feature_image}}
+        <img src="{{feature_image}}" alt="{{name}}" style="width:5rem;height:5rem;border-radius:50%;object-fit:cover;margin:0 auto 1rem;border:3px solid var(--color-brand-blue);">
+    {{/if}}
+    <h1 class="gm-page-header-title">{{name}}</h1>
+    {{#if description}}<p class="gm-page-header-desc">{{description}}</p>{{/if}}
+    <p class="gm-page-header-meta">{{plural pagination.total empty="No posts" singular="% post" plural="% posts"}}</p>
+</div>
+{{/tag}}
+
+<section class="gm-post-feed">
+    {{#if posts}}
+        <div class="gm-bento-grid">
+            {{#foreach posts}}
+                {{> "loop"}}
+            {{/foreach}}
+        </div>
+        {{pagination}}
+    {{else}}
+        <div class="gm-empty">
+            <h2 class="gm-empty-title">No posts in this tag</h2>
+            <p>Check back soon!</p>
+        </div>
+    {{/if}}
+</section>
