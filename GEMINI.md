@@ -1,4 +1,4 @@
-﻿# GitchPage (Personal Website)
+# GitchPage (Personal Website)
 
 This file expands the global GEMINI.md to provide guidance for GitchPage — a personal website and blog project.
 
@@ -59,3 +59,8 @@ This file expands the global GEMINI.md to provide guidance for GitchPage — a p
 - Changes are made on the `dev`, tested locally, then merged to `main` for deployment.
 - Use `gh` CLI commands to inspect issues and assist with planning, but do not create branches or PRs.
 - Focus on improving user experience, accessibility, and code quality.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->

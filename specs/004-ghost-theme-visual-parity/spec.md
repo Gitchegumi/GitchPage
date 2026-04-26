@@ -13,6 +13,17 @@ The Gitchegumi Media blog is currently split across three incomplete surfaces: a
 
 ---
 
+## Clarifications
+
+### Session 2026-04-26
+- Q: For legacy URL redirects, is the slug mapping strictly 1:1 (identical slugs), or is a custom mapping needed? → A: 1:1 slug mapping (e.g., `/blog/tech/my-post` -> `blog.gitchegumi.com/my-post`).
+- Q: Should redirects be handled at the application level (Next.js) or infrastructure level? → A: Next.js level (`next.config.ts` or `middleware.ts`).
+- Q: Should visual parity be achieved via custom theme modification or Ghost Code Injection? → A: Custom Ghost Theme (Handlebars/CSS repo).
+- Q: Should the homepage "Latest Blog Posts" keep the ERPNext source or switch to Ghost Content API? → A: Switch to Ghost Content API (canonical source).
+- Q: Should the glassmorphism effect (backdrop-filter) be replicated exactly or use a fallback? → A: Replicate exactly with CSS `backdrop-filter`.
+
+---
+
 ## User Scenarios & Testing
 
 ### Primary User Story
@@ -56,8 +67,8 @@ As a visitor on `gitchegumi.com`, when I click "Blog" in the navigation I am tak
 
 - **FR-001**: The "Blog" navigation link in the main site's Work & Content dropdown MUST point to `https://blog.gitchegumi.com`.
 - **FR-002**: The "Blog" link on the main site MUST open the Ghost blog in the same browser tab (not a new tab and not an iframe).
-- **FR-003**: Navigating to `https://www.gitchegumi.com/blog` MUST redirect the visitor to `https://blog.gitchegumi.com` via a permanent redirect.
-- **FR-004**: Navigating to any legacy MDX blog post URL under `gitchegumi.com/blog/` MUST redirect to the corresponding post on `blog.gitchegumi.com`.
+- **FR-003**: Navigating to `https://www.gitchegumi.com/blog` MUST redirect the visitor to `https://blog.gitchegumi.com` via a permanent redirect configured at the Next.js level.
+- **FR-004**: Navigating to any legacy MDX blog post URL under `gitchegumi.com/blog/` MUST redirect to the corresponding post on `blog.gitchegumi.com` using a 1:1 slug mapping (ignoring category), configured at the Next.js level.
 
 #### Navigation routing (Ghost blog → main site)
 
@@ -66,7 +77,7 @@ As a visitor on `gitchegumi.com`, when I click "Blog" in the navigation I am tak
 
 #### Visual integration
 
-- **FR-007**: The Ghost blog navigation bar MUST be visually indistinguishable from the main site navigation bar, including glassmorphism treatment, brand colours, border radius, shadows, logo size, brand name typography, and nav item spacing.
+- **FR-007**: The Ghost blog navigation bar MUST be visually indistinguishable from the main site navigation bar (modified at the theme level), including exact replication of the glassmorphism effect using CSS `backdrop-filter`, brand colours, border radius, shadows, logo size, brand name typography, and nav item spacing.
 - **FR-008**: The Socials section item titles (Instagram, X, Facebook) in the Ghost blog dropdown MUST appear in brand-orange, matching the main site.
 - **FR-009**: Dropdown item titles throughout the Ghost blog header MUST match the main site's colour and weight.
 - **FR-010**: The Ghost blog MUST NOT display membership or authentication controls ("Sign in", "Subscribe", "Account") visible to visitors.
@@ -75,7 +86,7 @@ As a visitor on `gitchegumi.com`, when I click "Blog" in the navigation I am tak
 
 #### Homepage latest posts
 
-- **FR-013**: Post cards in the main site's "Latest Blog Posts" section MUST link to the corresponding post on `blog.gitchegumi.com`, not to internal MDX routes.
+- **FR-013**: Post cards in the main site's "Latest Blog Posts" section MUST link to the corresponding post on `blog.gitchegumi.com`, and the data source MUST be switched from ERPNext to the Ghost Content API.
 
 ### Key Entities
 
@@ -101,7 +112,7 @@ As a visitor on `gitchegumi.com`, when I click "Blog" in the navigation I am tak
 ## Assumptions
 
 - The Ghost blog (`blog.gitchegumi.com`) is the accepted canonical blog platform going forward; the ERPNext blog iframe is a legacy artifact to be retired.
-- Ghost post URLs follow a predictable pattern compatible with the legacy MDX URL structure, making redirect mapping feasible.
+- Ghost post URLs follow a predictable pattern compatible with the legacy MDX URL structure, making a 1:1 slug redirect mapping feasible.
 - The existing MDX posts in `src/app/blog/` have already been published to the Ghost blog; content migration is not in scope.
 - Ghost membership features are not actively used and should be hidden at the theme level.
 - "Indistinguishable" means visual parity — functional platform differences (Ghost CMS vs Next.js) are acceptable as long as visitors cannot perceive them.
@@ -117,3 +128,4 @@ As a visitor on `gitchegumi.com`, when I click "Blog" in the navigation I am tak
 - Replacing the homepage latest-posts data fetching pipeline (the links must point to Ghost, but the data source change is a separate feature).
 - Cross-browser rendering parity beyond standard modern browsers.
 - Performance benchmarking between platforms.
+e benchmarking between platforms.

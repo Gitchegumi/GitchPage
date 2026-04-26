@@ -1,9 +1,27 @@
 {{!< default}}
 
+{{!-- Publication cover hero --}}
+{{#if @site.cover_image}}
+<div class="gm-cover-hero">
+    <img
+        class="gm-cover-hero-image"
+        src="{{@site.cover_image}}"
+        alt="{{@site.title}}"
+    >
+    <div class="gm-cover-hero-overlay"></div>
+    <div class="gm-cover-hero-content">
+        <h1 class="gm-cover-hero-title">{{@site.title}}</h1>
+        {{#if @site.description}}
+            <p class="gm-cover-hero-desc">{{@site.description}}</p>
+        {{/if}}
+    </div>
+</div>
+{{else}}
 <div class="gm-page-header">
     <h1 class="gm-page-header-title">{{@site.title}}</h1>
     {{#if @site.description}}<p class="gm-page-header-desc">{{@site.description}}</p>{{/if}}
 </div>
+{{/if}}
 
 <section class="gm-post-feed">
     {{#if posts}}

@@ -547,6 +547,84 @@ ul, ol { list-style: none; }
 }
 
 /* ============================================================
+   COVER HERO (Ghost publication cover image on blog index)
+   ============================================================ */
+.gm-cover-hero {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .gm-cover-hero { height: 420px; }
+}
+
+.gm-cover-hero-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+/* Two-layer gradient: dark vignette at top + heavier fade at bottom so
+   bento cards below it read cleanly against the page background */
+.gm-cover-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(13, 15, 25, 0.30) 0%,
+            rgba(13, 15, 25, 0.55) 60%,
+            rgba(13, 15, 25, 0.90) 100%
+        );
+}
+
+.gm-cover-hero-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    gap: 0.75rem;
+}
+
+.gm-cover-hero-title {
+    font-family: var(--font-oswald);
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--color-brand-orange);
+    line-height: 1.15;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .gm-cover-hero-title { font-size: 3.5rem; }
+}
+
+.gm-cover-hero-desc {
+    font-size: 1rem;
+    color: var(--color-soft-white);
+    max-width: 44rem;
+    opacity: 0.88;
+    line-height: 1.55;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .gm-cover-hero-desc { font-size: 1.125rem; }
+}
+
+/* ============================================================
    PAGE HEADER (index / tag / author)
    ============================================================ */
 .gm-page-header {
