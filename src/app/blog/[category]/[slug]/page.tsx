@@ -7,6 +7,26 @@ type Props = {
   params: Promise<{ category: string; slug: string }>;
 };
 
+// Generate static params for all ERPNext blog posts at build time.
+// If ERPNext is unreachable, returns a minimal fallback so the build
+// can still complete with output: 'export'.
+export async function generateStaticParams() {
+  try {
+    const posts = await getERPNextPosts();
+    if (!posts.length) {
+      // Minimal fallback: one dummy param so Next.js doesn't complain
+      return [{ category: "general", slug: "placeholder" }];
+    }
+    return posts.map((post) => ({
+      category: post.category ?? "general",
+      slug: post.slug,
+    }));
+  } catch {
+    // Fallback for build-time ERPNext failures
+    return [{ category: "general", slug: "placeholder" }];
+  }
+}
+
 export async function generateMetadata({ params }: Props) {
   const { category, slug } = await params;
   const posts = await getERPNextPosts();
@@ -41,12 +61,4 @@ export default async function BlogPostPage({ params }: Props) {
   const embedUrl = `${ERP_URL}/blog/${category}/${slug}?embed=1`;
 
   return <BlogEmbed src={embedUrl} title={slug} />;
-}
-
-export async function generateStaticParams() {
-  const posts = await getERPNextPosts();
-  return posts.map((post) => ({
-    category: post.category ?? "general",
-    slug: post.slug,
-  }));
 }
