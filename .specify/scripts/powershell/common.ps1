@@ -2,7 +2,11 @@
 # Common PowerShell functions analogous to common.sh (moved to powershell/)
 
 function Get-RepoRoot {
-    git rev-parse --show-toplevel
+    $root = git rev-parse --show-toplevel
+    if ($root -match '^/(.)/') {
+        $root = $root -replace '^/(.)/', '$1:/' -replace '/', '\'
+    }
+    return $root
 }
 
 function Get-CurrentBranch {
