@@ -420,6 +420,68 @@ ul, ol { list-style: none; }
 }
 
 /* ============================================================
+   NAV ACTIONS (search + portal)
+   ============================================================ */
+.gm-nav-actions {
+    display: none; /* hidden on mobile to keep nav clean */
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .gm-nav-actions { display: flex; }
+}
+
+.gm-search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-soft-white);
+    padding: 0.375rem;
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+}
+
+.gm-search-btn svg { width: 1.25rem; height: 1.25rem; }
+
+.gm-search-btn:hover { color: var(--color-brand-orange); }
+
+.gm-nav-members {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.gm-member-link {
+    font-family: var(--font-oswald);
+    font-size: 0.875rem;
+    color: var(--color-soft-white);
+    padding: 0.375rem 0.75rem;
+    transition: var(--transition);
+}
+
+.gm-member-link:hover { color: var(--color-brand-orange); text-decoration: underline; }
+
+.gm-member-btn {
+    font-family: var(--font-oswald);
+    font-size: 0.875rem;
+    color: var(--color-soft-white);
+    background: var(--color-brand-blue);
+    padding: 0.375rem 0.875rem;
+    border-radius: var(--radius-md);
+    transition: background 150ms ease, color 150ms ease;
+}
+
+.gm-member-btn:hover {
+    background: var(--color-brand-orange);
+    color: var(--color-brand-dark);
+}
+
+/* ============================================================
    FOOTER
    ============================================================ */
 .gm-footer {
@@ -904,6 +966,33 @@ ul, ol { list-style: none; }
     background: rgba(65, 102, 245, 0.2);
     font-family: var(--font-oswald);
     font-weight: 600;
+}
+
+/* ---- Ghost Koenig card width classes (required by gscan) ---- */
+
+/* Wide: breaks slightly outside the content column */
+.kg-width-wide,
+.gm-article-content .kg-width-wide {
+    margin-left: min(-8vw, -6rem);
+    margin-right: min(-8vw, -6rem);
+    width: auto;
+    max-width: none;
+}
+
+/* Full: edge-to-edge viewport width */
+.kg-width-full,
+.gm-article-content .kg-width-full {
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+    max-width: none;
+}
+
+.kg-width-wide img,
+.kg-width-full img {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 /* Ghost card components */
