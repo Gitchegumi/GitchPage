@@ -27,17 +27,17 @@
 ```
 
 ## Summary
-Full integration of the Ghost blog (`blog.gitchegumi.com`) with the main site (`gitchegumi.com`). This involves Next.js level redirects for legacy routes, a visual theme update for Ghost to match the main site's design (glassmorphism, typography, colors), and switching the homepage "Latest Blog Posts" data source to the Ghost Content API.
+Full integration of the Ghost blog (`blog.gitchegumi.com`) with the main site (`gitchegumi.com`). This involves a client-side redirect for the main `/blog` route, a visual theme update for Ghost to match the main site's design, and switching the homepage "Latest Blog Posts" data source to the Ghost Content API. Site rebuilds are triggered via n8n webhook upon Ghost post publication to ensure homepage freshness.
 
 ## Technical Context
 **Language/Version**: Next.js 15+ (TypeScript), Handlebars (Ghost Theme)
-**Primary Dependencies**: `@tryghost/content-api`, Next.js Redirects, Tailwind CSS (for reference)
+**Primary Dependencies**: `@tryghost/content-api`, n8n (Automation), Tailwind CSS (for reference)
 **Storage**: Ghost CMS (external Content API)
 **Testing**: Manual visual smoke check + a11y smoke check (Principle IV)
 **Target Platform**: Web (GitHub Pages for main site, Ghost Pro/Self-hosted for blog)
 **Project Type**: Web
 **Performance Goals**: LCP < 2.5s for home and blog index
-**Constraints**: Visual parity (glassmorphism), 1:1 legacy slug redirects
+**Constraints**: Visual parity (glassmorphism), Client-side redirect for `/blog`
 **Scale/Scope**: Single site integration
 
 ## Constitution Check

@@ -66,12 +66,11 @@
 
 ```text
 T001 → T003
-T003 → T016
+T003 → T017
 T004 → T005 → T007
-T008 → T009
-T010 → T011 → T012 → T013 → T015
-T016 → T017
-T007, T009, T015, T017 → T019 → T020
+T010 → T011 → T012 → T013 → T014 → T016
+T017 → T018
+T007, T009, T016, T018 → T021 → T022
 ```
 
 ## Parallel Example
@@ -86,4 +85,6 @@ Task T012: "Replicate footer HTML"
 ## Implementation Strategy
 - **MVP**: Complete Phase 1-4 first to ensure all existing traffic is correctly routed to the new blog without dead links.
 - **Incremental**: Follow with Phase 7 to update the main site content, then Phase 5-6 to achieve visual parity.
+- **Verification**: Each user story phase ends with a manual verification task derived from `quickstart.md`.
+**: Follow with Phase 7 to update the main site content, then Phase 5-6 to achieve visual parity.
 - **Verification**: Each user story phase ends with a manual verification task derived from `quickstart.md`.

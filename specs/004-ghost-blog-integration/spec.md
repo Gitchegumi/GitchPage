@@ -101,9 +101,8 @@ As a visitor on `gitchegumi.com`, when I click "Blog" in the navigation I am tak
 
 ## Success Criteria
 
-- Clicking "Blog" from any page on `gitchegumi.com` lands the visitor on `https://blog.gitchegumi.com` within a normal page load — no intermediate pages, iframes, or broken routes.
-- 100% of legacy blog URLs at `gitchegumi.com/blog/*` redirect to their Ghost equivalents with no 404s.
-- A visitor shown the navigation bar of both sites side-by-side at 1440 px viewport cannot identify which is the main site and which is the Ghost blog.
+- Clicking "Blog" from any page on `gitchegumi.com` lands the visitor on `https://blog.gitchegumi.com` within a normal page load — no intermediate pages or iframes.
+- The navigation bar of both sites is visually indistinguishable at 1440 px viewport.
 - Zero membership or authentication controls are visible in the Ghost blog navigation.
 - All "Latest Blog Posts" cards on the main site homepage link to `blog.gitchegumi.com` posts.
 - The Ghost blog nav correctly links to all main site destinations with zero broken hrefs.
@@ -113,7 +112,7 @@ As a visitor on `gitchegumi.com`, when I click "Blog" in the navigation I am tak
 ## Assumptions
 
 - The Ghost blog (`blog.gitchegumi.com`) is the accepted canonical blog platform going forward; the ERPNext blog iframe is a legacy artifact to be retired.
-- Ghost post URLs follow a predictable pattern compatible with the legacy MDX URL structure, making a 1:1 slug redirect mapping feasible.
+- Legacy MDX posts are being archived; it is acceptable for old social links to these posts to return a 404 once the files are removed.
 - The existing MDX posts in `src/app/blog/` have already been published to the Ghost blog; content migration is not in scope.
 - Ghost membership features are not actively used and should be hidden at the theme level.
 - "Indistinguishable" means visual parity — functional platform differences (Ghost CMS vs Next.js) are acceptable as long as visitors cannot perceive them.
@@ -129,4 +128,6 @@ As a visitor on `gitchegumi.com`, when I click "Blog" in the navigation I am tak
 - Replacing the homepage latest-posts data fetching pipeline (the links must point to Ghost, but the data source change is a separate feature).
 - Cross-browser rendering parity beyond standard modern browsers.
 - Performance benchmarking between platforms.
+  e benchmarking between platforms.
+arking between platforms.
   e benchmarking between platforms.
