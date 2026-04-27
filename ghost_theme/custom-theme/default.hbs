@@ -4,10 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{meta_title}}</title>
+    {{ghost_head}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto+Serif:ital,opsz,wght@0,8..144,300;0,8..144,400;0,8..144,500;0,8..144,700;1,8..144,300;1,8..144,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{asset "css/screen.css"}}">
-    {{ghost_head}}
 </head>
 
 <body class="{{body_class}}">
@@ -53,6 +54,7 @@
                     <li class="gm-nav-item gm-nav-item--work" data-dropdown>
                         <button class="gm-nav-trigger" aria-haspopup="true" aria-expanded="false">
                             Work &amp; Content
+                            <svg class="gm-nav-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                         </button>
                         <div class="gm-dropdown" role="menu">
                             <div class="gm-dropdown-inner">
@@ -141,6 +143,7 @@
                     <li class="gm-nav-item gm-nav-item--tools" data-dropdown>
                         <button class="gm-nav-trigger" aria-haspopup="true" aria-expanded="false">
                             Tools
+                            <svg class="gm-nav-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                         </button>
                         <div class="gm-dropdown" role="menu">
                             <div class="gm-dropdown-inner">
@@ -188,6 +191,7 @@
                     <li class="gm-nav-item gm-nav-item--shops" data-dropdown>
                         <button class="gm-nav-trigger" aria-haspopup="true" aria-expanded="false">
                             Shops
+                            <svg class="gm-nav-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                         </button>
                         <div class="gm-dropdown" role="menu">
                             <div class="gm-dropdown-inner" style="font-family:var(--font-oswald);">
@@ -212,27 +216,21 @@
                 </ul>
             </div><!-- /.gm-nav-menu -->
 
-            <!-- Ghost required: search + portal actions -->
+            <!-- Ghost required: search + member portal -->
             <div class="gm-nav-actions">
                 <button class="gm-search-btn" aria-label="Search this site" data-ghost-search>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
                     </svg>
                 </button>
-                {{#if @site.members_enabled}}
-                    <div class="gm-nav-members">
-                        {{#unless @member}}
-                            {{#unless @site.members_invite_only}}
-                                <a class="gm-member-link" href="#/portal/signin" data-portal="signin">Sign in</a>
-                                <a class="gm-member-btn" href="#/portal/signup" data-portal="signup">Subscribe</a>
-                            {{else}}
-                                <a class="gm-member-btn" href="#/portal/signin" data-portal="signin">Sign in</a>
-                            {{/unless}}
-                        {{else}}
-                            <a class="gm-member-btn" href="#/portal/account" data-portal="account">Account</a>
-                        {{/unless}}
-                    </div>
-                {{/if}}
+                <div class="gm-nav-members">
+                    {{#if @member}}
+                        <a href="#/portal/account" class="gm-member-link">Account</a>
+                    {{else}}
+                        <a href="#/portal/signin" class="gm-member-link">Log in</a>
+                        <a href="#/portal/signup" class="gm-member-btn">Subscribe</a>
+                    {{/if}}
+                </div>
             </div>
 
         </nav>

@@ -75,7 +75,7 @@ Thumbs.db
 ### Generated Assets (optional – uncomment if regenerated each build) ###
 public/sitemap.xml
 public/sitemap-*.xml
-# public/robots.txt
+public/robots.txt
 
 ### Project Docs (ignored intentionally) ###
 extra-documentation/

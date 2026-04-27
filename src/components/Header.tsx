@@ -25,14 +25,14 @@ export default function Header() {
     <>
       <div className="top-0 right-0 left-0 z-50 w-full md:sticky">
         <nav
-          className="flex z-50 flex-col items-center p-2 mx-16 mt-2 rounded-xl md:flex-row md:justify-between font-oswald text-[1em] text-soft-white backdrop-blur-xl"
+          className="flex z-50 flex-col items-center p-2 mx-16 mt-2 rounded-xl md:flex-row font-oswald text-[1em] text-soft-white backdrop-blur-xl"
           style={{
             background: "rgba(65,102,245,0.35)",
             border: "1px solid rgba(255,255,255,0.12)",
             boxShadow: "0 8px 32px rgba(65,102,245,0.25), inset 0 1px 0 rgba(255,255,255,0.15)",
           }}
         >
-          <div className="flex justify-between items-center w-full md:justify-start md:w-auto">
+          <div className="flex justify-between items-center w-full md:justify-start md:flex-1">
             <Image
               src={"/images/Mascot.png"}
               width={70}
@@ -68,15 +68,14 @@ export default function Header() {
           </div>
           <div
             className={`
-              md:flex 
+              md:flex
               md:flex-row
-              md:items-center 
-              m-auto ${
-                isMenuOpen ? "flex flex-col w-full" : "hidden"
+              md:items-center
+              ${isMenuOpen ? "flex flex-col w-full" : "hidden"
               } md:w-auto`}
           >
             <NavigationMenu viewport={false}>
-              <NavigationMenuList className="flex flex-col gap-4 md:flex-row md:gap-16">
+              <NavigationMenuList className="flex flex-col gap-4 md:flex-row md:ml-16 md:gap-8">
                 <NavigationMenuItem>
                   <NavigationMenuLink
                     asChild
@@ -98,21 +97,12 @@ export default function Header() {
                     Work & Content
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="md:-translate-x-1/2">
-                    <div
-                      className="rounded-xl text-soft-white backdrop-blur-xl"
-                      style={{
-                        background: "rgba(44,44,44,0.75)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
-                      }}
-                    >
-                      <div className="grid w-60 md:grid-cols-2 max-h-[calc(100vh-100px)] md:w-[600px] lg:w-[800px]">
+                    <div className="text-soft-white">
+                      <div className="grid w-60 p-6 md:grid-cols-2 max-h-[calc(100vh-100px)] md:w-[600px] lg:w-[800px]">
                         <div>
-                          <NavigationMenuLink asChild>
-                            <div className="mb-2 text-2xl font-bold md:mb-4 hover:bg-transparent text-brand-orange font-oswald hover:text-brand-orange">
-                              Work
-                            </div>
-                          </NavigationMenuLink>
+                          <div className="mb-2 text-2xl font-bold md:mb-4 text-brand-orange font-oswald">
+                            Work
+                          </div>
                           <ul className="z-50 space-y-2">
                             <ListItem
                               href="/portfolio"
@@ -136,11 +126,9 @@ export default function Header() {
                           </ul>
                         </div>
                         <div>
-                          <NavigationMenuLink asChild>
-                            <div className="mb-2 text-2xl font-bold md:mb-4 hover:bg-transparent text-brand-orange font-oswald hover:text-brand-orange">
-                              Content
-                            </div>
-                          </NavigationMenuLink>
+                          <div className="mb-2 text-2xl font-bold md:mb-4 text-brand-orange font-oswald">
+                            Content
+                          </div>
                           <ul className="space-y-2">
                             <ListItem
                               href="/voice-over"
@@ -153,7 +141,7 @@ export default function Header() {
                               </span>
                             </ListItem>
                             <ListItem
-                              href="/blog"
+                              href="https://blog.gitchegumi.com"
                               title="Blog"
                               className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
                             >
@@ -185,19 +173,17 @@ export default function Header() {
                         </div>
                       </div>
                       <div
-                        className="p-6 m-4 rounded-xl font-oswald text-brand-orange backdrop-blur-xl"
+                        className="p-6 mx-4 mb-4 rounded-xl font-oswald text-brand-orange"
                         style={{
                           background: "rgba(65,102,245,0.3)",
                           border: "1px solid rgba(255,255,255,0.12)",
                           boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12)",
                         }}
                       >
-                        <NavigationMenuLink asChild>
-                          <div className="mb-2 text-2xl font-bold text-center md:mb-4 hover:bg-transparent hover:text-brand-orange">
-                            Socials
-                            <hr />
-                          </div>
-                        </NavigationMenuLink>
+                        <div className="mb-2 text-2xl font-bold text-center md:mb-4">
+                          Socials
+                          <hr className="mt-2 border-white/20" />
+                        </div>
                         <ul className="grid gap-2 md:grid-cols-3">
                           <ListItem
                             href="https://www.instagram.com/gitchegumi"
@@ -239,21 +225,12 @@ export default function Header() {
                     <Link href="/tools">Tools</Link>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="md:-translate-x-1/2">
-                    <div
-                      className="rounded-xl text-soft-white backdrop-blur-xl"
-                      style={{
-                        background: "rgba(44,44,44,0.75)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
-                      }}
-                    >
-                      <div className="grid w-60">
+                    <div className="text-soft-white">
+                      <div className="grid w-60 p-6">
                         <div>
-                          <NavigationMenuLink asChild>
-                            <div className="mb-2 text-2xl font-bold hover:bg-transparent text-brand-orange font-oswald hover:text-brand-orange">
-                              FinPipe
-                            </div>
-                          </NavigationMenuLink>
+                          <div className="mb-2 text-2xl font-bold md:mb-4 text-brand-orange font-oswald">
+                            FinPipe
+                          </div>
                           <ul className="z-50 space-y-2">
                             <ListItem
                               href="/trakpipe"
@@ -293,11 +270,11 @@ export default function Header() {
                                 A simple debt tracking tool.
                               </span>
                             </ListItem>
-                            <NavigationMenuLink asChild>
-                              <div className="mb-2 text-2xl font-bold hover:bg-transparent text-brand-orange font-oswald hover:text-brand-orange">
-                                Trading
-                              </div>
-                            </NavigationMenuLink>
+                          </ul>
+                          <div className="mt-4 mb-2 text-2xl font-bold md:mb-4 text-brand-orange font-oswald">
+                            Trading
+                          </div>
+                          <ul className="space-y-2">
                             <ListItem
                               href="https://github.com/Gitchegumi/quantpipe"
                               title="QuantPipe"
@@ -320,14 +297,7 @@ export default function Header() {
                     Shops
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="md:-translate-x-4/5">
-                    <div
-                      className="z-50 p-4 w-60 rounded-xl font-oswald text-brand-orange backdrop-blur-xl md:w-[500px]"
-                      style={{
-                        background: "rgba(44,44,44,0.75)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)",
-                      }}
-                    >
+                    <div className="z-50 p-4 w-60 rounded-xl font-oswald text-brand-orange md:w-[500px]">
                       <ul className="grid gap-6 md:grid-cols-2">
                         <ListItem
                           href="https://store.gitchegumi.com/"
@@ -356,6 +326,7 @@ export default function Header() {
               </NavigationMenuList>
             </NavigationMenu>
           </div>
+          <div className="hidden md:flex md:flex-1" />
         </nav>
       </div>
     </>

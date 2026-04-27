@@ -1,9 +1,8 @@
 import Image from "next/image";
 import BlogCard from "@/components/BlogCard";
-import { getERPNextPosts } from "@/lib/getERPNextPosts";
+import { getLatestPosts } from "@/lib/ghost";
 
-const allPosts = await getERPNextPosts();
-const recentPosts = allPosts.slice(0, 3);
+const recentPosts = await getLatestPosts(3);
 
 export default function Home() {
   return (
@@ -101,7 +100,15 @@ export default function Home() {
           </h1>
           <div className="grid gap-6 px-8 sm:px-20 md:grid-cols-3">
             {recentPosts.map((post) => (
-              <BlogCard key={post.slug} {...post} showTags={false} />
+              <BlogCard 
+                key={post.slug} 
+                title={post.title}
+                slug={post.slug}
+                excerpt={post.excerpt}
+                feature_image={post.feature_image}
+                published_at={post.published_at}
+                showTags={false} 
+              />
             ))}
           </div>
         </div>
