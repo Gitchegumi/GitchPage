@@ -3,9 +3,6 @@
    Matches the design of gitchegumi.com
    ============================================================ */
 
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto+Serif:ital,opsz,wght@0,8..144,300;0,8..144,400;0,8..144,500;0,8..144,700;1,8..144,300;1,8..144,400&display=swap');
-
 /* ============================================================
    CUSTOM PROPERTIES
    ============================================================ */
@@ -43,9 +40,8 @@ html { font-size: 16px; scroll-behavior: smooth; }
 
 body {
     font-family: var(--font-roboto-serif);
-    /* Dark navy matching the Next.js site's --background token */
-    background-color: #0d0f19;
-    background-color: oklch(0.129 0.042 264.695);
+    /* Matches Next.js body bg-brand-dark (#2c2c2c) */
+    background-color: var(--color-brand-dark);
     color: var(--color-soft-white);
     min-height: 100vh;
     display: flex;
@@ -74,6 +70,7 @@ ul, ol { list-style: none; }
 
 /* Sticky only on md+ (≥768px), matching md:sticky in the original */
 .gm-header-wrapper {
+    position: relative;
     top: 0;
     left: 0;
     right: 0;
@@ -92,11 +89,12 @@ ul, ol { list-style: none; }
     flex-direction: column;
     align-items: center;
     padding: 0.5rem;
-    margin: 0.5rem 1rem 0;
+    margin: 0.5rem 4rem 0;
     border-radius: var(--radius-xl);
-    font-family: var(--font-oswald);
-    font-size: 1em;
-    color: var(--color-soft-white);
+    font-family: var(--font-oswald) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--color-soft-white) !important;
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     background: var(--glass-nav-bg);
@@ -107,7 +105,6 @@ ul, ol { list-style: none; }
 @media (min-width: 768px) {
     .gm-nav {
         flex-direction: row;
-        justify-content: space-between;
         margin: 0.5rem 4rem 0;
     }
 }
@@ -121,7 +118,7 @@ ul, ol { list-style: none; }
 }
 
 @media (min-width: 768px) {
-    .gm-nav-brand { width: auto; justify-content: flex-start; }
+    .gm-nav-brand { flex: 1; width: auto; justify-content: flex-start; }
 }
 
 .gm-nav-logo {
@@ -201,7 +198,7 @@ ul, ol { list-style: none; }
 @media (min-width: 768px) {
     .gm-nav-list {
         flex-direction: row;
-        gap: 4rem;
+        gap: 2rem;
         align-items: center;
         padding: 0;
     }
@@ -213,16 +210,17 @@ ul, ol { list-style: none; }
 /* Nav link / trigger shared styles */
 .gm-nav-link,
 .gm-nav-trigger {
-    font-family: var(--font-oswald);
-    font-size: 1em;
-    color: var(--color-soft-white);
-    background: none;
-    border: none;
+    font-family: var(--font-oswald) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--color-soft-white) !important;
+    background: none !important;
+    border: none !important;
     cursor: pointer;
-    padding: 0.625rem 1rem;
+    padding: 0.5rem 1rem;
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0;
     transition: var(--transition);
     white-space: nowrap;
     line-height: 1;
@@ -237,21 +235,21 @@ ul, ol { list-style: none; }
     outline: none;
 }
 
-/* Chevron on dropdown triggers */
-.gm-nav-trigger::after {
-    content: '';
+/* Chevron SVG on dropdown triggers — matches Lucide ChevronDownIcon used in Next.js */
+.gm-nav-trigger::after { display: none; }
+
+.gm-nav-chevron {
     display: inline-block;
-    width: 0;
-    height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid currentColor;
-    transition: transform 200ms ease;
+    width: 12px;
+    height: 12px;
+    margin-left: 4px;
     flex-shrink: 0;
-    margin-top: 1px;
+    position: relative;
+    top: 1px;
+    transition: transform 300ms ease;
 }
 
-.gm-nav-item.is-open > .gm-nav-trigger::after {
+.gm-nav-item.is-open > .gm-nav-trigger .gm-nav-chevron {
     transform: rotate(180deg);
 }
 
@@ -259,54 +257,79 @@ ul, ol { list-style: none; }
    DROPDOWN PANELS
    ============================================================ */
 .gm-dropdown {
-    display: none;
     border-radius: var(--radius-xl);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    background: var(--glass-dropdown-bg);
+    background: #2c2c2c;
     border: var(--glass-dropdown-border);
     box-shadow: var(--glass-dropdown-shadow);
     color: var(--color-soft-white);
     z-index: 100;
 }
 
-.gm-nav-item.is-open > .gm-dropdown { display: block; }
-
-/* Mobile: inline flow */
+/* Mobile: display:none toggle — no animation, no layout impact */
 @media (max-width: 767px) {
     .gm-dropdown {
+        display: none;
         position: static;
         width: 100%;
         margin-top: 0.5rem;
     }
+    .gm-nav-item.is-open > .gm-dropdown { display: block; }
 }
 
-/* Desktop: absolute positioned */
+/* Desktop: visibility/opacity/scale — matches Radix zoom-in-95 + fade-in */
 @media (min-width: 768px) {
     .gm-dropdown {
+        display: block;
         position: absolute;
         top: calc(100% + 0.5rem);
+        visibility: hidden;
+        opacity: 0;
+        transform-origin: top center;
+        transition:
+            opacity 200ms ease,
+            transform 200ms ease,
+            visibility 0s linear 200ms;
     }
 
+    .gm-nav-item.is-open > .gm-dropdown {
+        visibility: visible;
+        opacity: 1;
+        transition:
+            opacity 200ms ease,
+            transform 200ms ease,
+            visibility 0s linear 0s;
+    }
+
+    /* Per-dropdown positioning — transform on open overrides scale; use separate
+       open/closed states so translateX isn't clobbered by the scale animation */
     .gm-nav-item--work .gm-dropdown {
         left: 50%;
-        transform: translateX(-50%);
         width: 800px;
         max-height: calc(100vh - 100px);
         overflow-y: auto;
+        transform: translateX(-50%) scale(0.95);
+    }
+    .gm-nav-item--work.is-open > .gm-dropdown {
+        transform: translateX(-50%) scale(1);
     }
 
     .gm-nav-item--tools .gm-dropdown {
         left: 50%;
-        transform: translateX(-50%);
         width: 260px;
+        transform: translateX(-50%) scale(0.95);
+    }
+    .gm-nav-item--tools.is-open > .gm-dropdown {
+        transform: translateX(-50%) scale(1);
     }
 
     .gm-nav-item--shops .gm-dropdown {
         right: 0;
         left: auto;
-        transform: none;
         width: 500px;
+        transform: scale(0.95);
+    }
+    .gm-nav-item--shops.is-open > .gm-dropdown {
+        transform: scale(1);
     }
 }
 
@@ -370,7 +393,7 @@ ul, ol { list-style: none; }
 .gm-dropdown-item-desc {
     font-size: 0.875rem;
     line-height: 1.375;
-    color: rgba(240, 240, 240, 0.6);
+    color: oklch(0.554 0.046 257.417);
 }
 
 @media (max-width: 767px) {
@@ -382,11 +405,9 @@ ul, ol { list-style: none; }
     margin: 0 1rem 1rem;
     padding: 1.5rem;
     border-radius: var(--radius-xl);
-    background: var(--glass-socials-bg);
-    border: var(--glass-socials-border);
-    box-shadow: var(--glass-socials-shadow);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    background: rgba(65, 102, 245, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
     font-family: var(--font-oswald);
 }
 
@@ -423,14 +444,17 @@ ul, ol { list-style: none; }
    NAV ACTIONS (search + portal)
    ============================================================ */
 .gm-nav-actions {
-    display: none; /* hidden on mobile to keep nav clean */
+    display: none;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.75rem;
-    flex-shrink: 0;
 }
 
 @media (min-width: 768px) {
-    .gm-nav-actions { display: flex; }
+    .gm-nav-actions {
+        display: flex;
+        flex: 1;
+    }
 }
 
 .gm-search-btn {
@@ -457,28 +481,30 @@ ul, ol { list-style: none; }
 }
 
 .gm-member-link {
-    font-family: var(--font-oswald);
-    font-size: 0.875rem;
-    color: var(--color-soft-white);
+    font-family: var(--font-oswald) !important;
+    font-size: 14px !important;
+    color: var(--color-soft-white) !important;
     padding: 0.375rem 0.75rem;
     transition: var(--transition);
+    white-space: nowrap;
 }
 
-.gm-member-link:hover { color: var(--color-brand-orange); text-decoration: underline; }
+.gm-member-link:hover { color: var(--color-brand-orange) !important; text-decoration: underline; }
 
 .gm-member-btn {
-    font-family: var(--font-oswald);
-    font-size: 0.875rem;
-    color: var(--color-soft-white);
-    background: var(--color-brand-blue);
+    font-family: var(--font-oswald) !important;
+    font-size: 14px !important;
+    color: var(--color-soft-white) !important;
+    background: var(--color-brand-blue) !important;
     padding: 0.375rem 0.875rem;
     border-radius: var(--radius-md);
     transition: background 150ms ease, color 150ms ease;
+    white-space: nowrap;
 }
 
 .gm-member-btn:hover {
-    background: var(--color-brand-orange);
-    color: var(--color-brand-dark);
+    background: var(--color-brand-orange) !important;
+    color: var(--color-brand-dark) !important;
 }
 
 /* ============================================================
@@ -578,9 +604,9 @@ ul, ol { list-style: none; }
     background:
         linear-gradient(
             to bottom,
-            rgba(13, 15, 25, 0.30) 0%,
-            rgba(13, 15, 25, 0.55) 60%,
-            rgba(13, 15, 25, 0.90) 100%
+            rgba(44, 44, 44, 0.30) 0%,
+            rgba(44, 44, 44, 0.55) 60%,
+            rgba(44, 44, 44, 0.92) 100%
         );
 }
 
@@ -692,9 +718,8 @@ ul, ol { list-style: none; }
     position: relative;
     border-radius: 0.75rem;
     overflow: hidden;
-    /* Same bg as body; border + inset glow create separation */
-    background: #0d0f19;
-    background: oklch(0.129 0.042 264.695);
+    /* Same bg as body (#2c2c2c); border + inset glow create separation */
+    background: var(--color-brand-dark);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 -20px 80px -20px rgba(255, 255, 255, 0.12) inset;
     transition: background 200ms ease;
@@ -723,7 +748,7 @@ ul, ol { list-style: none; }
     height: 170px;
     flex-shrink: 0;
     overflow: hidden;
-    background: #262626;
+    background: #1a1a1a;
 }
 
 /* First featured card gets taller image */
@@ -758,7 +783,7 @@ ul, ol { list-style: none; }
 
 .gm-bento-card-no-image {
     height: 100%;
-    background: linear-gradient(135deg, #1a1b35 0%, #262626 100%);
+    background: linear-gradient(135deg, #3a3a4a 0%, #2c2c2c 100%);
 }
 
 /* Date badge over the image */
@@ -1261,4 +1286,5 @@ ul, ol { list-style: none; }
 /* ============================================================
    GHOST MEMBERS PORTAL BUTTON
    ============================================================ */
+/* Portal popup trigger is handled via #/portal/* hash links in the nav */
 .gh-portal-open { display: none; }
