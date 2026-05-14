@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { AudioPlayer } from "@/components/AudioPlayer";
-import { ContactForm } from "@/components/utilities/ContactForm";
+import { VoInquiryForm } from "@/components/utilities/VoInquiryForm";
 
 import type { Metadata } from "next";
 
@@ -78,8 +78,7 @@ export default async function VoiceOverPage() {
           </div>
         </div>
         <div className="w-full md:w-1/2">
-          <h2 className="text-3xl font-bold text-center">Get in Touch</h2>
-          <ContactForm />
+          <VoInquiryForm />
         </div>
       </div>
     </div>
