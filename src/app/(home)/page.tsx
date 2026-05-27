@@ -211,10 +211,10 @@ function BlogContent() {
     <>
       <div className="cardHeader">
         <div>
-          <p className="cardEyebrow">Writing Desk</p>
-          <h2 className="cardTitle">The Blog</h2>
+          <p className="cardEyebrow">{cards[1].label}</p>
+          <h2 className="cardTitle">{cards[1].title}</h2>
         </div>
-        <CtaLink href="/blog">Read more →</CtaLink>
+        <CtaLink href={cards[1].href}>Read more →</CtaLink>
       </div>
       <div className="contentGrid">
         <div className="contentCard">
@@ -228,28 +228,28 @@ function BlogContent() {
         </div>
         <div className="detailCard">
           <div className="blogGrid">
-            <Link href="/blog" className="blogCard">
+            <Link href={cards[1].href} className="blogCard">
               <span className="blogTag" style={{ background: "rgba(65,102,245,0.18)", color: "#4166f5" }}>
                 Latest
               </span>
               <h4>The Quiet Power of Narrative Voice</h4>
               <p>How the unsung craft shapes our imagination.</p>
             </Link>
-            <Link href="/blog" className="blogCard">
+            <Link href={cards[1].href} className="blogCard">
               <span className="blogTag" style={{ background: "rgba(175,224,206,0.18)", color: "#afe0ce" }}>
                 GM Tips
               </span>
               <h4>Believable Worlds in Five Minutes</h4>
               <p>Improvise lore that feels ancient.</p>
             </Link>
-            <Link href="/blog" className="blogCard">
+            <Link href={cards[1].href} className="blogCard">
               <span className="blogTag" style={{ background: "rgba(252,163,17,0.18)", color: "#fca311" }}>
                 Process
               </span>
               <h4>From Script to Sound</h4>
               <p>The ritual of talking to an empty room.</p>
             </Link>
-            <Link href="/blog" className="blogCard">
+            <Link href={cards[1].href} className="blogCard">
               <span className="blogTag" style={{ background: "rgba(204,219,220,0.18)", color: "#CCDBDC" }}>
                 Tech
               </span>
@@ -257,7 +257,7 @@ function BlogContent() {
               <p>Why I moved everything off the cloud.</p>
             </Link>
           </div>
-          <CtaLink href="/blog">
+          <CtaLink href={cards[1].href}>
             Read the latest
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M7 17L17 7M17 7H7M17 7V17" />
@@ -274,10 +274,10 @@ function CreationContent() {
     <>
       <div className="cardHeader">
         <div>
-          <p className="cardEyebrow">Creative Lab</p>
-          <h2 className="cardTitle">The Creation</h2>
+          <p className="cardEyebrow">{cards[2].label}</p>
+          <h2 className="cardTitle">{cards[2].title}</h2>
         </div>
-        <CtaLink href="https://www.youtube.com/@Gitchegumi" external>Watch →</CtaLink>
+        <CtaLink href={cards[2].href} external={cards[2].external}>Watch →</CtaLink>
       </div>
       <div className="contentGrid">
         <div className="contentCard">
@@ -330,10 +330,10 @@ function PersonContent() {
     <>
       <div className="cardHeader">
         <div>
-          <p className="cardEyebrow">About Mat</p>
-          <h2 className="cardTitle">The Person</h2>
+          <p className="cardEyebrow">{cards[3].label}</p>
+          <h2 className="cardTitle">{cards[3].title}</h2>
         </div>
-        <CtaLink href="/about">Full story →</CtaLink>
+        <CtaLink href={cards[3].href}>Full story →</CtaLink>
       </div>
       <div className="aboutLayout">
         <div className="aboutAvatar">
@@ -368,10 +368,10 @@ function MadeContent() {
     <>
       <div className="cardHeader">
         <div>
-          <p className="cardEyebrow">Build Log</p>
-          <h2 className="cardTitle">I Made This</h2>
+          <p className="cardEyebrow">{cards[4].label}</p>
+          <h2 className="cardTitle">{cards[4].title}</h2>
         </div>
-        <CtaLink href="/tools">All tools →</CtaLink>
+        <CtaLink href={cards[4].href}>All tools →</CtaLink>
       </div>
       <div className="builtGrid">
         <Link href="/debtpipe" className="builtItem">
@@ -395,7 +395,7 @@ function MadeContent() {
           <p>Transaction ledger &amp; import.</p>
         </Link>
       </div>
-      <CtaLink href="/tools" secondary>
+      <CtaLink href={cards[4].href} secondary>
         Browse all projects
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M7 17L17 7M17 7H7M17 7V17" />
@@ -414,8 +414,8 @@ const CardContents = [VoiceContent, BlogContent, CreationContent, PersonContent,
 function MobileVoice() {
   return (
     <>
-      <span className="bladeLabel">Featured Studio</span>
-      <h2 className="bladeTitle">Voice Over</h2>
+      <span className="bladeLabel">{cards[0].label}</span>
+      <h2 className="bladeTitle">{cards[0].title}</h2>
       <div className="mobileVoicePlayer">
         <div className="playerTop">
           <button className="playBtnLg">
@@ -437,7 +437,7 @@ function MobileVoice() {
           <div className="progressFill" />
         </div>
       </div>
-      <Link href="/voice-over" className="mobileCta">Explore demos →</Link>
+      <Link href={cards[0].href} className="mobileCta">Explore demos →</Link>
     </>
   );
 }
@@ -445,25 +445,25 @@ function MobileVoice() {
 function MobileBlog() {
   return (
     <>
-      <span className="bladeLabel">Writing Desk</span>
-      <h2 className="bladeTitle">The Blog</h2>
+      <span className="bladeLabel">{cards[1].label}</span>
+      <h2 className="bladeTitle">{cards[1].title}</h2>
       <div className="mobileBlogGrid">
-        <Link href="/blog" className="mobileBlogCard">
+        <Link href={cards[1].href} className="mobileBlogCard">
           <span className="mobileBlogTag" style={{ background: "rgba(65,102,245,0.18)", color: "#4166f5" }}>Latest</span>
           <h4>The Quiet Power of Narrative Voice</h4>
           <p>How the unsung craft shapes our imagination.</p>
         </Link>
-        <Link href="/blog" className="mobileBlogCard">
+        <Link href={cards[1].href} className="mobileBlogCard">
           <span className="mobileBlogTag" style={{ background: "rgba(175,224,206,0.18)", color: "#afe0ce" }}>GM Tips</span>
           <h4>Believable Worlds in Five Minutes</h4>
           <p>Improvise lore that feels ancient.</p>
         </Link>
-        <Link href="/blog" className="mobileBlogCard">
+        <Link href={cards[1].href} className="mobileBlogCard">
           <span className="mobileBlogTag" style={{ background: "rgba(252,163,17,0.18)", color: "#fca311" }}>Process</span>
           <h4>From Script to Sound</h4>
           <p>The ritual of talking to an empty room.</p>
         </Link>
-        <Link href="/blog" className="mobileBlogCard">
+        <Link href={cards[1].href} className="mobileBlogCard">
           <span className="mobileBlogTag" style={{ background: "rgba(204,219,220,0.18)", color: "#CCDBDC" }}>Tech</span>
           <h4>Self-Hosting for Creators</h4>
           <p>Why I moved everything off the cloud.</p>
@@ -476,8 +476,8 @@ function MobileBlog() {
 function MobileCreation() {
   return (
     <>
-      <span className="bladeLabel">Creative Lab</span>
-      <h2 className="bladeTitle">The Creation</h2>
+      <span className="bladeLabel">{cards[2].label}</span>
+      <h2 className="bladeTitle">{cards[2].title}</h2>
       <p style={{ fontSize: "0.9rem", lineHeight: 1.65, color: "rgba(240,240,240,0.6)", marginBottom: "1rem" }}>
         TTRPG actual plays, worldbuilding deep-dives, music experiments, and
         behind-the-scenes content. A mix of polished edited series and live
@@ -504,8 +504,8 @@ function MobileCreation() {
 function MobilePerson() {
   return (
     <>
-      <span className="bladeLabel">About Mat</span>
-      <h2 className="bladeTitle">The Person</h2>
+      <span className="bladeLabel">{cards[3].label}</span>
+      <h2 className="bladeTitle">{cards[3].title}</h2>
       <div className="mobileAboutAvatar">
         <Image src="/images/beach-selfie.jpg" alt="Mat" width={100} height={100} className="rounded-full object-cover" />
       </div>
@@ -525,8 +525,8 @@ function MobilePerson() {
 function MobileMade() {
   return (
     <>
-      <span className="bladeLabel">Build Log</span>
-      <h2 className="bladeTitle">I Made This</h2>
+      <span className="bladeLabel">{cards[4].label}</span>
+      <h2 className="bladeTitle">{cards[4].title}</h2>
       <div className="mobileBuiltGrid">
         <Link href="/debtpipe" className="mobileBuiltItem">
           <div className="mobileBuiltIcon">💰</div>
@@ -549,7 +549,7 @@ function MobileMade() {
           <p>Transaction ledger.</p>
         </Link>
       </div>
-      <Link href="/tools" className="mobileCta">Browse all projects →</Link>
+      <Link href={cards[4].href} className="mobileCta">Browse all projects →</Link>
     </>
   );
 }
