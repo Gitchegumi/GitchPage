@@ -313,35 +313,33 @@ function BlogContent({ posts }: { posts?: GhostPost[] }) {
       </div>
       <div className="blogBody">
         {displayPosts[0] && (
-          <div className="max-w-sm">
-            <a
-              href={displayPosts[0].url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="blogHero"
-            >
-              {displayPosts[0].feature_image && (
-                <div className="blogThumb">
-                  <img src={displayPosts[0].feature_image} alt={displayPosts[0].title} />
-                </div>
-              )}
-              <div className="blogHeroMeta">
-                <span
-                  className="blogTag"
-                  style={{
-                    background:
-                      tagColors[displayPosts[0].primary_tag?.slug || "latest"]?.bg || tagColors.latest.bg,
-                    color:
-                      tagColors[displayPosts[0].primary_tag?.slug || "latest"]?.text || tagColors.latest.text,
-                  }}
-                >
-                  {displayPosts[0].primary_tag?.name || "Latest"}
-                </span>
-                <h3>{displayPosts[0].title}</h3>
-                <p>{displayPosts[0].excerpt || "Read more on the blog..."}</p>
+          <a
+            href={displayPosts[0].url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="blogHero"
+          >
+            {displayPosts[0].feature_image && (
+              <div className="blogThumb">
+                <img src={displayPosts[0].feature_image} alt={displayPosts[0].title} />
               </div>
-            </a>
-          </div>
+            )}
+            <div className="blogHeroMeta">
+              <span
+                className="blogTag"
+                style={{
+                  background:
+                    tagColors[displayPosts[0].primary_tag?.slug || "latest"]?.bg || tagColors.latest.bg,
+                  color:
+                    tagColors[displayPosts[0].primary_tag?.slug || "latest"]?.text || tagColors.latest.text,
+                }}
+              >
+                {displayPosts[0].primary_tag?.name || "Latest"}
+              </span>
+              <h3>{displayPosts[0].title}</h3>
+              <p>{displayPosts[0].excerpt || "Read more on the blog..."}</p>
+            </div>
+          </a>
         )}
         <div className="blogMiniList">
           {displayPosts.slice(1, 4).map((post) => {

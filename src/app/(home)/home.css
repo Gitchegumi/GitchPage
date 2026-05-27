@@ -526,7 +526,7 @@
 
   .blogHero {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.65rem;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -537,6 +537,7 @@
     align-items: flex-start;
     flex: 1 1 55%;
     min-width: 0;
+    max-width: 260px;
   }
   .blogHero:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -544,8 +545,8 @@
   }
   .blogThumb {
     flex: 0 0 auto;
-    width: 100%;
-    height: 120px;
+    width: 120px;
+    height: 75px;
     border-radius: 8px;
     overflow: hidden;
     display: flex;
