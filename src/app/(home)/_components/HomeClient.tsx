@@ -16,16 +16,16 @@ const TOTAL_CARDS = 5;
 const cards = [
   {
     id: 0,
-    label: "Professional Studio",
-    title: "Voice Over",
-    tab: "Voice",
+    label: "Professional Recordings",
+    title: "The Voice",
+    tab: "Voice Over",
     tabColor: "linear-gradient(to bottom, #fca311, #e07c00)",
     href: "/voice-over",
   },
   {
     id: 1,
-    label: "Writing Desk",
-    title: "The Blog",
+    label: "The Gitchegumi Blog",
+    title: "The Writer",
     tab: "Blog",
     tabColor: "linear-gradient(to bottom, #4166f5, #1e3a8a)",
     href: "/blog",
@@ -33,17 +33,17 @@ const cards = [
   {
     id: 2,
     label: "Creative Lab",
-    title: "The Creation",
-    tab: "Create",
+    title: "The Creator",
+    tab: "Content",
     tabColor: "linear-gradient(to bottom, #8b5cf6, #312e81)",
     href: "https://www.youtube.com/@Gitchegumi",
     external: true,
   },
   {
     id: 3,
-    label: "About Mat",
+    label: "About Me",
     title: "The Person",
-    tab: "Person",
+    tab: "About",
     tabColor: "linear-gradient(to bottom, #10b981, #0f172a)",
     href: "/about",
   },
@@ -325,7 +325,6 @@ function BlogContent({ posts }: { posts?: GhostPost[] }) {
       </div>
       <div className="blogBody">
         {displayPosts[0] && (
-          <div className="max-w-sm">
             <a
               href={displayPosts[0].url}
               target="_blank"
@@ -358,7 +357,6 @@ function BlogContent({ posts }: { posts?: GhostPost[] }) {
                 <p>{displayPosts[0].excerpt || "Read more on the blog..."}</p>
               </div>
             </a>
-          </div>
         )}
         <div className="blogMiniList">
           {displayPosts.slice(1, 4).map((post) => {
