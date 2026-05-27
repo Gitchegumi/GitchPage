@@ -311,7 +311,7 @@ function BlogContent({ posts }: { posts?: GhostPost[] }) {
         </div>
         <CtaLink href={cards[1].href}>Read more →</CtaLink>
       </div>
-      <div className="blogFeatured">
+      <div className="blogBody">
         {displayPosts[0] && (
           <a
             href={displayPosts[0].url}
@@ -320,7 +320,7 @@ function BlogContent({ posts }: { posts?: GhostPost[] }) {
             className="blogHero"
           >
             {displayPosts[0].feature_image && (
-              <div className="blogHeroImg">
+              <div className="blogThumb">
                 <img src={displayPosts[0].feature_image} alt={displayPosts[0].title} />
               </div>
             )}
@@ -356,10 +356,8 @@ function BlogContent({ posts }: { posts?: GhostPost[] }) {
                 <span className="blogTag" style={{ background: colors.bg, color: colors.text }}>
                   {tag?.name || "Latest"}
                 </span>
-                <div>
-                  <h4>{post.title}</h4>
-                  <p>{post.excerpt || "Read more on the blog..."}</p>
-                </div>
+                <h4>{post.title}</h4>
+                <p>{post.excerpt || "Read more on the blog..."}</p>
               </a>
             );
           })}
