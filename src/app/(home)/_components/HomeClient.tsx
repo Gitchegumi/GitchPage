@@ -311,44 +311,58 @@ function BlogContent({ posts }: { posts?: GhostPost[] }) {
         </div>
         <CtaLink href={cards[1].href}>Read more →</CtaLink>
       </div>
-      <div className="contentGrid">
-        <div className="contentCard">
-          <div className="iconBox">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
-            </svg>
-          </div>
-          <p className="contentEyebrow">Latest Posts</p>
-          <h3>Words &amp; Worlds</h3>
-        </div>
-        <div className="detailCard">
-          <div className="blogGrid">
-            {displayPosts.map((post) => {
-              const tag = post.primary_tag;
-              const colors = tagColors[tag?.slug || "latest"] || tagColors.latest;
-              return (
-                <a
-                  key={post.id}
-                  href={post.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="blogCard"
-                >
-                  <span className="blogTag" style={{ background: colors.bg, color: colors.text }}>
-                    {tag?.name || "Latest"}
-                  </span>
+      <div className="blogFeatured">
+        {displayPosts[0] && (
+          <a
+            href={displayPosts[0].url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="blogHero"
+          >
+            {displayPosts[0].feature_image && (
+              <div className="blogHeroImg">
+                <img src={displayPosts[0].feature_image} alt={displayPosts[0].title} />
+              </div>
+            )}
+            <div className="blogHeroMeta">
+              <span
+                className="blogTag"
+                style={{
+                  background:
+                    tagColors[displayPosts[0].primary_tag?.slug || "latest"]?.bg || tagColors.latest.bg,
+                  color:
+                    tagColors[displayPosts[0].primary_tag?.slug || "latest"]?.text || tagColors.latest.text,
+                }}
+              >
+                {displayPosts[0].primary_tag?.name || "Latest"}
+              </span>
+              <h3>{displayPosts[0].title}</h3>
+              <p>{displayPosts[0].excerpt || "Read more on the blog..."}</p>
+            </div>
+          </a>
+        )}
+        <div className="blogMiniList">
+          {displayPosts.slice(1, 4).map((post) => {
+            const tag = post.primary_tag;
+            const colors = tagColors[tag?.slug || "latest"] || tagColors.latest;
+            return (
+              <a
+                key={post.id}
+                href={post.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="blogMini"
+              >
+                <span className="blogTag" style={{ background: colors.bg, color: colors.text }}>
+                  {tag?.name || "Latest"}
+                </span>
+                <div>
                   <h4>{post.title}</h4>
                   <p>{post.excerpt || "Read more on the blog..."}</p>
-                </a>
-              );
-            })}
-          </div>
-          <CtaLink href={cards[1].href}>
-            Read the latest
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M7 17L17 7M17 7H7M17 7V17" />
-            </svg>
-          </CtaLink>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </div>
     </>
