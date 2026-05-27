@@ -14,7 +14,7 @@ const TOTAL_CARDS = 5;
 const cards = [
   {
     id: 0,
-    label: "Featured Studio",
+    label: "Professional Studio",
     title: "Voice Over",
     tab: "Voice",
     tabColor: "linear-gradient(to bottom, #fca311, #e07c00)",
@@ -150,10 +150,10 @@ function VoiceContent() {
     <>
       <div className="cardHeader">
         <div>
-          <p className="cardEyebrow">Featured Studio</p>
-          <h2 className="cardTitle">Voice Over</h2>
+          <p className="cardEyebrow">{cards[0].label}</p>
+          <h2 className="cardTitle">{cards[0].title}</h2>
         </div>
-        <CtaLink href="/voice-over">Explore demos →</CtaLink>
+        <CtaLink href={cards[0].href}>Lets Colab! →</CtaLink>
       </div>
       <div className="voiceLayout">
         <div className="voicePlayer">
