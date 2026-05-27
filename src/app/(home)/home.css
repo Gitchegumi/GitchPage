@@ -358,6 +358,49 @@
     justify-content: center;
     cursor: pointer;
   }
+  .muteBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-left: auto;
+  }
+  .muteBtn:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+  .demoCardActions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .downloadBtn {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(240, 240, 240, 0.6);
+    transition: all 0.25s;
+    text-decoration: none;
+  }
+  .downloadBtn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #f0f0f0;
+  }
+  .demoCard.active {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(252, 163, 17, 0.35);
+  }
 
   /* Content grids */
   .contentGrid {
@@ -887,6 +930,78 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .mobileVoicePlayer .muteBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: auto;
+  }
+  .mobileDemoList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-bottom: 1.25rem;
+  }
+  .mobileDemoItem {
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .mobileDemoItem:hover {
+    background: rgba(255, 255, 255, 0.07);
+  }
+  .mobileDemoItem.active {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(252, 163, 17, 0.35);
+  }
+  .mobileDemoHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.35rem;
+  }
+  .mobileDemoHeader h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #f0f0f0;
+  }
+  .mobileDemoHeader p {
+    font-size: 0.78rem;
+    color: rgba(240, 240, 240, 0.55);
+    line-height: 1.5;
+  }
+  .mobileDemoActions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .mobileDemoItem .downloadBtn {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(240, 240, 240, 0.6);
+    transition: all 0.25s;
+    text-decoration: none;
+  }
+  .mobileDemoItem .downloadBtn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #f0f0f0;
   }
 
   /* Mobile blog */

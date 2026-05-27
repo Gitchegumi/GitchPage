@@ -55,6 +55,22 @@ const cards = [
   },
 ];
 
+/* Demo files for Voice Over card */
+const DEMOS = [
+  {
+    id: 0,
+    title: "Commercial Demo",
+    src: "/demos/GITCHEGUMI-MEDIA_COMMERICAL-DEMO.mp3",
+    desc: "Warm, persuasive reads for brands, ads, and promos.",
+  },
+  {
+    id: 1,
+    title: "E-Learning Demo",
+    src: "/demos/GITCHEGUMI-MEDIA_ELEARNING-DEMO.mp3",
+    desc: "Clear, engaging narration for courses and training.",
+  },
+];
+
 /* seeded rng for stable SSR + hydration */
 function seededRandom(seed: number) {
   let s = seed;
@@ -146,60 +162,145 @@ function CtaLink({
    ============================================================= */
 
 function VoiceContent() {
+  const [selectedIdx, setSelectedIdx] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const selected = DEMOS[selectedIdx];
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const onTime = () => setCurrentTime(audio.currentTime);
+    const onMeta = () => { if (isFinite(audio.duration)) setDuration(audio.duration); };
+    const onEnd = () => setIsPlaying(false);
+    audio.addEventListener("timeupdate", onTime);
+    audio.addEventListener("loadedmetadata", onMeta);
+    audio.addEventListener("ended", onEnd);
+    if (audio.readyState >= 1) onMeta();
+    return () => {
+      audio.removeEventListener("timeupdate", onTime);
+      audio.removeEventListener("loadedmetadata", onMeta);
+      audio.removeEventListener("ended", onEnd);
+    };
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.play().catch(() => setIsPlaying(false));
+    } else {
+      audio.pause();
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.muted = isMuted;
+  }, [isMuted]);
+
+  const selectDemo = (idx: number) => {
+    setSelectedIdx(idx);
+    setCurrentTime(0);
+    setIsPlaying(true);
+  };
+
+  const progress = duration ? (currentTime / duration) * 100 : 0;
+
   return (
     <>
+      <audio ref={audioRef} src={selected.src} preload="metadata" />
       <div className="cardHeader">
         <div>
           <p className="cardEyebrow">{cards[0].label}</p>
           <h2 className="cardTitle">{cards[0].title}</h2>
         </div>
-        <CtaLink href={cards[0].href}>Lets Colab! →</CtaLink>
+        <CtaLink href={cards[0].href}>Start a Voiceover Project →</CtaLink>
       </div>
       <div className="voiceLayout">
         <div className="voicePlayer">
           <div className="playerTop">
-            <button className="playBtnLg">
-              <svg viewBox="0 0 24 24" width="20" height="20">
-                <path d="M8 5v14l11-7z" fill="#161616" />
-              </svg>
+            <button className="playBtnLg" onClick={() => setIsPlaying(!isPlaying)}>
+              {isPlaying ? (
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <rect x="6" y="4" width="4" height="16" fill="#161616" />
+                  <rect x="14" y="4" width="4" height="16" fill="#161616" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path d="M8 5v14l11-7z" fill="#161616" />
+                </svg>
+              )}
             </button>
             <div className="playerMeta">
               <p>Featured reel</p>
-              <h4>Commercial / Narrative Demo</h4>
+              <h4>{selected.title}</h4>
             </div>
+            <button
+              className="muteBtn"
+              onClick={() => setIsMuted(!isMuted)}
+              title={isMuted ? "Unmute" : "Mute"}
+            >
+              {isMuted ? (
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                  <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="#f0f0f0" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                  <path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="#f0f0f0" />
+                </svg>
+              )}
+            </button>
           </div>
-          <p className="voiceDesc">
-            Warm narration, grounded character work, and practical audio for
-            brands, games, explainers, and story-driven projects.
-          </p>
+          <p className="voiceDesc">{selected.desc}</p>
           <Waveform />
           <div className="progressTrack">
-            <div className="progressFill" />
+            <div className="progressFill" style={{ width: `${progress}%` }} />
           </div>
         </div>
         <div className="demoCards">
-          <Link href="/voice-over" className="demoCard">
-            <div className="demoCardHeader">
-              <h4>Demo Option One</h4>
-              <span className="miniPlay">
-                <svg viewBox="0 0 24 24" width="10" height="10">
-                  <path d="M8 5v14l11-7z" fill="#161616" />
-                </svg>
-              </span>
+          {DEMOS.map((demo, idx) => (
+            <div
+              key={demo.id}
+              className={`demoCard ${idx === selectedIdx ? "active" : ""}`}
+              onClick={() => selectDemo(idx)}
+            >
+              <div className="demoCardHeader">
+                <h4>{demo.title}</h4>
+                <div className="demoCardActions">
+                  <span
+                    className="miniPlay"
+                    onClick={(e) => { e.stopPropagation(); selectDemo(idx); }}
+                  >
+                    {idx === selectedIdx && isPlaying ? (
+                      <svg viewBox="0 0 24 24" width="10" height="10">
+                        <rect x="5" y="4" width="4" height="16" fill="#161616" />
+                        <rect x="13" y="4" width="4" height="16" fill="#161616" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" width="10" height="10">
+                        <path d="M8 5v14l11-7z" fill="#161616" />
+                      </svg>
+                    )}
+                  </span>
+                  <a
+                    href={demo.src}
+                    download
+                    className="downloadBtn"
+                    title="Download demo"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <svg viewBox="0 0 24 24" width="14" height="14">
+                      <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              <p>{demo.desc}</p>
             </div>
-            <p>Warm commercial read for lifestyle brands.</p>
-          </Link>
-          <Link href="/voice-over" className="demoCard">
-            <div className="demoCardHeader">
-              <h4>Demo Option Two</h4>
-              <span className="miniPlay">
-                <svg viewBox="0 0 24 24" width="10" height="10">
-                  <path d="M8 5v14l11-7z" fill="#161616" />
-                </svg>
-              </span>
-            </div>
-            <p>Character narration and documentary storytelling.</p>
-          </Link>
+          ))}
         </div>
       </div>
     </>
@@ -412,32 +513,141 @@ const CardContents = [VoiceContent, BlogContent, CreationContent, PersonContent,
    ============================================================= */
 
 function MobileVoice() {
+  const [selectedIdx, setSelectedIdx] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const selected = DEMOS[selectedIdx];
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const onTime = () => setCurrentTime(audio.currentTime);
+    const onMeta = () => { if (isFinite(audio.duration)) setDuration(audio.duration); };
+    const onEnd = () => setIsPlaying(false);
+    audio.addEventListener("timeupdate", onTime);
+    audio.addEventListener("loadedmetadata", onMeta);
+    audio.addEventListener("ended", onEnd);
+    if (audio.readyState >= 1) onMeta();
+    return () => {
+      audio.removeEventListener("timeupdate", onTime);
+      audio.removeEventListener("loadedmetadata", onMeta);
+      audio.removeEventListener("ended", onEnd);
+    };
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.play().catch(() => setIsPlaying(false));
+    } else {
+      audio.pause();
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.muted = isMuted;
+  }, [isMuted]);
+
+  const selectDemo = (idx: number) => {
+    setSelectedIdx(idx);
+    setCurrentTime(0);
+    setIsPlaying(true);
+  };
+
+  const progress = duration ? (currentTime / duration) * 100 : 0;
+
   return (
     <>
+      <audio ref={audioRef} src={selected.src} preload="metadata" />
       <span className="bladeLabel">{cards[0].label}</span>
       <h2 className="bladeTitle">{cards[0].title}</h2>
       <div className="mobileVoicePlayer">
         <div className="playerTop">
-          <button className="playBtnLg">
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path d="M8 5v14l11-7z" fill="#161616" />
-            </svg>
+          <button className="playBtnLg" onClick={() => setIsPlaying(!isPlaying)}>
+            {isPlaying ? (
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <rect x="6" y="4" width="4" height="16" fill="#161616" />
+                <rect x="14" y="4" width="4" height="16" fill="#161616" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path d="M8 5v14l11-7z" fill="#161616" />
+              </svg>
+            )}
           </button>
           <div className="playerMeta">
             <p>Featured reel</p>
-            <h4>Commercial / Narrative Demo</h4>
+            <h4>{selected.title}</h4>
           </div>
+          <button
+            className="muteBtn"
+            onClick={() => setIsMuted(!isMuted)}
+            title={isMuted ? "Unmute" : "Mute"}
+          >
+            {isMuted ? (
+              <svg viewBox="0 0 24 24" width="18" height="18">
+                <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="#f0f0f0" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" width="18" height="18">
+                <path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="#f0f0f0" />
+              </svg>
+            )}
+          </button>
         </div>
-        <p className="voiceDesc">
-          Warm narration, grounded character work, and practical audio for
-          brands, games, explainers, and story-driven projects.
-        </p>
+        <p className="voiceDesc">{selected.desc}</p>
         <MobileWaveform />
         <div className="progressTrack">
-          <div className="progressFill" />
+          <div className="progressFill" style={{ width: `${progress}%` }} />
         </div>
       </div>
-      <Link href={cards[0].href} className="mobileCta">Explore demos →</Link>
+      <div className="mobileDemoList">
+        {DEMOS.map((demo, idx) => (
+          <div
+            key={demo.id}
+            className={`mobileDemoItem ${idx === selectedIdx ? "active" : ""}`}
+            onClick={() => selectDemo(idx)}
+          >
+            <div className="mobileDemoHeader">
+              <h4>{demo.title}</h4>
+              <div className="mobileDemoActions">
+                <span
+                  className="miniPlay"
+                  onClick={(e) => { e.stopPropagation(); selectDemo(idx); }}
+                >
+                  {idx === selectedIdx && isPlaying ? (
+                    <svg viewBox="0 0 24 24" width="10" height="10">
+                      <rect x="5" y="4" width="4" height="16" fill="#161616" />
+                      <rect x="13" y="4" width="4" height="16" fill="#161616" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" width="10" height="10">
+                      <path d="M8 5v14l11-7z" fill="#161616" />
+                    </svg>
+                  )}
+                </span>
+                <a
+                  href={demo.src}
+                  download
+                  className="downloadBtn"
+                  title="Download demo"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <svg viewBox="0 0 24 24" width="14" height="14">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+            <p>{demo.desc}</p>
+          </div>
+        ))}
+      </div>
+      <Link href={cards[0].href} className="mobileCta">Start a Voiceover Project →</Link>
     </>
   );
 }
