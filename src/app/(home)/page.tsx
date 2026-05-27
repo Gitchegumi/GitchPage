@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -55,17 +55,32 @@ const cards = [
   },
 ];
 
+/* seeded rng for stable SSR + hydration */
+function seededRandom(seed: number) {
+  let s = seed;
+  return () => {
+    s = (s * 16807 + 0) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+function makeBars(count: number, seed: number) {
+  const rng = seededRandom(seed);
+  return Array.from({ length: count }, () => rng() * 60 + 20);
+}
+
 /* Waveform bar component */
 function Waveform({ count = 28 }: { count?: number }) {
-  const [bars, setBars] = useState(() =>
-    Array.from({ length: count }, () => Math.random() * 60 + 20)
-  );
+  const [seed, setSeed] = useState(42);
+  useEffect(() => {
+    setSeed(Math.floor(Math.random() * 1e9));
+  }, []);
   useEffect(() => {
     const id = setInterval(() => {
-      setBars(Array.from({ length: count }, () => Math.random() * 65 + 15));
+      setSeed((s) => s + 1);
     }, 200);
     return () => clearInterval(id);
-  }, [count]);
+  }, []);
+  const bars = useMemo(() => makeBars(count, seed), [count, seed]);
   return (
     <div className="waveform">
       {bars.map((h, i) => (
@@ -77,15 +92,17 @@ function Waveform({ count = 28 }: { count?: number }) {
 
 /* Mobile waveform */
 function MobileWaveform({ count = 20 }: { count?: number }) {
-  const [bars, setBars] = useState(() =>
-    Array.from({ length: count }, () => Math.random() * 60 + 20)
-  );
+  const [seed, setSeed] = useState(99);
+  useEffect(() => {
+    setSeed(Math.floor(Math.random() * 1e9));
+  }, []);
   useEffect(() => {
     const id = setInterval(() => {
-      setBars(Array.from({ length: count }, () => Math.random() * 65 + 15));
+      setSeed((s) => s + 1);
     }, 220);
     return () => clearInterval(id);
-  }, [count]);
+  }, []);
+  const bars = useMemo(() => makeBars(count, seed), [count, seed]);
   return (
     <div className="mobileWaveform">
       {bars.map((h, i) => (
