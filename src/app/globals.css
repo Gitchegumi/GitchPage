@@ -9,6 +9,8 @@
   --color-brand-orange: #fca311;
   --color-brand-dark: #2c2c2c;
   --color-soft-white: #f0f0f0;
+  --color-brand-tiffany: #afe0ce;
+  --color-brand-platinum: #CCDBDC;
 }
 
 @theme inline {
