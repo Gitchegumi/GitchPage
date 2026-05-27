@@ -215,19 +215,9 @@ function VoiceContent() {
     <>
       <audio ref={audioRef} src={selected.src} preload="metadata" />
       <div className="cardHeader">
-        <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
-          <div>
-            <p className="cardEyebrow">{cards[0].label}</p>
-            <h2 className="cardTitle">{cards[0].title}</h2>
-          </div>
-          <Image
-            src="/images/Background.png"
-            alt="Voice over"
-            width={44}
-            height={44}
-            className="rounded-full object-cover"
-            style={{ border: "2px solid rgba(252,163,17,0.3)", flexShrink: 0 }}
-          />
+        <div>
+          <p className="cardEyebrow">{cards[0].label}</p>
+          <h2 className="cardTitle">{cards[0].title}</h2>
         </div>
         <CtaLink href={cards[0].href}>Start a Voiceover Project →</CtaLink>
       </div>
@@ -276,6 +266,19 @@ function VoiceContent() {
           </div>
           <p className="voiceDesc">{selected.desc}</p>
           <Waveform />
+          <Image
+            src="/images/Background.png"
+            alt="In the recording studio"
+            width={220}
+            height={220}
+            className="rounded-xl object-cover"
+            style={{
+              width: "100%",
+              height: "auto",
+              marginTop: "0.75rem",
+              border: "1px solid rgba(255,255,255,0.08)",
+            }}
+          />
           <div className="progressTrack">
             <div className="progressFill" style={{ width: `${progress}%` }} />
           </div>
@@ -652,17 +655,7 @@ function MobileVoice() {
     <>
       <audio ref={audioRef} src={selected.src} preload="metadata" />
       <span className="bladeLabel">{cards[0].label}</span>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
-        <h2 className="bladeTitle">{cards[0].title}</h2>
-        <Image
-          src="/images/Background.png"
-          alt="Voice over"
-          width={38}
-          height={38}
-          className="rounded-full object-cover"
-          style={{ border: "2px solid rgba(252,163,17,0.3)", flexShrink: 0 }}
-        />
-      </div>
+      <h2 className="bladeTitle">{cards[0].title}</h2>
       <div className="mobileVoicePlayer">
         <div className="playerTop">
           <button
@@ -707,6 +700,19 @@ function MobileVoice() {
         </div>
         <p className="voiceDesc">{selected.desc}</p>
         <MobileWaveform />
+        <Image
+          src="/images/Background.png"
+          alt="In the recording studio"
+          width={220}
+          height={220}
+          className="rounded-xl object-cover"
+          style={{
+            width: "100%",
+            height: "auto",
+            marginTop: "0.75rem",
+            border: "1px solid rgba(255,255,255,0.08)",
+          }}
+        />
         <div className="progressTrack">
           <div className="progressFill" style={{ width: `${progress}%` }} />
         </div>
