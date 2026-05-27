@@ -415,54 +415,54 @@
     border-color: rgba(252, 163, 17, 0.35);
   }
 
-  /* Content grids */
+/* Content card — 3-column platforms */
   .contentGrid {
     display: grid;
-    grid-template-columns: 0.85fr 1fr;
-    gap: 1.25rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
   }
-  .contentCard {
+  .platformCard {
     border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.025);
     padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: all 0.25s;
+    text-decoration: none;
+    color: inherit;
   }
-  .iconBox {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.08);
+  .platformCard:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+  .platformHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .platformIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 0.875rem;
   }
-  .contentEyebrow {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    color: rgba(240, 240, 240, 0.4);
-  }
-  .contentCard h3 {
-    font-family: var(--font-roboto-serif), 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-top: 0.4rem;
+  .platformIcon.youtube { background: rgba(255, 0, 0, 0.15); color: #ff3b3b; }
+  .platformIcon.twitch  { background: rgba(145, 71, 255, 0.15); color: #9147ff; }
+  .platformIcon.tiktok  { background: rgba(254, 44, 85, 0.12); color: #fe2c55; }
+  .platformCard h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
     color: #f0f0f0;
+    margin: 0;
   }
-  .detailCard {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(0, 0, 0, 0.12);
-    padding: 1.25rem;
-  }
-  .detailCard p {
-    font-size: 0.9rem;
-    line-height: 1.65;
-    color: rgba(240, 240, 240, 0.65);
+  .platformCard p {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: rgba(240, 240, 240, 0.55);
   }
 
   /* Blog */
@@ -753,31 +753,6 @@
   .ctaBtnSecondary:hover {
     background: rgba(255, 255, 255, 0.06);
     transform: translateY(-2px);
-  }
-
-  /* Platform chips */
-  .platforms {
-    display: flex;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-    margin-top: 0.875rem;
-  }
-  .platform {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0.9rem;
-    border-radius: 100px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    text-decoration: none;
-    color: #f0f0f0;
-    font-size: 0.8rem;
-    transition: all 0.25s;
-  }
-  .platform:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
   }
 
   /* Home footer */
@@ -1299,6 +1274,56 @@
     text-decoration: none;
     color: #f0f0f0;
     font-size: 0.8rem;
+  }
+
+  /* Mobile platform cards */
+  .mobilePlatformGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .mobilePlatformCard {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.25s;
+  }
+  .mobilePlatformCard:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .mobilePlatformHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.4rem;
+  }
+  .mobilePlatformIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .mobilePlatformIcon.youtube { background: rgba(255, 0, 0, 0.15); color: #ff3b3b; }
+  .mobilePlatformIcon.twitch  { background: rgba(145, 71, 255, 0.15); color: #9147ff; }
+  .mobilePlatformIcon.tiktok  { background: rgba(254, 44, 85, 0.12); color: #fe2c55; }
+  .mobilePlatformCard h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f0f0f0;
+    margin: 0;
+  }
+  .mobilePlatformCard p {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: rgba(240, 240, 240, 0.55);
+    margin: 0;
   }
 
   /* Mobile footer */
