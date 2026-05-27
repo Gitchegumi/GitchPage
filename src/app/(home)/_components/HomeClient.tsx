@@ -499,7 +499,7 @@ function PersonContent() {
           <div
             style={{ display: "flex", gap: "0.625rem", marginTop: "0.5rem" }}
           >
-            <CtaLink href="mailto:mat@gitchegumi.com">Say Hello →</CtaLink>
+            <CtaLink href="https://discord.gg/0ivCrUa3GMaqtjkH" external>Come say hi →</CtaLink>
             <CtaLink href="/portfolio" secondary>
               View Resume →
             </CtaLink>
@@ -834,9 +834,9 @@ function MobilePerson() {
         <p>Army veteran turned technologist. Cloud, DevOps, web dev, AI.</p>
         <p>I built this site myself — every line of code, every word.</p>
         <div className="mobileContactBtns">
-          <Link href="mailto:mat@gitchegumi.com" className="mobileCta">
-            Say Hello
-          </Link>
+          <a href="https://discord.gg/0ivCrUa3GMaqtjkH" target="_blank" rel="noopener noreferrer" className="mobileCta">
+            Come say hi
+          </a>
           <Link href="/about" className="mobileCta mobileCtaSecondary">
             View Resume
           </Link>
