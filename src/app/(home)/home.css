@@ -380,8 +380,8 @@
     gap: 0.4rem;
   }
   .downloadBtn {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     border-radius: 6px;
     border: none;
     background: rgba(255, 255, 255, 0.08);
@@ -986,8 +986,8 @@
     gap: 0.4rem;
   }
   .mobileDemoItem .downloadBtn {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     border-radius: 6px;
     border: none;
     background: rgba(255, 255, 255, 0.08);

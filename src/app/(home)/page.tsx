@@ -276,7 +276,7 @@ function VoiceContent() {
                     title="Download demo"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <svg viewBox="0 0 24 24" width="14" height="14">
+                    <svg viewBox="0 0 24 24" width="18" height="18">
                       <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor" />
                     </svg>
                   </a>
@@ -605,7 +605,7 @@ function MobileVoice() {
                   title="Download demo"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <svg viewBox="0 0 24 24" width="14" height="14">
+                  <svg viewBox="0 0 24 24" width="18" height="18">
                     <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor" />
                   </svg>
                 </a>
