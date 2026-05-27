@@ -484,16 +484,17 @@ function PersonContent() {
         </div>
         <div className="aboutText">
           <p className="lead">
-            I write the words, speak the lines, and roll the dice.
+            I speak the lines, build the tools, and roll the dice.
           </p>
           <p>
-            Army veteran turned technologist, blending discipline and creativity
-            to build scalable solutions. Experienced in cloud infrastructure,
-            DevOps, web development, and AI integrations.
+            I’m a serving Army warrant officer, aviator, technologist, voiceover artist,
+            writer, and lifelong tinkerer. I’ve spent my career solving problems under
+            pressure, from aviation operations to cloud infrastructure, DevOps, web
+            development, and AI.
           </p>
           <p>
-            I built this site myself — every line of code, every word, every
-            audio clip.
+            This site is an example of my build process: I guide the agents, shape the
+            work, and make the final calls.
           </p>
           <div
             style={{ display: "flex", gap: "0.625rem", marginTop: "0.5rem" }}
