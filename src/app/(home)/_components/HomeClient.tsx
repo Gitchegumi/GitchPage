@@ -325,38 +325,38 @@ function BlogContent({ posts }: { posts?: GhostPost[] }) {
       </div>
       <div className="blogBody">
         {displayPosts[0] && (
-            <a
-              href={displayPosts[0].url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="blogHero"
-            >
-              {displayPosts[0].feature_image && (
-                <div className="blogThumb">
-                  <img
-                    src={displayPosts[0].feature_image}
-                    alt={displayPosts[0].title}
-                  />
-                </div>
-              )}
-              <div className="blogHeroMeta">
-                <span
-                  className="blogTag"
-                  style={{
-                    background:
-                      tagColors[displayPosts[0].primary_tag?.slug || "latest"]
-                        ?.bg || tagColors.latest.bg,
-                    color:
-                      tagColors[displayPosts[0].primary_tag?.slug || "latest"]
-                        ?.text || tagColors.latest.text,
-                  }}
-                >
-                  {displayPosts[0].primary_tag?.name || "Latest"}
-                </span>
-                <h3>{displayPosts[0].title}</h3>
-                <p>{displayPosts[0].excerpt || "Read more on the blog..."}</p>
+          <a
+            href={displayPosts[0].url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="blogHero"
+          >
+            {displayPosts[0].feature_image && (
+              <div className="blogThumb">
+                <img
+                  src={displayPosts[0].feature_image}
+                  alt={displayPosts[0].title}
+                />
               </div>
-            </a>
+            )}
+            <div className="blogHeroMeta">
+              <span
+                className="blogTag"
+                style={{
+                  background:
+                    tagColors[displayPosts[0].primary_tag?.slug || "latest"]
+                      ?.bg || tagColors.latest.bg,
+                  color:
+                    tagColors[displayPosts[0].primary_tag?.slug || "latest"]
+                      ?.text || tagColors.latest.text,
+                }}
+              >
+                {displayPosts[0].primary_tag?.name || "Latest"}
+              </span>
+              <h3>{displayPosts[0].title}</h3>
+              <p>{displayPosts[0].excerpt || "Read more on the blog..."}</p>
+            </div>
+          </a>
         )}
         <div className="blogMiniList">
           {displayPosts.slice(1, 4).map((post) => {
@@ -405,16 +405,21 @@ function CreationContent() {
         >
           <div className="platformHeader">
             <div className="platformIcon youtube">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z" />
               </svg>
             </div>
             <h3>YouTube</h3>
           </div>
           <p>
-            Deep dives, lets plays, and live streams — mostly MMO, survival, and sim
-            gaming with a variety focus. Building toward edited series and long-form
-            content.
+            Deep dives, lets plays, and live streams — mostly MMO, survival, and
+            sim gaming with a variety focus. Building toward edited series and
+            long-form content.
           </p>
         </a>
 
@@ -426,7 +431,12 @@ function CreationContent() {
         >
           <div className="platformHeader">
             <div className="platformIcon twitch">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z" />
               </svg>
             </div>
@@ -446,7 +456,12 @@ function CreationContent() {
         >
           <div className="platformHeader">
             <div className="platformIcon tiktok">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
               </svg>
             </div>
@@ -487,19 +502,21 @@ function PersonContent() {
             I speak the lines, build the tools, and roll the dice.
           </p>
           <p>
-            I’m a serving Army warrant officer, aviator, technologist, voiceover artist,
-            writer, and lifelong tinkerer. I’ve spent my career solving problems under
-            pressure, from aviation operations to cloud infrastructure, DevOps, web
-            development, and AI.
+            I'm a serving Army warrant officer, aviator, technologist, voiceover
+            artist, writer, and lifelong tinkerer. I've spent my career solving
+            problems under pressure, from aviation operations to cloud
+            infrastructure, DevOps, web development, and AI.
           </p>
           <p>
-            This site is an example of my build process: I guide the agents, shape the
-            work, and make the final calls.
+            This site is an example of my build process: I guide the agents,
+            shape the work, and make the final calls.
           </p>
           <div
             style={{ display: "flex", gap: "0.625rem", marginTop: "0.5rem" }}
           >
-            <CtaLink href="https://discord.gg/0ivCrUa3GMaqtjkH" external>Come say hi →</CtaLink>
+            <CtaLink href="https://discord.gg/0ivCrUa3GMaqtjkH" external>
+              Come say hi →
+            </CtaLink>
             <CtaLink href="/portfolio" secondary>
               View Resume →
             </CtaLink>
@@ -766,13 +783,22 @@ function MobileCreation() {
         >
           <div className="mobilePlatformHeader">
             <div className="mobilePlatformIcon youtube">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z" />
               </svg>
             </div>
             <h4>YouTube</h4>
           </div>
-          <p>Deep dives, lets plays, and live streams — mostly MMO, survival, and sim gaming with a variety focus. Building toward edited series and long-form content.</p>
+          <p>
+            Deep dives, lets plays, and live streams — mostly MMO, survival, and
+            sim gaming with a variety focus. Building toward edited series and
+            long-form content.
+          </p>
         </a>
 
         <a
@@ -783,13 +809,21 @@ function MobileCreation() {
         >
           <div className="mobilePlatformHeader">
             <div className="mobilePlatformIcon twitch">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z" />
               </svg>
             </div>
             <h4>Twitch</h4>
           </div>
-          <p>Live streaming in real time. Unfiltered, unscripted — just gameplay, commentary, and whatever chaos the chat brings.</p>
+          <p>
+            Live streaming in real time. Unfiltered, unscripted — just gameplay,
+            commentary, and whatever chaos the chat brings.
+          </p>
         </a>
 
         <a
@@ -800,13 +834,21 @@ function MobileCreation() {
         >
           <div className="mobilePlatformHeader">
             <div className="mobilePlatformIcon tiktok">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
               </svg>
             </div>
             <h4>TikTok</h4>
           </div>
-          <p>Live streams and short-form video experiments. Quick clips, random ideas, and whatever content format seems fun that week.</p>
+          <p>
+            Live streams and short-form video experiments. Quick clips, random
+            ideas, and whatever content format seems fun that week.
+          </p>
         </a>
       </div>
     </>
@@ -829,12 +871,25 @@ function MobilePerson() {
       </div>
       <div className="mobileAboutText">
         <p className="lead">
-          I write the words, speak the lines, and roll the dice.
+          I speak the lines, build the tools, and roll the dice.
         </p>
-        <p>Army veteran turned technologist. Cloud, DevOps, web dev, AI.</p>
-        <p>I built this site myself — every line of code, every word.</p>
+        <p>
+          I'm a serving Army warrant officer, aviator, technologist, voiceover
+          artist, writer, and lifelong tinkerer. I've spent my career solving
+          problems under pressure, from aviation operations to cloud
+          infrastructure, DevOps, web development, and AI.
+        </p>
+        <p>
+          This site is an example of my build process: I guide the agents, shape
+          the work, and make the final calls.
+        </p>
         <div className="mobileContactBtns">
-          <a href="https://discord.gg/0ivCrUa3GMaqtjkH" target="_blank" rel="noopener noreferrer" className="mobileCta">
+          <a
+            href="https://discord.gg/0ivCrUa3GMaqtjkH"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mobileCta"
+          >
             Come say hi
           </a>
           <Link href="/about" className="mobileCta mobileCtaSecondary">
