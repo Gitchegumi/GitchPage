@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Oswald, Roboto_Serif } from "next/font/google";
 import Script from "next/script";
 import "../globals.css";
+import "./home.css";
 
 const oswald = Oswald({
   variable: "--font-oswald",
