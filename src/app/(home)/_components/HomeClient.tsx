@@ -142,9 +142,7 @@ function CtaLink({
   children: React.ReactNode;
   secondary?: boolean;
 }) {
-  const cls = secondary
-    ? "ctaBtn ctaBtnSecondary"
-    : "ctaBtn";
+  const cls = secondary ? "ctaBtn ctaBtnSecondary" : "ctaBtn";
   if (external) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
@@ -176,7 +174,9 @@ function VoiceContent() {
     const audio = audioRef.current;
     if (!audio) return;
     const onTime = () => setCurrentTime(audio.currentTime);
-    const onMeta = () => { if (isFinite(audio.duration)) setDuration(audio.duration); };
+    const onMeta = () => {
+      if (isFinite(audio.duration)) setDuration(audio.duration);
+    };
     const onEnd = () => setIsPlaying(false);
     audio.addEventListener("timeupdate", onTime);
     audio.addEventListener("loadedmetadata", onMeta);
@@ -224,7 +224,10 @@ function VoiceContent() {
       <div className="voiceLayout">
         <div className="voicePlayer">
           <div className="playerTop">
-            <button className="playBtnLg" onClick={() => setIsPlaying(!isPlaying)}>
+            <button
+              className="playBtnLg"
+              onClick={() => setIsPlaying(!isPlaying)}
+            >
               {isPlaying ? (
                 <svg viewBox="0 0 24 24" width="20" height="20">
                   <rect x="6" y="4" width="4" height="16" fill="#161616" />
@@ -246,11 +249,17 @@ function VoiceContent() {
             >
               {isMuted ? (
                 <svg viewBox="0 0 24 24" width="18" height="18">
-                  <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="#f0f0f0" />
+                  <path
+                    d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"
+                    fill="#f0f0f0"
+                  />
                 </svg>
               ) : (
                 <svg viewBox="0 0 24 24" width="18" height="18">
-                  <path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="#f0f0f0" />
+                  <path
+                    d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                    fill="#f0f0f0"
+                  />
                 </svg>
               )}
             </button>
@@ -279,7 +288,10 @@ function VoiceContent() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <svg viewBox="0 0 24 24" width="18" height="18">
-                      <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor" />
+                      <path
+                        d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"
+                        fill="currentColor"
+                      />
                     </svg>
                   </a>
                 </div>
@@ -313,33 +325,40 @@ function BlogContent({ posts }: { posts?: GhostPost[] }) {
       </div>
       <div className="blogBody">
         {displayPosts[0] && (
-          <a
-            href={displayPosts[0].url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="blogHero"
-          >
-            {displayPosts[0].feature_image && (
-              <div className="blogThumb">
-                <img src={displayPosts[0].feature_image} alt={displayPosts[0].title} />
+          <div className="max-w-sm">
+            <a
+              href={displayPosts[0].url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="blogHero"
+            >
+              {displayPosts[0].feature_image && (
+                <div className="blogThumb">
+                  <img
+                    src={displayPosts[0].feature_image}
+                    alt={displayPosts[0].title}
+                  />
+                </div>
+              )}
+              <div className="blogHeroMeta">
+                <span
+                  className="blogTag"
+                  style={{
+                    background:
+                      tagColors[displayPosts[0].primary_tag?.slug || "latest"]
+                        ?.bg || tagColors.latest.bg,
+                    color:
+                      tagColors[displayPosts[0].primary_tag?.slug || "latest"]
+                        ?.text || tagColors.latest.text,
+                  }}
+                >
+                  {displayPosts[0].primary_tag?.name || "Latest"}
+                </span>
+                <h3>{displayPosts[0].title}</h3>
+                <p>{displayPosts[0].excerpt || "Read more on the blog..."}</p>
               </div>
-            )}
-            <div className="blogHeroMeta">
-              <span
-                className="blogTag"
-                style={{
-                  background:
-                    tagColors[displayPosts[0].primary_tag?.slug || "latest"]?.bg || tagColors.latest.bg,
-                  color:
-                    tagColors[displayPosts[0].primary_tag?.slug || "latest"]?.text || tagColors.latest.text,
-                }}
-              >
-                {displayPosts[0].primary_tag?.name || "Latest"}
-              </span>
-              <h3>{displayPosts[0].title}</h3>
-              <p>{displayPosts[0].excerpt || "Read more on the blog..."}</p>
-            </div>
-          </a>
+            </a>
+          </div>
         )}
         <div className="blogMiniList">
           {displayPosts.slice(1, 4).map((post) => {
@@ -353,7 +372,10 @@ function BlogContent({ posts }: { posts?: GhostPost[] }) {
                 rel="noopener noreferrer"
                 className="blogMini"
               >
-                <span className="blogTag" style={{ background: colors.bg, color: colors.text }}>
+                <span
+                  className="blogTag"
+                  style={{ background: colors.bg, color: colors.text }}
+                >
                   {tag?.name || "Latest"}
                 </span>
                 <h4>{post.title}</h4>
@@ -375,12 +397,21 @@ function CreationContent() {
           <p className="cardEyebrow">{cards[2].label}</p>
           <h2 className="cardTitle">{cards[2].title}</h2>
         </div>
-        <CtaLink href={cards[2].href} external={cards[2].external}>Watch →</CtaLink>
+        <CtaLink href={cards[2].href} external={cards[2].external}>
+          Watch →
+        </CtaLink>
       </div>
       <div className="contentGrid">
         <div className="contentCard">
           <div className="iconBox">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M15 14l-4-4-6 6M20 4l-4 4-4-4" />
             </svg>
           </div>
@@ -400,7 +431,12 @@ function CreationContent() {
               rel="noopener noreferrer"
               className="platform"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z" />
               </svg>
               YouTube
@@ -411,7 +447,12 @@ function CreationContent() {
               rel="noopener noreferrer"
               className="platform"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z" />
               </svg>
               Twitch
@@ -444,16 +485,25 @@ function PersonContent() {
           />
         </div>
         <div className="aboutText">
-          <p className="lead">I write the words, speak the lines, and roll the dice.</p>
+          <p className="lead">
+            I write the words, speak the lines, and roll the dice.
+          </p>
           <p>
             Army veteran turned technologist, blending discipline and creativity
             to build scalable solutions. Experienced in cloud infrastructure,
             DevOps, web development, and AI integrations.
           </p>
-          <p>I built this site myself — every line of code, every word, every audio clip.</p>
-          <div style={{ display: "flex", gap: "0.625rem", marginTop: "0.5rem" }}>
+          <p>
+            I built this site myself — every line of code, every word, every
+            audio clip.
+          </p>
+          <div
+            style={{ display: "flex", gap: "0.625rem", marginTop: "0.5rem" }}
+          >
             <CtaLink href="mailto:mat@gitchegumi.com">Say Hello →</CtaLink>
-            <CtaLink href="/portfolio" secondary>View Resume →</CtaLink>
+            <CtaLink href="/portfolio" secondary>
+              View Resume →
+            </CtaLink>
           </div>
         </div>
       </div>
@@ -495,7 +545,14 @@ function MadeContent() {
       </div>
       <CtaLink href={cards[4].href} secondary>
         Browse all projects
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M7 17L17 7M17 7H7M17 7V17" />
         </svg>
       </CtaLink>
@@ -528,7 +585,9 @@ function MobileVoice() {
     const audio = audioRef.current;
     if (!audio) return;
     const onTime = () => setCurrentTime(audio.currentTime);
-    const onMeta = () => { if (isFinite(audio.duration)) setDuration(audio.duration); };
+    const onMeta = () => {
+      if (isFinite(audio.duration)) setDuration(audio.duration);
+    };
     const onEnd = () => setIsPlaying(false);
     audio.addEventListener("timeupdate", onTime);
     audio.addEventListener("loadedmetadata", onMeta);
@@ -570,7 +629,10 @@ function MobileVoice() {
       <h2 className="bladeTitle">{cards[0].title}</h2>
       <div className="mobileVoicePlayer">
         <div className="playerTop">
-          <button className="playBtnLg" onClick={() => setIsPlaying(!isPlaying)}>
+          <button
+            className="playBtnLg"
+            onClick={() => setIsPlaying(!isPlaying)}
+          >
             {isPlaying ? (
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <rect x="6" y="4" width="4" height="16" fill="#161616" />
@@ -592,11 +654,17 @@ function MobileVoice() {
           >
             {isMuted ? (
               <svg viewBox="0 0 24 24" width="18" height="18">
-                <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z" fill="#f0f0f0" />
+                <path
+                  d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"
+                  fill="#f0f0f0"
+                />
               </svg>
             ) : (
               <svg viewBox="0 0 24 24" width="18" height="18">
-                <path d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="#f0f0f0" />
+                <path
+                  d="M3 9v6h4l5 5V4L7 9H3zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                  fill="#f0f0f0"
+                />
               </svg>
             )}
           </button>
@@ -625,7 +693,10 @@ function MobileVoice() {
                   onClick={(e) => e.stopPropagation()}
                 >
                   <svg viewBox="0 0 24 24" width="18" height="18">
-                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor" />
+                    <path
+                      d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"
+                      fill="currentColor"
+                    />
                   </svg>
                 </a>
               </div>
@@ -634,7 +705,9 @@ function MobileVoice() {
           </div>
         ))}
       </div>
-      <Link href={cards[0].href} className="mobileCta">Start a Voiceover Project →</Link>
+      <Link href={cards[0].href} className="mobileCta">
+        Start a Voiceover Project →
+      </Link>
     </>
   );
 }
@@ -685,19 +758,36 @@ function MobileCreation() {
     <>
       <span className="bladeLabel">{cards[2].label}</span>
       <h2 className="bladeTitle">{cards[2].title}</h2>
-      <p style={{ fontSize: "0.9rem", lineHeight: 1.65, color: "rgba(240,240,240,0.6)", marginBottom: "1rem" }}>
+      <p
+        style={{
+          fontSize: "0.9rem",
+          lineHeight: 1.65,
+          color: "rgba(240,240,240,0.6)",
+          marginBottom: "1rem",
+        }}
+      >
         TTRPG actual plays, worldbuilding deep-dives, music experiments, and
         behind-the-scenes content. A mix of polished edited series and live
         unfiltered chaos.
       </p>
       <div className="mobilePlatforms">
-        <a href="https://www.youtube.com/@Gitchegumi" target="_blank" rel="noopener noreferrer" className="mobilePlatform">
+        <a
+          href="https://www.youtube.com/@Gitchegumi"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mobilePlatform"
+        >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z" />
           </svg>
           YouTube
         </a>
-        <a href="https://www.twitch.tv/gitchegumi" target="_blank" rel="noopener noreferrer" className="mobilePlatform">
+        <a
+          href="https://www.twitch.tv/gitchegumi"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mobilePlatform"
+        >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z" />
           </svg>
@@ -714,15 +804,27 @@ function MobilePerson() {
       <span className="bladeLabel">{cards[3].label}</span>
       <h2 className="bladeTitle">{cards[3].title}</h2>
       <div className="mobileAboutAvatar">
-        <Image src="/images/beach-selfie.jpg" alt="Mat" width={100} height={100} className="rounded-full object-cover" />
+        <Image
+          src="/images/beach-selfie.jpg"
+          alt="Mat"
+          width={100}
+          height={100}
+          className="rounded-full object-cover"
+        />
       </div>
       <div className="mobileAboutText">
-        <p className="lead">I write the words, speak the lines, and roll the dice.</p>
+        <p className="lead">
+          I write the words, speak the lines, and roll the dice.
+        </p>
         <p>Army veteran turned technologist. Cloud, DevOps, web dev, AI.</p>
         <p>I built this site myself — every line of code, every word.</p>
         <div className="mobileContactBtns">
-          <Link href="mailto:mat@gitchegumi.com" className="mobileCta">Say Hello</Link>
-          <Link href="/about" className="mobileCta mobileCtaSecondary">View Resume</Link>
+          <Link href="mailto:mat@gitchegumi.com" className="mobileCta">
+            Say Hello
+          </Link>
+          <Link href="/about" className="mobileCta mobileCtaSecondary">
+            View Resume
+          </Link>
         </div>
       </div>
     </>
@@ -756,12 +858,20 @@ function MobileMade() {
           <p>Transaction ledger.</p>
         </Link>
       </div>
-      <Link href={cards[4].href} className="mobileCta">Browse all projects →</Link>
+      <Link href={cards[4].href} className="mobileCta">
+        Browse all projects →
+      </Link>
     </>
   );
 }
 
-const MobileBlades = [MobileVoice, MobileBlog, MobileCreation, MobilePerson, MobileMade];
+const MobileBlades = [
+  MobileVoice,
+  MobileBlog,
+  MobileCreation,
+  MobilePerson,
+  MobileMade,
+];
 const BladeAccents = ["#fca311", "#4166f5", "#8b5cf6", "#10b981", "#f97316"];
 
 /* =============================================================
@@ -804,7 +914,9 @@ export default function HomeClient({ blogPosts }: { blogPosts: GhostPost[] }) {
 
   useEffect(() => {
     if (isMobile) return;
-    const cardEls = document.querySelectorAll(`.card`) as NodeListOf<HTMLDivElement>;
+    const cardEls = document.querySelectorAll(
+      `.card`,
+    ) as NodeListOf<HTMLDivElement>;
     cardEls.forEach((card, i) => {
       let dist = i - activeIndex;
       if (dist < -2) dist += TOTAL_CARDS;
@@ -866,7 +978,7 @@ export default function HomeClient({ blogPosts }: { blogPosts: GhostPost[] }) {
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
     blades.forEach((b) => observer.observe(b));
     return () => observer.disconnect();
@@ -898,7 +1010,14 @@ export default function HomeClient({ blogPosts }: { blogPosts: GhostPost[] }) {
         </div>
         <Link href="/blog" className="headerCta">
           Start here
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M7 17L17 7M17 7H7M17 7V17" />
           </svg>
         </Link>
@@ -917,7 +1036,10 @@ export default function HomeClient({ blogPosts }: { blogPosts: GhostPost[] }) {
                 data-order={i}
                 style={{ "--tab-color": card.tabColor } as React.CSSProperties}
                 onClick={(e) => {
-                  if (i !== activeIndex && !(e.target as HTMLElement).closest(`.cardTab`)) {
+                  if (
+                    i !== activeIndex &&
+                    !(e.target as HTMLElement).closest(`.cardTab`)
+                  ) {
                     setActiveIndex(i);
                   }
                 }}
@@ -938,9 +1060,18 @@ export default function HomeClient({ blogPosts }: { blogPosts: GhostPost[] }) {
                   }}
                 >
                   <span className="tabName">{card.tab}</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     {i === 0 && <polygon points="5 3 19 12 5 21 5 3" />}
-                    {i === 1 && <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />}
+                    {i === 1 && (
+                      <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    )}
                     {i === 2 && <path d="M15 14l-4-4-6 6M20 4l-4 4-4-4" />}
                     {i === 3 && (
                       <>
@@ -948,9 +1079,13 @@ export default function HomeClient({ blogPosts }: { blogPosts: GhostPost[] }) {
                         <circle cx="12" cy="7" r="4" />
                       </>
                     )}
-                    {i === 4 && <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />}
+                    {i === 4 && (
+                      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+                    )}
                   </svg>
-                  <span className="tabNum">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="tabNum">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                 </div>
               </div>
             );
@@ -986,7 +1121,9 @@ export default function HomeClient({ blogPosts }: { blogPosts: GhostPost[] }) {
             key={i}
             className={`mobileDot ${i === mobileActive ? "active" : ""}`}
             onClick={() => {
-              document.getElementById(`mob-${i}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              document
+                .getElementById(`mob-${i}`)
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
             }}
           />
         ))}
@@ -1001,21 +1138,65 @@ export default function HomeClient({ blogPosts }: { blogPosts: GhostPost[] }) {
             <Link href="/tools">Tools</Link>
             <Link href="/about">Portfolio</Link>
             <Link href="/budget">Store</Link>
-            <a href="https://github.com/Gitchegumi" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a
+              href="https://github.com/Gitchegumi"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
           </div>
           <div className="footerSocial">
-            <a href="https://twitter.com/Gitchegumi" target="_blank" rel="noopener noreferrer" className="socialLink" title="Twitter">𝕏</a>
-            <a href="https://github.com/Gitchegumi" target="_blank" rel="noopener noreferrer" className="socialLink" title="GitHub">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <a
+              href="https://twitter.com/Gitchegumi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="socialLink"
+              title="Twitter"
+            >
+              𝕏
+            </a>
+            <a
+              href="https://github.com/Gitchegumi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="socialLink"
+              title="GitHub"
+            >
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
               </svg>
             </a>
-            <a href="https://discord.gg/gitchegumi" target="_blank" rel="noopener noreferrer" className="socialLink" title="Discord">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <a
+              href="https://discord.gg/gitchegumi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="socialLink"
+              title="Discord"
+            >
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03a.078.078 0 00.084-.028 14.09 14.09 0 001.226-1.994.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892a.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292a.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892a.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03a.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
               </svg>
             </a>
-            <a href="https://ko-fi.com/gitchegumi" target="_blank" rel="noopener noreferrer" className="socialLink" title="Ko-fi">☕</a>
+            <a
+              href="https://ko-fi.com/gitchegumi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="socialLink"
+              title="Ko-fi"
+            >
+              ☕
+            </a>
           </div>
         </div>
       </footer>
