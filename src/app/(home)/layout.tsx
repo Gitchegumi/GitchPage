@@ -51,6 +51,7 @@ export default function HomeLayout({
     <html lang="en">
       <body
         className={`${oswald.variable} ${robotoSerif.variable} antialiased`}
+        suppressHydrationWarning
       >
         <Script
           async

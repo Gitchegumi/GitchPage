@@ -54,6 +54,7 @@ export default function SiteLayout({
     <html lang="en">
       <body
         className={`${oswald.variable} ${robotoSerif.variable} antialiased bg-brand-dark`}
+        suppressHydrationWarning
       >
         <Script
           async
