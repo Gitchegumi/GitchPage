@@ -11,41 +11,45 @@ export const metadata: Metadata = {
 export default async function VoiceOverPage() {
   return (
     <div className="container p-4 mx-auto">
-      <div className="my-12 text-center">
-        <h1 className="mb-4 text-4xl font-bold md:text-5xl">
-          Bring Your Project to Life with Professional Voiceover.
-        </h1>
-        <p className="mx-auto mb-6 max-w-3xl text-lg md:text-xl">
-          Are you looking for a versatile voice to elevate your project? Look no
-          further! With experience in both commercial and e-learning voiceover,
-          I bring characters and concepts to life with clarity and enthusiasm.
-        </p>
-        <p className="mx-auto max-w-3xl text-lg md:text-xl">
-          Whether you need a friendly voice for your next ad campaign or an
-          engaging narrator for your educational content, I&apos;m here to
-          deliver high-quality audio that meets your specific needs.
-        </p>
+      {/* ── Top grid: intro + demos left, form right ── */}
+      <div className="grid grid-cols-1 gap-8 items-start my-8 md:grid-cols-5">
+        {/* Left: intro + demos */}
+        <div className="md:col-span-3 space-y-6">
+          <div>
+            <h1 className="mb-4 text-4xl font-bold md:text-5xl">
+              Bring Your Project to Life with Professional Voiceover
+            </h1>
+            <p className="text-lg md:text-xl" style={{ color: "rgba(240,240,240,0.75)" }}>
+              Looking for a versatile voice to elevate your project? With
+              experience in both commercial and e-learning voiceover, I bring
+              characters and concepts to life with clarity and enthusiasm.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <AudioPlayer
+              key="commercial-demo"
+              src="/demos/GITCHEGUMI-MEDIA_COMMERICAL-DEMO.mp3"
+              title="Commercial Demo"
+              showDownloadButton={true}
+            />
+            <AudioPlayer
+              key="elearning-demo"
+              src="/demos/GITCHEGUMI-MEDIA_ELEARNING-DEMO.mp3"
+              title="E-Learning Demo"
+              showDownloadButton={true}
+            />
+          </div>
+        </div>
+
+        {/* Right: inquiry form */}
+        <div className="md:col-span-2">
+          <VoInquiryForm />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 justify-center my-8 md:flex md:flex-cols-2">
-        <div className="w-full md:w-1/3">
-          <AudioPlayer
-            key="commercial-demo"
-            src="/demos/GITCHEGUMI-MEDIA_COMMERICAL-DEMO.mp3"
-            title="Commercial Demo"
-            showDownloadButton={true}
-          />
-        </div>
-        <div className="w-full md:w-1/3">
-          <AudioPlayer
-            key="elearning-demo"
-            src="/demos/GITCHEGUMI-MEDIA_ELEARNING-DEMO.mp3"
-            title="E-Learning Demo"
-            showDownloadButton={true}
-          />
-        </div>
-      </div>
-      <div className="flex flex-col items-center my-8">
+      {/* ── Why Choose Me section ── */}
+      <div className="flex flex-col items-center my-12">
         <div className="flex flex-row gap-8 justify-center items-start my-8">
           <Image
             src="/images/Background.png"
@@ -76,9 +80,6 @@ export default async function VoiceOverPage() {
               </ul>
             </div>
           </div>
-        </div>
-        <div className="w-full md:w-1/2">
-          <VoInquiryForm />
         </div>
       </div>
     </div>
