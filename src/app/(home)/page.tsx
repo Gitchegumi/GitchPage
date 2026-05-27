@@ -317,7 +317,7 @@ function PersonContent() {
           <p className={"cardEyebrow"}>About Mat</p>
           <h2 className={"cardTitle"}>The Person</h2>
         </div>
-        <CtaLink href="/portfolio">Full story →</CtaLink>
+        <CtaLink href="/about">Full story →</CtaLink>
       </div>
       <div className={"aboutLayout"}>
         <div className={"aboutAvatar"}>
@@ -339,7 +339,7 @@ function PersonContent() {
           <p>I built this site myself — every line of code, every word, every audio clip.</p>
           <div style={{ display: "flex", gap: "0.625rem", marginTop: "0.5rem" }}>
             <CtaLink href="mailto:mat@gitchegumi.com">Say Hello →</CtaLink>
-            <CtaLink href="/about" secondary>View Resume →</CtaLink>
+            <CtaLink href="/portfolio" secondary>View Resume →</CtaLink>
           </div>
         </div>
       </div>
