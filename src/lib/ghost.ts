@@ -27,11 +27,9 @@ export interface GhostPost {
  */
 export async function getLatestPosts(limit: number = 3): Promise<GhostPost[]> {
   try {
-    const posts = await ghostClient.posts.browse({
+    const posts: any[] = await (ghostClient.posts.browse as any)({
       limit: limit.toString() as any,
       include: ['tags', 'authors'],
-    }, {
-      // @ts-ignore - Ghost API supports cache control
       cache: 'no-store',
     });
     
