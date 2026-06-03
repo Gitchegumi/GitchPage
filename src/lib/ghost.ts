@@ -23,12 +23,16 @@ export interface GhostPost {
 
 /**
  * Fetches the most recent posts for the homepage.
+ * Forces no-store to ensure fresh data on every build.
  */
 export async function getLatestPosts(limit: number = 3): Promise<GhostPost[]> {
   try {
     const posts = await ghostClient.posts.browse({
       limit: limit.toString() as any,
       include: ['tags', 'authors'],
+    }, {
+      // @ts-ignore - Ghost API supports cache control
+      cache: 'no-store',
     });
     
     return posts.map(post => ({
