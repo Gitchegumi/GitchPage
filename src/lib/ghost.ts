@@ -30,8 +30,7 @@ export async function getLatestPosts(limit: number = 3): Promise<GhostPost[]> {
     const posts: any[] = await (ghostClient.posts.browse as any)({
       limit: limit.toString() as any,
       include: ['tags', 'authors'],
-      cache: 'no-store',
-    });
+    } as any);
     
     return posts.map(post => ({
       id: post.id,
