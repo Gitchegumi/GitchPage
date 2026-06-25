@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Oswald, Roboto_Serif } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const oswald = Oswald({
@@ -50,8 +51,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${oswald.variable} ${robotoSerif.variable} antialiased bg-brand-dark`}
+        className={`${oswald.variable} ${robotoSerif.variable} antialiased bg-[#0a0a0a]`}
+        suppressHydrationWarning
       >
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-TH478GZSDH"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-TH478GZSDH');
+          `}
+        </Script>
         {children}
       </body>
     </html>

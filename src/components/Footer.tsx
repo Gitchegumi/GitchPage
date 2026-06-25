@@ -1,115 +1,82 @@
 import Link from "next/link";
-import Image from "next/image";
-import KoFiWidget from "./ui/KoFiWidget";
+
+const FOOTER_LINKS = [
+  { label: "Blog", href: "/blog" },
+  { label: "Voice Over", href: "/voice-over" },
+  { label: "Tools", href: "/tools" },
+  { label: "Portfolio", href: "/portfolio" },
+  { label: "About", href: "/about" },
+];
+
+const SOCIAL_LINKS = [
+  { label: "X / Twitter", href: "https://twitter.com/GitchegumiGames", display: "𝕏" },
+  { label: "GitHub", href: "https://github.com/Gitchegumi", display: "GH" },
+  { label: "Discord", href: "https://discord.gg/0ivCrUa3GMaqtjkH", display: "DC" },
+  { label: "Ko-fi", href: "https://ko-fi.com/gitchegumi", display: "Ko" },
+];
+
+const circleStyle: React.CSSProperties = {
+  width: "34px",
+  height: "34px",
+  borderRadius: "50%",
+  border: "1px solid rgba(255,255,255,0.14)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontFamily: "Oswald, sans-serif",
+  fontWeight: 600,
+  fontSize: "0.62rem",
+  color: "#CCDBDC",
+  textDecoration: "none",
+  flexShrink: 0,
+};
 
 export default function Footer() {
   return (
-    <footer className="py-8 px-8 mt-auto text-white bg-gray-800 sm:px-20 footer">
-      <div className="container px-16 mx-auto md:px-4">
-        <div className="mb-8 border-t border-gray-700 footer-line"></div>
-        <div className="footer-content">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div>
-              <h5 className="mb-4 text-lg font-bold">Site Map</h5>
-              <ul className="space-y-2 list-none">
-                <li>
-                  <Link href="/" className="hover:underline">
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/blog" className="hover:underline">
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/pages/portfolio.html"
-                    className="hover:underline"
-                  >
-                    Portfolio
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/pages/voice_over.html"
-                    className="hover:underline"
-                  >
-                    Voice Over
-                  </Link>
-                </li>
-                <li className="font-semibold">
-                  <Link href="/tools" className="hover:underline">
-                    Tools
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://store.gitchegumi.com"
-                    className="hover:underline"
-                  >
-                    Merch
-                  </Link>
-                </li>
-              </ul>
-              <div className="mt-4">
-                <KoFiWidget />
-              </div>
-            </div>
-            <div>
-              <h5 className="mb-4 text-lg font-bold">Social Media</h5>
-              <ul className="space-y-2 list-none">
-                <li>
-                  <Link
-                    href="https://www.facebook.com/GitchegumiGaming"
-                    target="_blank"
-                    className="hover:underline"
-                  >
-                    Facebook
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://www.instagram.com/gitchegumi"
-                    target="_blank"
-                    className="hover:underline"
-                  >
-                    Instagram
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://twitter.com/GitchegumiGames"
-                    target="_blank"
-                    className="hover:underline"
-                  >
-                    Twitter
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="https://www.twitch.tv/gitchegumi"
-                    target="_blank"
-                    className="hover:underline"
-                  >
-                    Twitch
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div className="flex flex-col">
-              <p>&copy; 2024 GitcheGumi Media LLC. All rights reserved.</p>
-              <p>Designed and developed by Mathew Lindholm</p>
-              <Image
-                src="/images/Media Text.png"
-                alt="GitcheGumi Media LLC"
-                width={450}
-                height={250}
-                className="object-cover -translate-x-4 w-[80%] md:w-full"
-              />
-            </div>
-          </div>
-        </div>
+    <footer
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "26px 40px",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+        flexWrap: "wrap",
+        gap: "1rem",
+        background: "#0a0a0a",
+      }}
+    >
+      <div style={{ display: "flex", gap: "26px", flexWrap: "wrap" }}>
+        {FOOTER_LINKS.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            style={{
+              fontFamily: "Oswald, sans-serif",
+              fontWeight: 500,
+              fontSize: "0.72rem",
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "#9aa3a6",
+              textDecoration: "none",
+            }}
+          >
+            {link.label}
+          </Link>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: "12px" }}>
+        {SOCIAL_LINKS.map((s) => (
+          <a
+            key={s.label}
+            href={s.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={s.label}
+            style={circleStyle}
+          >
+            {s.display}
+          </a>
+        ))}
       </div>
     </footer>
   );

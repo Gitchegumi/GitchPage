@@ -3,360 +3,211 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { cn } from "../lib/utils";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "../components/ui/navigation-menu";
+import { usePathname } from "next/navigation";
+
+const NAV_LINKS = [
+  { label: "Blog", href: "/blog" },
+  { label: "Voice Over", href: "/voice-over" },
+  { label: "Tools", href: "/tools" },
+  { label: "Portfolio", href: "/portfolio" },
+  { label: "About", href: "/about" },
+];
+
+const NAV_BG =
+  "radial-gradient(120% 140% at 0% 0%, rgba(65,102,245,0.12), transparent 45%), radial-gradient(120% 140% at 100% 100%, rgba(252,163,17,0.09), transparent 45%), #0a0a0a";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  function isActive(href: string) {
+    if (href === "/blog") return pathname === "/blog";
+    return pathname === href || pathname.startsWith(href + "/");
+  }
+
+  const pillLinkStyle = (active: boolean): React.CSSProperties => ({
+    fontFamily: "Oswald, sans-serif",
+    fontWeight: 500,
+    fontSize: "0.7rem",
+    letterSpacing: "0.16em",
+    textTransform: "uppercase",
+    color: active ? "#161616" : "#f0f0f0",
+    background: active ? "#fca311" : "transparent",
+    textDecoration: "none",
+    padding: "7px 16px",
+    borderRadius: "9999px",
+    transition: "all 0.2s",
+    whiteSpace: "nowrap",
+  });
 
   return (
-    <>
-      <div className="top-0 right-0 left-0 z-50 w-full md:sticky">
-        <nav
-          className="flex z-50 flex-col items-center p-2 mx-16 mt-2 rounded-xl md:flex-row font-oswald text-[1em] text-soft-white backdrop-blur-xl"
+    <div style={{ position: "sticky", top: 0, zIndex: 50, padding: "0.75rem 2rem" }}>
+      {/* Desktop nav — hidden on mobile */}
+      <nav
+        className="hidden md:grid"
+        style={{
+          gridTemplateColumns: "1fr auto 1fr",
+          alignItems: "center",
+          padding: "16px 24px",
+          borderRadius: "14px",
+          background: NAV_BG,
+          border: "1px solid rgba(255,255,255,0.07)",
+          boxShadow: "0 20px 50px -10px rgba(0,0,0,0.7)",
+        }}
+      >
+        {/* Brand */}
+        <div style={{ display: "flex", alignItems: "center", gap: "13px" }}>
+          <Link href="/" aria-label="Gitchegumi Media home">
+            <Image
+              src="/images/Mascot.png"
+              alt="Gitchegumi Media mascot"
+              width={42}
+              height={42}
+              priority
+              style={{ borderRadius: "50%", border: "1px solid rgba(255,255,255,0.16)" }}
+            />
+          </Link>
+          <div style={{ display: "flex", flexDirection: "column", lineHeight: "1.12" }}>
+            <span
+              style={{
+                fontFamily: "Oswald, sans-serif",
+                fontWeight: 700,
+                fontSize: "1.02rem",
+                color: "#f0f0f0",
+              }}
+            >
+              Gitchegumi Media
+            </span>
+            <span
+              style={{
+                fontFamily: "Oswald, sans-serif",
+                fontWeight: 400,
+                fontSize: "0.55rem",
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                color: "#CCDBDC",
+                opacity: 0.6,
+              }}
+            >
+              Army Vet · Technologist · Creator
+            </span>
+          </div>
+        </div>
+
+        {/* Centered pill nav */}
+        <div
           style={{
-            background: "rgba(65,102,245,0.35)",
-            border: "1px solid rgba(255,255,255,0.12)",
-            boxShadow: "0 8px 32px rgba(65,102,245,0.25), inset 0 1px 0 rgba(255,255,255,0.15)",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: "9999px",
+            padding: "6px 8px",
           }}
         >
-          <div className="flex justify-between items-center w-full md:justify-start md:flex-1">
-            <Image
-              src={"/images/Mascot.png"}
-              width={70}
-              height={70}
-              priority
-              alt="Logo Mascot"
-              className="hidden md:block w-auto h-15"
-            />
-            <div className="hidden px-4 text-4xl font-bold md:block font-oswald text-brand-orange">
-              Gitchegumi Media
-            </div>
-            <div className="m-auto md:hidden">
-              <button
-                onClick={toggleMenu}
-                className="text-white focus:text-brand-orange"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h16m-7 6h7"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div
-            className={`
-              md:flex
-              md:flex-row
-              md:items-center
-              ${isMenuOpen ? "flex flex-col w-full" : "hidden"
-              } md:w-auto`}
+          {NAV_LINKS.map((link) => (
+            <Link key={link.href} href={link.href} style={pillLinkStyle(isActive(link.href))}>
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Right spacer */}
+        <div />
+      </nav>
+
+      {/* Mobile nav bar */}
+      <nav
+        className="flex md:hidden"
+        style={{
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 16px",
+          borderRadius: "12px",
+          background: NAV_BG,
+          border: "1px solid rgba(255,255,255,0.07)",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+        }}
+      >
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
+          <Image
+            src="/images/Mascot.png"
+            alt="Gitchegumi Media"
+            width={36}
+            height={36}
+            priority
+            style={{ borderRadius: "50%", border: "1px solid rgba(255,255,255,0.16)" }}
+          />
+          <span
+            style={{
+              fontFamily: "Oswald, sans-serif",
+              fontWeight: 700,
+              fontSize: "0.95rem",
+              color: "#f0f0f0",
+            }}
           >
-            <NavigationMenu viewport={false}>
-              <NavigationMenuList className="flex flex-col gap-4 md:flex-row md:ml-16 md:gap-8">
-                <NavigationMenuItem>
-                  <NavigationMenuLink
-                    asChild
-                    className={`
-                      ${navigationMenuTriggerStyle()} 
-                      bg-transparent 
-                      hover:text-brand-orange 
-                      hover:underline 
-                      focus:text-brand-orange 
-                      hover:bg-transparent 
-                      focus:bg-transparent
-                      `}
-                  >
-                    <Link href="/">Home</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent hover:underline hover:bg-transparent focus:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">
-                    Work & Content
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="md:-translate-x-1/2">
-                    <div className="text-soft-white">
-                      <div className="grid w-60 p-6 md:grid-cols-2 max-h-[calc(100vh-100px)] md:w-[600px] lg:w-[800px]">
-                        <div>
-                          <div className="mb-2 text-2xl font-bold md:mb-4 text-brand-orange font-oswald">
-                            Work
-                          </div>
-                          <ul className="z-50 space-y-2">
-                            <ListItem
-                              href="/portfolio"
-                              title="Technical CV"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                A list of the tech credentials of Gitchegumi.
-                              </span>
-                            </ListItem>
-                            <ListItem
-                              href="https://github.com/Gitchegumi"
-                              title="GitHub Profile"
-                              target="_blank"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                The GitHub Profile for Gitchegumi
-                              </span>
-                            </ListItem>
-                          </ul>
-                        </div>
-                        <div>
-                          <div className="mb-2 text-2xl font-bold md:mb-4 text-brand-orange font-oswald">
-                            Content
-                          </div>
-                          <ul className="space-y-2">
-                            <ListItem
-                              href="/voice-over"
-                              title="Voice Over"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                Listen to Gitchegumi's VO Demos and Schedule him
-                                for your next project!
-                              </span>
-                            </ListItem>
-                            <ListItem
-                              href="https://blog.gitchegumi.com"
-                              title="Blog"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                Read the latest from Gitchegumi!
-                              </span>
-                            </ListItem>
-                            <ListItem
-                              href="https://www.youtube.com/@Gitche_Gumi"
-                              target="_blank"
-                              title="YouTube"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                Join Gitchegumi on YouTube!
-                              </span>
-                            </ListItem>
-                            <ListItem
-                              href="https://www.twitch.tv/gitchegumi"
-                              target="_blank"
-                              title="Twitch"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                Join Gitchegumi on Twitch!
-                              </span>
-                            </ListItem>
-                          </ul>
-                        </div>
-                      </div>
-                      <div
-                        className="p-6 mx-4 mb-4 rounded-xl font-oswald text-brand-orange"
-                        style={{
-                          background: "rgba(65,102,245,0.3)",
-                          border: "1px solid rgba(255,255,255,0.12)",
-                          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12)",
-                        }}
-                      >
-                        <div className="mb-2 text-2xl font-bold text-center md:mb-4">
-                          Socials
-                          <hr className="mt-2 border-white/20" />
-                        </div>
-                        <ul className="grid gap-2 md:grid-cols-3">
-                          <ListItem
-                            href="https://www.instagram.com/gitchegumi"
-                            target="_blank"
-                            title="Instagram"
-                            className="hover:bg-brand-dark/30 hover:text-brand-orange"
-                          >
-                            <span className="hidden md:block text-soft-white">
-                              Follow on Instagram
-                            </span>
-                          </ListItem>
-                          <ListItem
-                            href="https://x.com/GitchegumiGames"
-                            target="_blank"
-                            title="X"
-                            className="hover:bg-brand-dark/30 hover:text-brand-orange"
-                          >
-                            <span className="hidden md:block text-soft-white">
-                              Follow on X
-                            </span>
-                          </ListItem>
-                          <ListItem
-                            href="https://www.facebook.com/GitchegumiGaming"
-                            target="_blank"
-                            title="Facebook"
-                            className="hover:bg-brand-dark/30 hover:text-brand-orange"
-                          >
-                            <span className="hidden md:block text-soft-white">
-                              Join FB Community
-                            </span>
-                          </ListItem>
-                        </ul>
-                      </div>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent hover:underline hover:bg-transparent focus:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">
-                    <Link href="/tools">Tools</Link>
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="md:-translate-x-1/2">
-                    <div className="text-soft-white">
-                      <div className="grid w-60 p-6">
-                        <div>
-                          <div className="mb-2 text-2xl font-bold md:mb-4 text-brand-orange font-oswald">
-                            FinPipe
-                          </div>
-                          <ul className="z-50 space-y-2">
-                            <ListItem
-                              href="/trakpipe"
-                              title="TrakPipe"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                Transaction register for cash and investment
-                                accounts.
-                              </span>
-                            </ListItem>
-                            <ListItem
-                              href="/accountpipe"
-                              title="AccountPipe"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                The source of truth for your accounts accross
-                                FinPipe.
-                              </span>
-                            </ListItem>
-                            <ListItem
-                              href="/budget"
-                              title="SpendPipe"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                A simple budget tracking tool.
-                              </span>
-                            </ListItem>
-                            <ListItem
-                              href="/debtpipe"
-                              title="DebtPipe"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                A simple debt tracking tool.
-                              </span>
-                            </ListItem>
-                          </ul>
-                          <div className="mt-4 mb-2 text-2xl font-bold md:mb-4 text-brand-orange font-oswald">
-                            Trading
-                          </div>
-                          <ul className="space-y-2">
-                            <ListItem
-                              href="https://github.com/Gitchegumi/quantpipe"
-                              title="QuantPipe"
-                              target="_blank"
-                              className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                            >
-                              <span className="hidden md:block">
-                                Backtesting, forwardtesting, and trading bot in
-                                development.
-                              </span>
-                            </ListItem>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="mr-4 bg-transparent md:left-0 md:mr-16 hover:underline hover:bg-transparent font-oswald hover:text-brand-orange focus:text-brand-orange">
-                    Shops
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="md:-translate-x-4/5">
-                    <div className="z-50 p-4 w-60 rounded-xl font-oswald text-brand-orange md:w-[500px]">
-                      <ul className="grid gap-6 md:grid-cols-2">
-                        <ListItem
-                          href="https://store.gitchegumi.com/"
-                          target="_blank"
-                          title="Gitchegumi Store"
-                          className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                        >
-                          <span className="hidden md:block">
-                            Check out the Gitchegumi Merch Store!
-                          </span>
-                        </ListItem>
-                        <ListItem
-                          href="https://www.etsy.com/shop/GitchPrints"
-                          target="_blank"
-                          title="Etsy Store"
-                          className="mx-2 hover:bg-brand-blue/30 hover:text-brand-orange"
-                        >
-                          <span className="hidden md:block">
-                            Check out the GitchPrints Etsy Store!
-                          </span>
-                        </ListItem>
-                      </ul>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-          <div className="hidden md:flex md:flex-1" />
-        </nav>
-      </div>
-    </>
+            Gitchegumi Media
+          </span>
+        </Link>
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation"
+          aria-expanded={menuOpen}
+          style={{ background: "none", border: "none", cursor: "pointer", color: "#f0f0f0", padding: "4px", lineHeight: 0 }}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            {menuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
+      </nav>
+
+      {/* Mobile dropdown */}
+      {menuOpen && (
+        <div
+          className="md:hidden"
+          style={{
+            marginTop: "8px",
+            padding: "10px",
+            borderRadius: "12px",
+            background: "#0a0a0a",
+            border: "1px solid rgba(255,255,255,0.07)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+          }}
+        >
+          {NAV_LINKS.map((link) => {
+            const active = isActive(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  fontFamily: "Oswald, sans-serif",
+                  fontWeight: 500,
+                  fontSize: "0.8rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: active ? "#161616" : "#f0f0f0",
+                  background: active ? "#fca311" : "rgba(255,255,255,0.04)",
+                  textDecoration: "none",
+                  padding: "10px 16px",
+                  borderRadius: "8px",
+                }}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
-
-const ListItem = React.forwardRef<
-  React.ComponentRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, target, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none rounded-md p-3 leading-none no-underline             outline-none transition-colors hover:bg-accent             hover:text-accent-foreground focus:text-accent-foreground",
-            className,
-          )}
-          target={target}
-          rel={target === "_blank" ? "noopener noreferrer" : undefined}
-          {...props}
-        >
-          <div className="mb-1 text-base font-medium leading-none">{title}</div>
-          <p className="text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
-ListItem.displayName = "ListItem";
