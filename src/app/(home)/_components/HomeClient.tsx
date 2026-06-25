@@ -1104,19 +1104,6 @@ export default function HomeClient({ blogPosts }: { blogPosts: GhostPost[] }) {
             )}
           </div>
         </div>
-        <Link href="/blog" className="headerCta">
-          Start here
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M7 17L17 7M17 7H7M17 7V17" />
-          </svg>
-        </Link>
       </header>
 
       {/* ── DESKTOP ROLLODEX ── */}

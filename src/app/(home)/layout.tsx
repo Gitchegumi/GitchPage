@@ -1,21 +1,8 @@
 import type { Metadata } from "next";
-import { Oswald, Roboto_Serif } from "next/font/google";
-import Script from "next/script";
 import "../globals.css";
 import "./home.css";
 
-const oswald = Oswald({
-  variable: "--font-oswald",
-  subsets: ["latin"],
-});
-
-const robotoSerif = Roboto_Serif({
-  variable: "--font-roboto-serif",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.gitchegumi.com"),
   title: "Gitchegumi Media — Army Vet · Technologist · Creator",
   description:
     "Mathew Lindholm — Army veteran, Blackhawk pilot, technologist, voice actor, content creator, and unapologetic nerd. Building tools, telling stories, and rolling dice.",
@@ -48,27 +35,5 @@ export default function HomeLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${oswald.variable} ${robotoSerif.variable} antialiased`}
-        suppressHydrationWarning
-      >
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-TH478GZSDH"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-TH478GZSDH');
-          `}
-        </Script>
-        {children}
-      </body>
-    </html>
-  );
+  return <>{children}</>;
 }

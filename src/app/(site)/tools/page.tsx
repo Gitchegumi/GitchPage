@@ -1,10 +1,17 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Tools | Gitchegumi Media",
+  description:
+    "Financial tools, trading utilities, and mini-apps built by Gitchegumi. DebtPipe, SpendPipe, AccountPipe, TrakPipe, QuantPipe.",
+};
 
 type ToolDef = {
   name: string;
   description: string;
   href: string;
-  status: string;
+  status: "active" | "coming_soon";
   external?: boolean;
 };
 
@@ -19,14 +26,14 @@ const finpipeTools: ToolDef[] = [
   {
     name: "SpendPipe",
     description:
-      "Monthly budgeting - track income, expenses, and cash flow. Includes template download and Excel import.",
+      "Monthly budgeting — track income, expenses, and cash flow. Includes template download and Excel import.",
     href: "/budget",
     status: "active",
   },
   {
     name: "AccountPipe",
     description:
-      "Manage all your accounts in one place - checking, savings, credit cards, investments. Integrates with DebtPipe and SpendPipe.",
+      "Manage all your accounts in one place — checking, savings, credit cards, investments. Integrates with DebtPipe and SpendPipe.",
     href: "/accountpipe",
     status: "active",
   },
@@ -50,40 +57,49 @@ const tradingTools: ToolDef[] = [
   },
 ];
 
+function StatusBadge({ status }: { status: ToolDef["status"] }) {
+  if (status === "active") {
+    return (
+      <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: "9999px", fontFamily: "Oswald, sans-serif", fontWeight: 600, fontSize: "0.6rem", letterSpacing: "0.14em", textTransform: "uppercase", background: "rgba(175,224,206,0.14)", color: "#afe0ce", border: "1px solid rgba(175,224,206,0.25)", whiteSpace: "nowrap" }}>
+        Active
+      </span>
+    );
+  }
+  return (
+    <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: "9999px", fontFamily: "Oswald, sans-serif", fontWeight: 600, fontSize: "0.6rem", letterSpacing: "0.14em", textTransform: "uppercase", background: "rgba(252,163,17,0.12)", color: "#fca311", border: "1px solid rgba(252,163,17,0.22)", whiteSpace: "nowrap" }}>
+      Coming Soon
+    </span>
+  );
+}
+
 function ToolCard({ tool }: { tool: ToolDef }) {
   return (
-    <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-gray-600 transition-colors flex flex-col h-full">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-2xl font-semibold text-white">{tool.name}</h3>
-        {tool.status === "active" ? (
-          <span className="px-2 py-1 text-xs font-medium bg-green-900 text-green-300 rounded-full whitespace-nowrap ml-2">
-            Active
-          </span>
-        ) : (
-          <span className="px-2 py-1 text-xs font-medium bg-yellow-900 text-yellow-300 rounded-full whitespace-nowrap ml-2">
-            Coming Soon
-          </span>
-        )}
+    <div
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.1)",
+        borderRadius: "16px",
+        padding: "24px 26px",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        transition: "border-color 0.2s",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "10px", gap: "10px" }}>
+        <h3 style={{ fontFamily: "Oswald, sans-serif", fontWeight: 700, fontSize: "1.4rem", color: "#f0f0f0", margin: 0 }}>{tool.name}</h3>
+        <StatusBadge status={tool.status} />
       </div>
-      <p className="text-gray-400 mb-4 flex-grow">{tool.description}</p>
+      <p style={{ fontFamily: "'Roboto Serif', serif", fontSize: "0.9rem", lineHeight: 1.62, color: "#9aa3a6", flexGrow: 1, margin: "0 0 18px" }}>{tool.description}</p>
+
       {tool.status === "active" ? (
         <Link
           href={tool.href}
-          className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors mt-auto"
+          style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "Oswald, sans-serif", fontWeight: 600, fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#fca311", textDecoration: "none" }}
         >
           Try it now
-          <svg
-            className="ml-1 w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-            />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
         </Link>
       ) : tool.external ? (
@@ -91,45 +107,15 @@ function ToolCard({ tool }: { tool: ToolDef }) {
           href={tool.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors mt-auto"
+          style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "Oswald, sans-serif", fontWeight: 600, fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#4166f5", textDecoration: "none" }}
         >
-          <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 24 24">
-            <path
-              fillRule="evenodd"
-              d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-              clipRule="evenodd"
-            />
-          </svg>
           View on GitHub
-          <svg
-            className="ml-1 w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-            />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
         </a>
       ) : (
-        <span className="inline-flex items-center text-gray-500 mt-auto">
-          <svg
-            className="mr-1 w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "Oswald, sans-serif", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)" }}>
           Coming soon
         </span>
       )}
@@ -137,28 +123,54 @@ function ToolCard({ tool }: { tool: ToolDef }) {
   );
 }
 
+function SectionLabel({ text, color }: { text: string; color: string }) {
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "4px 14px",
+        borderRadius: "8px",
+        fontFamily: "Oswald, sans-serif",
+        fontWeight: 700,
+        fontSize: "0.65rem",
+        letterSpacing: "0.22em",
+        textTransform: "uppercase",
+        background: color,
+        color: "#0a0a0a",
+        marginRight: "14px",
+        flexShrink: 0,
+      }}
+    >
+      {text}
+    </span>
+  );
+}
+
 export default function ToolsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-          Tools Hub
-        </h1>
-        <p className="text-gray-400 mb-8">
-          A collection of mini-apps and utilities to help with your workflow.
-        </p>
+    <div style={{ background: "radial-gradient(120% 140% at 0% 0%, rgba(65,102,245,0.08), transparent 40%), radial-gradient(100% 120% at 100% 100%, rgba(252,163,17,0.06), transparent 40%), #0a0a0a", color: "#f0f0f0", minHeight: "100vh" }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "3rem 2.5rem 3rem" }}>
+
+        {/* Header */}
+        <div style={{ marginBottom: "48px" }}>
+          <div style={{ fontFamily: "Oswald, sans-serif", fontWeight: 600, fontSize: "0.7rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#f0f0f0", opacity: 0.45, marginBottom: "18px" }}>
+            Build · Tools Hub
+          </div>
+          <h1 style={{ fontFamily: "'Roboto Serif', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.05, color: "#f0f0f0", margin: "0 0 14px" }}>
+            Tools
+          </h1>
+          <p style={{ fontFamily: "'Roboto Serif', serif", fontSize: "1rem", lineHeight: 1.6, color: "#9aa3a6", margin: 0, maxWidth: "36rem" }}>
+            A collection of mini-apps and utilities — built to solve real problems I run into.
+          </p>
+        </div>
 
         {/* FinPipe Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
-            <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-gray-900 px-3 py-1 rounded-lg mr-3 text-sm font-bold">
-              FinPipe
-            </span>
-            <span className="text-gray-400 text-lg font-normal">
-              Financial Tools
-            </span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section style={{ marginBottom: "48px" }}>
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "24px" }}>
+            <SectionLabel text="FinPipe" color="#afe0ce" />
+            <span style={{ fontFamily: "'Roboto Serif', serif", fontSize: "1.1rem", color: "#9aa3a6" }}>Financial Tools</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {finpipeTools.map((tool) => (
               <ToolCard key={tool.name} tool={tool} />
             ))}
@@ -166,16 +178,12 @@ export default function ToolsPage() {
         </section>
 
         {/* Trading Tools Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
-            <span className="bg-gradient-to-r from-blue-500 to-cyan-400 text-gray-900 px-3 py-1 rounded-lg mr-3 text-sm font-bold">
-              Quant
-            </span>
-            <span className="text-gray-400 text-lg font-normal">
-              Trading Tools
-            </span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section style={{ marginBottom: "48px" }}>
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "24px" }}>
+            <SectionLabel text="Quant" color="#4166f5" />
+            <span style={{ fontFamily: "'Roboto Serif', serif", fontSize: "1.1rem", color: "#9aa3a6" }}>Trading Tools</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {tradingTools.map((tool) => (
               <ToolCard key={tool.name} tool={tool} />
             ))}
