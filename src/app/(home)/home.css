@@ -951,6 +951,13 @@
     background: var(--blade-accent);
     opacity: 0.8;
   }
+  /* The voice blade is the most content-dense panel: title, player, studio
+     image, two demo cards, and the CTA. Top-align it (instead of centering)
+     so the "Start a Voiceover Project" button stays inside the snap viewport
+     and remains tappable rather than overflowing into the next panel. */
+  .mobileScrollContainer .mobileBlade:first-child {
+    justify-content: flex-start;
+  }
   .bladeLabel {
     font-size: 0.7rem;
     text-transform: uppercase;
@@ -971,8 +978,14 @@
     border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.04);
-    padding: 1.25rem;
-    margin-bottom: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  /* Cap the decorative studio image so the dense voice blade fits one
+     viewport and doesn't push the CTA past the scroll-snap boundary. */
+  .mobileVoicePlayer img {
+    max-height: 130px;
+    object-fit: cover;
   }
   .mobileVoicePlayer .playerTop {
     display: flex;
@@ -1009,7 +1022,7 @@
     font-size: 0.85rem;
     line-height: 1.6;
     color: rgba(240, 240, 240, 0.6);
-    margin: 0.75rem 0;
+    margin: 0.5rem 0;
   }
   .mobileWaveform {
     height: 24px;
@@ -1069,13 +1082,33 @@
     cursor: pointer;
     margin-left: auto;
   }
+  .mobileDemoCount {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(240, 240, 240, 0.45);
+    margin-bottom: 0.5rem;
+  }
+  /* Horizontal swipe carousel: one demo fills the width, the next peeks at
+     the right edge to signal there's more. Adding demos to the DEMOS array
+     just adds slides — no extra vertical space is consumed. */
   .mobileDemoList {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.625rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.875rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .mobileDemoList::-webkit-scrollbar {
+    display: none;
   }
   .mobileDemoItem {
+    flex: 0 0 88%;
+    min-width: 0;
+    scroll-snap-align: start;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.04);

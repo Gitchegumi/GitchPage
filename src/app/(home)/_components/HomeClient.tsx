@@ -607,8 +607,23 @@ function MobileVoice() {
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [visibleDemo, setVisibleDemo] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const demoListRef = useRef<HTMLDivElement>(null);
   const selected = DEMOS[selectedIdx];
+
+  /* Track which carousel slide is in view for the "Demo n of X" counter.
+     Step is the offset between two sibling cards (card width + gap), so it
+     stays correct regardless of how many demos exist. */
+  const handleDemoScroll = () => {
+    const el = demoListRef.current;
+    if (!el || el.children.length === 0) return;
+    const first = el.children[0] as HTMLElement;
+    const second = el.children[1] as HTMLElement | undefined;
+    const step = second ? second.offsetLeft - first.offsetLeft : el.clientWidth;
+    const idx = step > 0 ? Math.round(el.scrollLeft / step) : 0;
+    setVisibleDemo(Math.max(0, Math.min(DEMOS.length - 1, idx)));
+  };
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -717,7 +732,14 @@ function MobileVoice() {
           <div className="progressFill" style={{ width: `${progress}%` }} />
         </div>
       </div>
-      <div className="mobileDemoList">
+      <div className="mobileDemoCount">
+        Demo {visibleDemo + 1} of {DEMOS.length}
+      </div>
+      <div
+        className="mobileDemoList"
+        ref={demoListRef}
+        onScroll={handleDemoScroll}
+      >
         {DEMOS.map((demo, idx) => (
           <div
             key={demo.id}
