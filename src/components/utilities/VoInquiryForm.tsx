@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useId, useRef, useState } from "react";
+import React, { useCallback, useId, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -61,13 +61,15 @@ interface FormErrors {
 
 type SubmitStatus = "idle" | "submitting" | "success" | "error";
 
+const VO_FORM_ENDPOINT = process.env.NEXT_PUBLIC_VO_FORM_ENDPOINT;
+
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export function VoInquiryForm() {
-  const loadedAtRef = useRef<number>(Date.now());
   const honeypotId = useId();
+  const formLoadedAt = useRef(Date.now());
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [errors, setErrors] = useState<FormErrors>({});
   const [data, setData] = useState<FormData>({
@@ -126,18 +128,35 @@ export function VoInquiryForm() {
 
       const honeypot = (
         e.currentTarget.elements.namedItem("website") as HTMLInputElement | null
-      )?.value;
+      )?.value ?? "";
+
+      if (!VO_FORM_ENDPOINT) {
+        setErrors({
+          _form: "The inquiry form is not configured. Please contact me by email.",
+        });
+        setStatus("error");
+        return;
+      }
 
       const payload = {
-        ...data,
-        honeypot: honeypot || undefined,
-        formLoadedAt: loadedAtRef.current,
+        source: "vo-inquiry-form",
+        name: data.name.trim(),
+        email: data.email.trim(),
+        company: data.company.trim(),
+        projectType: data.projectType,
+        budgetRange: data.budgetRange,
+        timeline: data.timeline,
+        message: data.message.trim(),
+        consent: data.consent,
+        website: honeypot,
+        formLoadedAt: formLoadedAt.current,
+        submittedAt: new Date().toISOString(),
       };
 
       try {
-        const res = await fetch("/api/vo-lead", {
+        const res = await fetch(VO_FORM_ENDPOINT, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
           body: JSON.stringify(payload),
         });
 
@@ -153,7 +172,6 @@ export function VoInquiryForm() {
             message: "",
             consent: false,
           });
-          loadedAtRef.current = Date.now();
         } else {
           const body = await res.json().catch(() => ({}));
           setErrors({ _form: body.message || "Something went wrong. Please try again." });
@@ -219,16 +237,16 @@ export function VoInquiryForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {/* Honeypot */}
-        <div className="hidden" aria-hidden="true">
+        <div
+          className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden"
+          aria-hidden="true"
+        >
           <input
             id={honeypotId}
             name="website"
             type="text"
             tabIndex={-1}
             autoComplete="off"
-            value=""
-            readOnly
-            onChange={() => {}}
           />
         </div>
 
