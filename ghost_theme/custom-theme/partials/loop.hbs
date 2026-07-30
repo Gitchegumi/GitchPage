@@ -1,0 +1,50 @@
+<article class="gm-bento-card">
+    <a class="gm-bento-card-link" href="{{url}}">
+
+        {{!-- Background image area --}}
+        <div class="gm-bento-card-bg">
+            {{#if feature_image}}
+                <img
+                    class="gm-bento-card-image"
+                    srcset="{{img_url feature_image size="s"}} 400w,
+                            {{img_url feature_image size="m"}} 720w,
+                            {{img_url feature_image size="l"}} 960w"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    src="{{img_url feature_image size="m"}}"
+                    alt="{{title}}"
+                    loading="lazy"
+                >
+            {{else}}
+                <div class="gm-bento-card-no-image"></div>
+            {{/if}}
+            <span class="gm-bento-card-date-badge">
+                <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="DD MMM YYYY"}}</time>
+            </span>
+        </div>
+
+        {{!-- Content --}}
+        <div class="gm-bento-card-content">
+            <div class="gm-bento-card-body">
+                {{#primary_tag}}
+                    <span class="gm-bento-card-tag">{{name}}</span>
+                {{/primary_tag}}
+                <h2 class="gm-bento-card-title">{{title}}</h2>
+                {{#if excerpt}}
+                    <p class="gm-bento-card-desc">{{excerpt words="20"}}</p>
+                {{/if}}
+            </div>
+
+            {{!-- CTA slides up on hover --}}
+            <div class="gm-bento-card-cta" aria-hidden="true">
+                <span class="gm-bento-card-cta-text">Read More</span>
+                <svg class="gm-bento-card-cta-arrow" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+        </div>
+
+        {{!-- Subtle hover overlay --}}
+        <div class="gm-bento-card-overlay" aria-hidden="true"></div>
+
+    </a>
+</article>

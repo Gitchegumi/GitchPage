@@ -28,6 +28,12 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    environment: github-pages
+    env:
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      NEXT_PUBLIC_TWENTY_VO_WEBHOOK_URL: ${{ vars.NEXT_PUBLIC_TWENTY_VO_WEBHOOK_URL }}
+      GHOST_URL: ${{ vars.GHOST_URL }}
+      GHOST_CONTENT_API_KEY: ${{ vars.GHOST_CONTENT_API_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,26 +61,32 @@ jobs:
           cache: ${{ steps.detect-package-manager.outputs.manager }}
           cache-dependency-path: package-lock.json
       #      - name: Setup Pages
-#        uses: actions/configure-pages@v5
-#        with:
-#          # Automatically inject basePath in your Next.js configuration file and disable
-#          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-#          #
-#          # You may remove this line if you want to manage the configuration yourself.
-#          static_site_generator: next
+      #        uses: actions/configure-pages@v5
+      #        with:
+      #          # Automatically inject basePath in your Next.js configuration file and disable
+      #          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
+      #          #
+      #          # You may remove this line if you want to manage the configuration yourself.
+      #          static_site_generator: next
       - name: Restore cache
         uses: actions/cache@v4
         with:
           path: |
             .next/cache
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          # Cache bust on manual runs or daily to ensure fresh Ghost data
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}-${{ github.run_id }}
           # If source files changed but packages didn't, rebuild from a prior cache.
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
         working-directory: .
+      - name: Verify voiceover webhook configuration
+        run: |
+          if [ -z "$NEXT_PUBLIC_TWENTY_VO_WEBHOOK_URL" ]; then
+            echo "NEXT_PUBLIC_TWENTY_VO_WEBHOOK_URL is not configured."
+            exit 1
+          fi
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
         working-directory: .

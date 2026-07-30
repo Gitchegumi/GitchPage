@@ -1,0 +1,60 @@
+{{!< default}}
+
+{{#post}}
+<main>
+    <article class="gm-article-wrapper">
+
+        <!-- Article header -->
+        <header>
+            <div class="gm-article-meta">
+                {{authors}}
+                {{#if primary_tag}}
+                    in <a class="gm-article-tag" href="{{primary_tag.url}}">{{primary_tag.name}}</a>
+                {{/if}}
+                &mdash;
+                <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="DD MMM YYYY"}}</time>
+            </div>
+
+            <h1 class="gm-article-title">{{title}}</h1>
+
+            {{#if custom_excerpt}}
+                <p class="gm-article-excerpt">{{custom_excerpt}}</p>
+            {{/if}}
+
+            {{#if feature_image}}
+                <img
+                    class="gm-article-feature-image"
+                    src="{{img_url feature_image size="xl"}}"
+                    srcset="{{img_url feature_image size="m"}} 720w,
+                            {{img_url feature_image size="l"}} 960w,
+                            {{img_url feature_image size="xl"}} 1200w"
+                    sizes="(max-width: 48rem) 100vw, 48rem"
+                    alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                >
+                {{#if feature_image_caption}}
+                    <p style="font-size:0.8rem;text-align:center;color:rgba(240,240,240,0.5);margin-top:-1.5rem;margin-bottom:2rem;">
+                        {{{feature_image_caption}}}
+                    </p>
+                {{/if}}
+            {{/if}}
+        </header>
+
+        <!-- Article body -->
+        <div class="gm-article-content">
+            {{content}}
+        </div>
+
+    </article>
+
+    <!-- Prev / Next navigation -->
+    {{> "post-navigation"}}
+
+    <!-- Comments -->
+    {{#if comments}}
+        <div style="max-width:48rem;margin:0 auto;padding:0 1rem 3rem;">
+            {{comments}}
+        </div>
+    {{/if}}
+
+</main>
+{{/post}}

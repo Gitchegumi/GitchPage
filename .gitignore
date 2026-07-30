@@ -70,11 +70,12 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.template.json
+.claude/*.json
 
 ### Generated Assets (optional – uncomment if regenerated each build) ###
-# public/sitemap.xml
-# public/sitemap-*.xml
-# public/robots.txt
+public/sitemap.xml
+public/sitemap-*.xml
+public/robots.txt
 
 ### Project Docs (ignored intentionally) ###
 extra-documentation/
@@ -90,9 +91,11 @@ extra-documentation/
 
 ### Workspace / Project Files ###
 GitchPage.code-workspace
+example-theme/
+*.zip
 
 ### Design / Binary Sources ###
-Photoshop Template/
+Feature Image Template/
 
 ### Media processing caches (if added later) ###
 # .cache/

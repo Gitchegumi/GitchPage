@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Oswald, Roboto_Serif } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const oswald = Oswald({
   variable: "--font-oswald",
@@ -32,7 +30,7 @@ export const metadata: Metadata = {
         url: "/images/Mascot.png",
         width: 1200,
         height: 630,
-        alt: "Gitchegumi Mascot"
+        alt: "Gitchegumi Mascot",
       },
     ],
     type: "website",
@@ -53,7 +51,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${oswald.variable} ${robotoSerif.variable} antialiased bg-brand-dark`}
+        className={`${oswald.variable} ${robotoSerif.variable} antialiased bg-[#0a0a0a]`}
+        suppressHydrationWarning
       >
         <Script
           async
@@ -68,9 +67,7 @@ export default function RootLayout({
             gtag('config', 'G-TH478GZSDH');
           `}
         </Script>
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

@@ -1,0 +1,515 @@
+"use client";
+
+import { useState, useEffect, useCallback, useMemo } from "react";
+import {
+  BudgetData,
+  IncomeItem,
+  DebtItem,
+  BillItem,
+  getWeeksInMonth,
+  computeMonthlyAmount,
+  allocateIncomeToHalves,
+  allocateExpensesToHalves,
+  type IncomeFrequency,
+  DEBTPIPE_TO_BUDGET_KEY,
+} from "./types";
+import { loadAccounts, getAccountCurrentBalance, Account } from "@/lib/storage";
+import IncomeSection from "./IncomeSection";
+import DebtSection from "./DebtSection";
+import BillsSection from "./BillsSection";
+import SummaryCards from "./SummaryCards";
+import TotalBudgetTracker from "./TotalBudgetTracker";
+import {
+  Download,
+  Upload,
+  FileText,
+  Table,
+  FilePieChart,
+  Settings2,
+} from "lucide-react";
+import {
+  exportToCSV,
+  exportToExcel,
+  exportToPDF,
+  downloadTemplate,
+  importFromCSV,
+} from "./utils/export";
+
+const STORAGE_KEY = "gitchpage-budget-data";
+
+function currentMonth(): string {
+  return new Date().toISOString().slice(0, 7);
+}
+
+const DEFAULT_BUDGET: BudgetData = {
+  month: currentMonth(),
+  incomes: [],
+  debts: [],
+  bills: [],
+  customDebtCategories: [],
+  customBillCategories: [],
+};
+
+export default function BudgetTool() {
+  // 1. Initialize with default — NO localStorage read during SSR
+  const [budget, setBudget] = useState<BudgetData>(DEFAULT_BUDGET);
+  const [hydrated, setHydrated] = useState(false);
+  const [showDataMenu, setShowDataMenu] = useState(false);
+
+  // 2. Hydrate from localStorage on mount (client only)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved) as BudgetData;
+        // Backward compat — ensure all fields exist
+        if (!parsed.month) parsed.month = currentMonth();
+        if (!parsed.incomes) parsed.incomes = [];
+        if (!parsed.debts) parsed.debts = [];
+        if (!parsed.bills) parsed.bills = [];
+        if (!parsed.customDebtCategories) parsed.customDebtCategories = [];
+        if (!parsed.customBillCategories) parsed.customBillCategories = [];
+        // Normalize old income items that lack amounts/frequency/payDate
+        const weeks = getWeeksInMonth(
+          parseInt(parsed.month.split("-")[0], 10),
+          parseInt(parsed.month.split("-")[1], 10),
+        );
+        parsed.incomes = parsed.incomes.map((inc) => {
+          const raw = inc as unknown as Record<string, unknown>;
+          const amounts = (raw.amounts as number[]) ?? [
+            (raw.monthlyAmount as number) || 0,
+          ];
+          const frequency = (inc.frequency as IncomeFrequency) || "monthly";
+          return {
+            ...inc,
+            frequency,
+            amounts,
+            monthlyAmount: computeMonthlyAmount(frequency, amounts, weeks),
+            payDate: (raw.payDate as number | null) ?? null,
+          } as IncomeItem;
+        });
+        // Normalize debts (add dueBy, interestRate if missing)
+        parsed.debts = parsed.debts.map((d) => {
+          const raw = d as unknown as Record<string, unknown>;
+          const rawRate = raw.interestRate as number | null;
+          return {
+            ...d,
+            dueBy: d.dueBy ?? null,
+            interestRate:
+              rawRate != null ? parseFloat(rawRate.toFixed(4)) : null,
+            availableCredit: (raw.availableCredit as number | null) ?? null,
+            paid: raw.paid === true,
+          };
+        });
+        // Normalize bills (add dueBy, paid, remove old fields if present)
+        parsed.bills = parsed.bills.map((b) => {
+          const raw = b as unknown as Record<string, unknown>;
+          return {
+            id: b.id,
+            name: b.name,
+            category: b.category || "",
+            monthlyAmount: b.monthlyAmount || 0,
+            dueBy: (raw.dueBy as number | null) ?? null,
+            paid: raw.paid === true,
+          } as BillItem;
+        });
+
+        // --- ACCOUNTPIPE SYNC LOGIC ---
+        try {
+          const accData = loadAccounts();
+          if (accData && accData.accounts.length > 0) {
+            const hasMatches = { debts: false, bills: false };
+
+            // Sync Debts
+            parsed.debts = parsed.debts.map((debt) => {
+              const matchedAcc = accData.accounts.find(
+                (a) =>
+                  a.mainCategory === "debt" &&
+                  a.name.toLowerCase() === debt.name.toLowerCase(),
+              );
+              if (matchedAcc) {
+                hasMatches.debts = true;
+                return {
+                  ...debt,
+                  balance: getAccountCurrentBalance(matchedAcc.id) ?? null,
+                  ...(matchedAcc.dueDate !== undefined
+                    ? { dueDay: matchedAcc.dueDate }
+                    : {}),
+                };
+              }
+              return debt;
+            });
+
+            // Sync Bills
+            parsed.bills = parsed.bills.map((bill) => {
+              const matchedAcc = accData.accounts.find(
+                (a) =>
+                  a.mainCategory === "bill" &&
+                  a.name.toLowerCase() === bill.name.toLowerCase(),
+              );
+              if (matchedAcc) {
+                hasMatches.bills = true;
+                return {
+                  ...bill,
+                  ...(matchedAcc.monthlyAmount !== undefined
+                    ? { monthlyAmount: matchedAcc.monthlyAmount }
+                    : {}),
+                  ...(matchedAcc.dueDate !== undefined
+                    ? { dueBy: matchedAcc.dueDate }
+                    : {}),
+                };
+              }
+              return bill;
+            });
+
+            // If we synced anything, we might want to log it or just silently benefit from it
+          }
+        } catch (e) {
+          console.error("Failed to sync with AccountPipe during hydration", e);
+        }
+
+        setBudget(parsed);
+      }
+    } catch {
+      // Corrupted data — stick with defaults
+    }
+
+    // Auto-import any pending DebtPipe snowball data (written by DebtPipe before opening this tab)
+    try {
+      const pendingRaw = localStorage.getItem(DEBTPIPE_TO_BUDGET_KEY);
+      if (pendingRaw) {
+        const entries = JSON.parse(pendingRaw) as Array<{
+          name: string;
+          minPayment: number;
+          balance?: number;
+          interestRate?: number;
+          dueDay?: number;
+          creditLimit?: number;
+        }>;
+        if (Array.isArray(entries) && entries.length > 0) {
+          setBudget((prev) => {
+            let matched = 0;
+            const updatedDebts = prev.debts.map((d) => {
+              const entry = entries.find(
+                (e) => e.name.toLowerCase() === d.name.toLowerCase(),
+              );
+              if (entry) {
+                matched++;
+                return { ...d, monthlyAmount: entry.minPayment };
+              }
+              return d;
+            });
+            const existingNames = new Set(
+              prev.debts.map((d) => d.name.toLowerCase()),
+            );
+            const newItems: DebtItem[] = entries
+              .filter((e) => !existingNames.has(e.name.toLowerCase()))
+              .map((e) => {
+                const hasCreditLimit = (e.creditLimit ?? 0) > 0;
+                return {
+                  id: crypto.randomUUID(),
+                  name: e.name,
+                  category: hasCreditLimit ? "Credit Card" : "",
+                  monthlyAmount: e.minPayment,
+                  actual: null,
+                  balance: e.balance ?? null,
+                  interestRate:
+                    e.interestRate != null
+                      ? parseFloat(e.interestRate.toFixed(4))
+                      : null,
+                  dueBy: e.dueDay ?? null,
+                  availableCredit: hasCreditLimit ? e.creditLimit! : null,
+                  paid: false,
+                };
+              });
+            void matched; // used for future status messaging
+            return { ...prev, debts: [...updatedDebts, ...newItems] };
+          });
+          localStorage.removeItem(DEBTPIPE_TO_BUDGET_KEY);
+        }
+      }
+    } catch {
+      // Ignore pending import errors
+    }
+
+    setHydrated(true);
+  }, []);
+
+  // 3. Persist to localStorage on every change (after hydration)
+  useEffect(() => {
+    if (!hydrated) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(budget));
+  }, [budget, hydrated]);
+
+  // Derived values
+  const [year, monthNum] = useMemo(() => {
+    const parts = budget.month.split("-");
+    return [parseInt(parts[0], 10), parseInt(parts[1], 10)];
+  }, [budget.month]);
+
+  const weeksInMonth = useMemo(
+    () => getWeeksInMonth(year, monthNum),
+    [year, monthNum],
+  );
+
+  // Recalculate income monthlyAmounts when month changes
+  const recalcIncomes = useCallback(
+    (incomes: IncomeItem[], weeks: number): IncomeItem[] =>
+      incomes.map((inc) => ({
+        ...inc,
+        monthlyAmount: computeMonthlyAmount(
+          inc.frequency,
+          inc.amounts ?? [0],
+          weeks,
+        ),
+      })),
+    [],
+  );
+
+  const handleMonthChange = (newMonth: string) => {
+    const parts = newMonth.split("-");
+    const newYear = parseInt(parts[0], 10);
+    const newMonthNum = parseInt(parts[1], 10);
+    const newWeeks = getWeeksInMonth(newYear, newMonthNum);
+    setBudget((prev) => ({
+      ...prev,
+      month: newMonth,
+      incomes: recalcIncomes(prev.incomes, newWeeks),
+    }));
+  };
+
+  const handleIncomesChange = (incomes: IncomeItem[]) => {
+    setBudget((prev) => ({ ...prev, incomes }));
+  };
+
+  const handleDebtsChange = (debts: DebtItem[]) => {
+    setBudget((prev) => ({ ...prev, debts }));
+  };
+
+  const handleBillsChange = (bills: BillItem[]) => {
+    setBudget((prev) => ({ ...prev, bills }));
+  };
+
+  const handleAddDebtCategory = (cat: string) => {
+    setBudget((prev) => ({
+      ...prev,
+      customDebtCategories: prev.customDebtCategories.includes(cat)
+        ? prev.customDebtCategories
+        : [...prev.customDebtCategories, cat],
+    }));
+  };
+
+  const handleAddBillCategory = (cat: string) => {
+    setBudget((prev) => ({
+      ...prev,
+      customBillCategories: prev.customBillCategories.includes(cat)
+        ? prev.customBillCategories
+        : [...prev.customBillCategories, cat],
+    }));
+  };
+
+  // Summary calculations
+  const totalIncome = budget.incomes.reduce(
+    (sum, i) => sum + i.monthlyAmount,
+    0,
+  );
+  const totalBills = budget.bills.reduce((sum, b) => sum + b.monthlyAmount, 0);
+  const totalDebtPayments = budget.debts.reduce(
+    (sum, d) => sum + d.monthlyAmount,
+    0,
+  );
+  const totalDebtBalance = budget.debts.reduce(
+    (sum, d) => sum + (d.balance ?? 0),
+    0,
+  );
+
+  // Half-month allocation
+  const incomeHalves = useMemo(
+    () => allocateIncomeToHalves(budget.incomes),
+    [budget.incomes],
+  );
+  const billHalves = useMemo(
+    () => allocateExpensesToHalves(budget.bills),
+    [budget.bills],
+  );
+  const debtHalves = useMemo(
+    () => allocateExpensesToHalves(budget.debts),
+    [budget.debts],
+  );
+
+  const firstHalf = {
+    income: incomeHalves.firstHalf,
+    bills: billHalves.firstHalf,
+    debts: debtHalves.firstHalf,
+  };
+  const secondHalf = {
+    income: incomeHalves.secondHalf,
+    bills: billHalves.secondHalf,
+    debts: debtHalves.secondHalf,
+  };
+
+  // Month selector helpers
+  const monthLabel = new Date(year, monthNum - 1).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  // Don't render until hydrated to prevent flicker
+  if (!hydrated) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="h-24 bg-gray-800/50 rounded-xl" />
+        <div className="h-48 bg-gray-800/50 rounded-xl" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Month Selector */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => {
+            const d = new Date(year, monthNum - 2, 1);
+            handleMonthChange(d.toISOString().slice(0, 7));
+          }}
+          className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition"
+        >
+          ← Prev
+        </button>
+        <div className="text-lg font-semibold text-white">{monthLabel}</div>
+        <button
+          onClick={() => {
+            const d = new Date(year, monthNum, 1);
+            handleMonthChange(d.toISOString().slice(0, 7));
+          }}
+          className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition"
+        >
+          Next →
+        </button>
+
+        <div className="flex-1" />
+
+        <div className="relative">
+          <button
+            onClick={() => setShowDataMenu(!showDataMenu)}
+            className="flex items-center gap-2 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition"
+          >
+            <Settings2 className="w-4 h-4" />
+            Manage Data
+          </button>
+
+          {showDataMenu && (
+            <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden">
+              <div className="p-1 divide-y divide-gray-700">
+                <div className="py-1">
+                  <button
+                    onClick={() => {
+                      exportToCSV(budget);
+                      setShowDataMenu(false);
+                    }}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition"
+                  >
+                    <FileText className="w-4 h-4 text-blue-400" />
+                    Export CSV
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await exportToExcel(budget);
+                      setShowDataMenu(false);
+                    }}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition"
+                  >
+                    <Table className="w-4 h-4 text-green-400" />
+                    Export Excel
+                  </button>
+                  <button
+                    onClick={() => {
+                      exportToPDF(budget);
+                      setShowDataMenu(false);
+                    }}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition"
+                  >
+                    <FilePieChart className="w-4 h-4 text-red-400" />
+                    Export PDF
+                  </button>
+                </div>
+                <div className="py-1">
+                  <label className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition cursor-pointer">
+                    <Upload className="w-4 h-4 text-orange-400" />
+                    Import CSV
+                    <input
+                      type="file"
+                      accept=".csv"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          importFromCSV(file, (imported) => {
+                            setBudget((prev) => ({
+                              ...prev,
+                              ...imported,
+                            }));
+                            setShowDataMenu(false);
+                          });
+                        }
+                      }}
+                    />
+                  </label>
+                  <button
+                    onClick={() => {
+                      downloadTemplate();
+                      setShowDataMenu(false);
+                    }}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition"
+                  >
+                    <Download className="w-4 h-4 text-gray-400" />
+                    Download Template
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <span className="text-xs text-gray-500 ml-2">
+          ({weeksInMonth} weeks)
+        </span>
+      </div>
+
+      {/* Summary */}
+      <SummaryCards
+        totalIncome={totalIncome}
+        totalBills={totalBills}
+        totalDebtPayments={totalDebtPayments}
+        totalDebtBalance={totalDebtBalance}
+        firstHalf={firstHalf}
+        secondHalf={secondHalf}
+      />
+
+      {/* Total Budget Tracker */}
+      <TotalBudgetTracker debts={budget.debts} bills={budget.bills} />
+
+      {/* Sections */}
+      <IncomeSection
+        incomes={budget.incomes}
+        weeksInMonth={weeksInMonth}
+        onChange={handleIncomesChange}
+      />
+
+      <DebtSection
+        debts={budget.debts}
+        categories={budget.customDebtCategories}
+        onChange={handleDebtsChange}
+        onAddCategory={handleAddDebtCategory}
+      />
+
+      <BillsSection
+        bills={budget.bills}
+        categories={budget.customBillCategories}
+        onChange={handleBillsChange}
+        onAddCategory={handleAddBillCategory}
+      />
+    </div>
+  );
+}

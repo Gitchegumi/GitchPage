@@ -5,7 +5,8 @@
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
 ## Execution Flow (/plan command scope)
-```
+
+```text
 1. Load feature spec from Input path
    → If not found: ERROR "No feature spec at {path}"
 2. Fill Technical Context (scan for NEEDS CLARIFICATION)
@@ -49,10 +50,17 @@
 
 [Gates determined based on constitution file]
 
+Key gates from GitchPage Constitution v1.1.0:
+- **Principle II**: Change must not break static export or add unplanned dynamic routes
+- **Principle III**: Structural changes require manual a11y smoke check before merge
+- **Principle IV**: `npm run build` must pass with zero type errors; no automated test suite required
+- **Principle V**: New capability? Document rollback criteria and scaling trigger
+
 ## Project Structure
 
 ### Documentation (this feature)
-```
+
+```text
 specs/[###-feature]/
 ├── plan.md              # This file (/plan command output)
 ├── research.md          # Phase 0 output (/plan command)
@@ -63,7 +71,8 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-```
+
+```text
 # Option 1: Single project (DEFAULT)
 src/
 ├── models/
@@ -130,21 +139,17 @@ ios/ or android/
    - Validation rules from requirements
    - State transitions if applicable
 
-2. **Generate API contracts** from functional requirements:
+2. **Generate API contracts** from functional requirements (if applicable):
    - For each user action → endpoint
    - Use standard REST/GraphQL patterns
    - Output OpenAPI/GraphQL schema to `/contracts/`
+   - Skip if feature has no external-facing interfaces
 
-3. **Generate contract tests** from contracts:
-   - One test file per endpoint
-   - Assert request/response schemas
-   - Tests must fail (no implementation yet)
+3. **Define manual verification steps** → `quickstart.md`:
+   - Each user story → a numbered check step
+   - Steps must be executable by a human reviewer without code knowledge
 
-4. **Extract test scenarios** from user stories:
-   - Each story → integration test scenario
-   - Quickstart test = story validation steps
-
-5. **Update agent file incrementally** (O(1) operation):
+4. **Update agent file incrementally** (O(1) operation):
    - Run `.specify/scripts/powershell/update-agent-context.ps1 -AgentType copilot` for your AI assistant
    - If exists: Add only NEW tech from current plan
    - Preserve manual additions between markers
@@ -152,7 +157,7 @@ ios/ or android/
    - Keep under 150 lines for token efficiency
    - Output to repository root
 
-**Output**: data-model.md, /contracts/*, failing tests, quickstart.md, agent-specific file
+**Output**: data-model.md, /contracts/* (if applicable), quickstart.md, agent-specific file
 
 ## Phase 2: Task Planning Approach
 *This section describes what the /tasks command will do - DO NOT execute during /plan*
@@ -160,14 +165,12 @@ ios/ or android/
 **Task Generation Strategy**:
 - Load `.specify/templates/tasks-template.md` as base
 - Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
-- Each contract → contract test task [P]
-- Each entity → model creation task [P] 
-- Each user story → integration test task
-- Implementation tasks to make tests pass
+- Each contract → implementation task [P]
+- Each entity → model/component task [P]
+- Each user story → implementation + manual verification step
 
 **Ordering Strategy**:
-- TDD order: Tests before implementation 
-- Dependency order: Models before services before UI
+- Dependency order: Models/data before services before UI
 - Mark [P] for parallel execution (independent files)
 
 **Estimated Output**: 25-30 numbered, ordered tasks in tasks.md
@@ -179,7 +182,7 @@ ios/ or android/
 
 **Phase 3**: Task execution (/tasks command creates tasks.md)  
 **Phase 4**: Implementation (execute tasks.md following constitutional principles)  
-**Phase 5**: Validation (run tests, execute quickstart.md, performance validation)
+**Phase 5**: Validation (execute quickstart.md manual checks, build gate, a11y smoke check)
 
 ## Complexity Tracking
 *Fill ONLY if Constitution Check has violations that must be justified*

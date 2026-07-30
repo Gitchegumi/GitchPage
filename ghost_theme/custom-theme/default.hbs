@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="{{@site.locale}}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{meta_title}}</title>
+    {{ghost_head}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto+Serif:ital,opsz,wght@0,8..144,300;0,8..144,400;0,8..144,500;0,8..144,700;1,8..144,300;1,8..144,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{asset "css/screen.css"}}">
+</head>
+
+<body class="{{body_class}}">
+<div class="gm-site">
+
+    <!-- ================================================
+         HEADER
+         ================================================ -->
+    <div class="gm-header-wrapper">
+        <nav class="gm-nav" role="navigation" aria-label="Main navigation">
+
+            <!-- Brand (left) -->
+            <div class="gm-nav-brand">
+                <a href="https://www.gitchegumi.com/" aria-label="Gitchegumi Media home">
+                    <img
+                        class="gm-nav-logo"
+                        src="https://www.gitchegumi.com/images/Mascot.png"
+                        alt="Gitchegumi Media mascot"
+                        width="42"
+                        height="42"
+                    >
+                </a>
+                <div class="gm-nav-brand-text">
+                    <span class="gm-nav-brand-name">Gitchegumi Media</span>
+                    <span class="gm-nav-brand-tagline">Army Vet · Technologist · Creator</span>
+                </div>
+
+                <!-- Mobile burger -->
+                <button class="gm-burger" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Centered pill nav -->
+            <div class="gm-nav-menu" id="gm-nav-menu">
+                <div class="gm-pill-nav">
+                    <a class="gm-pill-link gm-pill-link--active" href="/">Blog</a>
+                    <a class="gm-pill-link" href="https://www.gitchegumi.com/voice-over">Voice Over</a>
+                    <a class="gm-pill-link" href="https://www.gitchegumi.com/tools">Tools</a>
+                    <a class="gm-pill-link" href="https://www.gitchegumi.com/portfolio">Portfolio</a>
+                    <a class="gm-pill-link" href="https://www.gitchegumi.com/about">About</a>
+                </div>
+            </div>
+
+            <!-- Ghost required: search + member portal (right) -->
+            <div class="gm-nav-actions">
+                <button class="gm-search-btn" aria-label="Search this site" data-ghost-search>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                    </svg>
+                </button>
+                <div class="gm-nav-members">
+                    {{#if @member}}
+                        <a href="#/portal/account" class="gm-member-link">Account</a>
+                    {{else}}
+                        <a href="#/portal/signin" class="gm-member-link">Log in</a>
+                        <a href="#/portal/signup" class="gm-member-btn">Subscribe</a>
+                    {{/if}}
+                </div>
+            </div>
+
+        </nav>
+    </div><!-- /.gm-header-wrapper -->
+
+    <!-- ================================================
+         PAGE CONTENT
+         ================================================ -->
+    <div class="gm-content">
+        {{{body}}}
+    </div>
+
+    <!-- ================================================
+         FOOTER
+         ================================================ -->
+    <footer class="gm-footer">
+        <nav class="gm-footer-nav" aria-label="Footer navigation">
+            <a class="gm-footer-nav-link" href="/">Blog</a>
+            <a class="gm-footer-nav-link" href="https://www.gitchegumi.com/voice-over">Voice Over</a>
+            <a class="gm-footer-nav-link" href="https://www.gitchegumi.com/tools">Tools</a>
+            <a class="gm-footer-nav-link" href="https://www.gitchegumi.com/portfolio">Portfolio</a>
+            <a class="gm-footer-nav-link" href="https://www.gitchegumi.com/about">About</a>
+        </nav>
+        <div class="gm-footer-socials">
+            <a class="gm-footer-social-link" href="https://twitter.com/GitchegumiGames" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">𝕏</a>
+            <a class="gm-footer-social-link" href="https://github.com/Gitchegumi" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GH</a>
+            <a class="gm-footer-social-link" href="https://discord.gg/0ivCrUa3GMaqtjkH" target="_blank" rel="noopener noreferrer" aria-label="Discord">DC</a>
+            <a class="gm-footer-social-link" href="https://ko-fi.com/gitchegumi" target="_blank" rel="noopener noreferrer" aria-label="Ko-fi">Ko</a>
+        </div>
+    </footer>
+
+</div><!-- /.gm-site -->
+
+<script src="{{asset "js/main.js"}}"></script>
+{{ghost_foot}}
+
+</body>
+</html>

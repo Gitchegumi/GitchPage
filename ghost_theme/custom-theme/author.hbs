@@ -1,0 +1,28 @@
+{{!< default}}
+
+{{#author}}
+<div class="gm-author-profile">
+    {{#if profile_image}}
+        <img class="gm-author-avatar" src="{{img_url profile_image size="s"}}" alt="{{name}}">
+    {{/if}}
+    <h1 class="gm-author-name">{{name}}</h1>
+    {{#if bio}}<p class="gm-author-bio">{{bio}}</p>{{/if}}
+    {{#if location}}<p class="gm-author-meta">{{location}}</p>{{/if}}
+    <p class="gm-author-meta">{{plural pagination.total empty="No posts" singular="% post" plural="% posts"}}</p>
+</div>
+{{/author}}
+
+<section class="gm-post-feed">
+    {{#if posts}}
+        <div class="gm-bento-grid">
+            {{#foreach posts}}
+                {{> "loop"}}
+            {{/foreach}}
+        </div>
+        {{pagination}}
+    {{else}}
+        <div class="gm-empty">
+            <h2 class="gm-empty-title">No posts yet</h2>
+        </div>
+    {{/if}}
+</section>
