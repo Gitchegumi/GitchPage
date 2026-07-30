@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useId, useState } from "react";
+import React, { useCallback, useId, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -61,7 +61,7 @@ interface FormErrors {
 
 type SubmitStatus = "idle" | "submitting" | "success" | "error";
 
-const VO_WEBHOOK_URL = process.env.NEXT_PUBLIC_TWENTY_VO_WEBHOOK_URL;
+const VO_FORM_ENDPOINT = process.env.NEXT_PUBLIC_VO_FORM_ENDPOINT;
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -69,6 +69,7 @@ function isValidEmail(email: string): boolean {
 
 export function VoInquiryForm() {
   const honeypotId = useId();
+  const formLoadedAt = useRef(Date.now());
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [errors, setErrors] = useState<FormErrors>({});
   const [data, setData] = useState<FormData>({
@@ -129,7 +130,7 @@ export function VoInquiryForm() {
         e.currentTarget.elements.namedItem("website") as HTMLInputElement | null
       )?.value ?? "";
 
-      if (!VO_WEBHOOK_URL) {
+      if (!VO_FORM_ENDPOINT) {
         setErrors({
           _form: "The inquiry form is not configured. Please contact me by email.",
         });
@@ -147,14 +148,15 @@ export function VoInquiryForm() {
         timeline: data.timeline,
         message: data.message.trim(),
         consent: data.consent,
-        honeypot,
+        website: honeypot,
+        formLoadedAt: formLoadedAt.current,
         submittedAt: new Date().toISOString(),
       };
 
       try {
-        const res = await fetch(VO_WEBHOOK_URL, {
+        const res = await fetch(VO_FORM_ENDPOINT, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
           body: JSON.stringify(payload),
         });
 
