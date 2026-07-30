@@ -1,15 +1,14 @@
 <!--
 Sync Impact Report
-Version change: 1.1.0 → 1.1.1
+Version change: 2.0.0 -> 2.0.1
 Modified principles: None
 Added sections: None
 Removed sections: None
-Formatting: Applied Prettier markdown standards throughout (language tags on code blocks,
-  blank lines after headings); added code style mandate to Documentation expectations.
-Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ updated (language tags on code blocks)
-  - .specify/templates/spec-template.md ✅ updated (language tag on code block)
-  - .specify/templates/tasks-template.md ✅ updated (language tags + TDD references removed)
+Updated sections:
+  - Platform Constraints: identifies Ghost as the blog CMS and publishing platform.
+  - Platform Constraints: limits ERPNext to its prospective commerce responsibilities.
+  - Delivery & Quality Workflow: classifies Ghost post edits as content-only changes.
+Templates requiring updates: None; Spec Kit templates read this constitution at runtime.
 Follow-up TODOs: None outstanding.
 -->
 
@@ -38,12 +37,15 @@ structure (headings, landmarks, aria roles where appropriate). Media (audio demo
 textual context (alt text, captions/description). Any theme or component refactor requires a manual a11y
 smoke checklist before merge.
 
-### IV. Build Integrity & Manual Verification
+### IV. CI-Backed Build Integrity & Verification
 
-`npm run build` MUST succeed with zero type errors before any merge. Structural changes (layout, routing,
-component logic) MUST pass a manual visual and accessibility smoke check across the affected pages.
-Automated test suites are not required; human verification of the rendered result is the quality gate.
-Broken builds block publish — no exceptions.
+The GitHub Actions build on `dev` MUST succeed for the integrated commit before `dev` is promoted to
+`main`. This CI run is the authoritative build and integration gate because it uses the repository's
+deployment configuration and actual GitHub environment variables. A local `npm run build` is optional,
+MUST NOT be required for routine promotion, and MUST NOT substitute for a successful `dev` CI run.
+Local builds MAY be used to diagnose failures or validate unusually risky work before review. Structural
+changes (layout, routing, component logic) MUST also pass an appropriate manual visual and accessibility
+smoke check across the affected pages. Failed CI blocks promotion and publish - no exceptions.
 
 ### V. Lean Evolution & Future-Proofing
 
@@ -57,15 +59,16 @@ generalizing for hypothetical reuse. Version increments reflect meaningful gover
 The site is a personal portfolio and knowledge hub. The delivery stack is:
 
 - **Next.js** (TypeScript) — static export deployed to GitHub Pages (`gitchegumi.com`)
-- **ERPNext** (`erp.gitchegumi.com`) — blog CMS (posts served as iframes), newsletter via Email Groups,
-  and future eCommerce (digital products, invoicing, inventory) once that phase begins
+- **Ghost** - blog CMS and publishing platform, with its theme maintained under `ghost_theme/`
+- **ERPNext** (`erp.gitchegumi.com`) - prospective eCommerce support for digital products,
+  invoicing, and inventory if that phase begins
 - **n8n** (`n8n.gitchegumi.com`) — automation middleware (subscribe flows, publish triggers, CRM leads)
 - **Homelab** (TrueNAS + Docker Compose + Nginx Proxy Manager) — self-hosted infrastructure for all
   services above
 
 Current functional domains:
 
-- Blog (ERPNext CMS, embedded via iframe at `/blog`)
+- Blog (Ghost CMS and publication theme)
 - Portfolio / CV
 - Voice-over demo reels (audio streaming)
 
@@ -81,7 +84,7 @@ Performance budgets:
 
 Content governance:
 
-- ERPNext blog posts MUST include: title, description, category, and published date before going live.
+- Ghost blog posts MUST include: title, description, category, and published date before going live.
 - Feature images MUST use descriptive, kebab-case filenames.
 - Deleting a post requires a redirect strategy or explicit acceptance of 404 with a note logged.
 
@@ -95,25 +98,33 @@ Security & privacy:
 
 Workflow stages:
 
-1. Draft (content or feature)
-2. Local build pass (`npm run build`)
-3. Manual smoke check (visual + a11y on affected pages)
-4. PR with checklist
-5. Preview build review
-6. Main merge
+1. Create a feature or fix branch from `main` when independent, or from `dev` when it depends on
+   unreleased integrated work.
+2. Open a pull request from the feature or fix branch into `dev`.
+3. Merge into `dev` for integration validation.
+4. Require the GitHub Actions build on `dev` to pass using the configured deployment environment.
+5. Complete applicable manual smoke checks for the affected pages.
+6. Open a pull request from `dev` into `main`.
+7. Complete code review.
+8. Merge into `main` to trigger the production GitHub Pages publish workflow.
+
+Feature and fix branches MUST NOT target `main` directly. `dev` is the integration branch and MAY be
+ahead of `main` while multiple features are in progress. When no unreleased work remains, `dev` and
+`main` SHOULD be aligned.
 
 Quality gates (mandatory before merge):
 
-- `npm run build` succeeds with zero type errors.
+- The GitHub Actions build on `dev` succeeds for the exact integrated commit with zero type errors.
+- Local build results are diagnostic only and are not required acceptance evidence.
 - Manual visual check: affected pages render correctly on desktop and mobile.
-- Accessibility spot check: keyboard nav across header, blog index, single post.
+- Accessibility spot check: keyboard navigation and semantics work across affected surfaces.
 - Lighthouse (or similar) sample run recorded for major layout shifts (manual, as needed).
 
 Change classification:
 
-- Content-only: ERPNext post edits (no code logic) → no build step required; publish directly.
-- Structural: component/layout logic or routing → requires build pass + manual a11y smoke check.
-- Platform expansion (new domain like eCommerce) → requires governance amendment PR.
+- Content-only: Ghost post edits (no code logic) -> no build step required; publish directly.
+- Structural: component/layout logic or routing -> requires successful `dev` CI + manual a11y smoke check.
+- Platform expansion (new domain like eCommerce) -> requires governance amendment PR.
 
 Rollbacks:
 
@@ -159,10 +170,12 @@ Record keeping:
 | 1.0.0   | 2025-09-21 | Initial constitution                                                                        |
 | 1.1.0   | 2026-04-22 | Replace TDD mandate with build + manual verification gate; add ERPNext to platform stack    |
 | 1.1.1   | 2026-04-22 | Apply Prettier markdown standards; add code style mandate to Documentation expectations     |
+| 2.0.0   | 2026-07-30 | Replace the local build gate with dev CI and adopt the branch promotion workflow            |
+| 2.0.1   | 2026-07-30 | Correct blog platform governance from ERPNext to Ghost                                      |
 
 Enforcement:
 
 - If a change violates a principle, it MUST be reverted or amended before next publish.
-- The build gate (`npm run build`) is the first line of enforcement; a failing build blocks merge.
+- The `dev` GitHub Actions build is the first line of enforcement; a failing build blocks promotion.
 
-**Version**: 1.1.1 | **Ratified**: 2025-09-21 | **Last Amended**: 2026-04-22
+**Version**: 2.0.1 | **Ratified**: 2025-09-21 | **Last Amended**: 2026-07-30

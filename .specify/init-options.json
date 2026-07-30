@@ -1,9 +1,9 @@
 {
-  "ai": "gemini",
-  "branch_numbering": "sequential",
-  "context_file": "GEMINI.md",
+  "ai": "codex",
+  "ai_skills": true,
+  "feature_numbering": "sequential",
   "here": true,
-  "integration": "gemini",
+  "integration": "codex",
   "script": "ps",
-  "speckit_version": "0.7.5"
+  "speckit_version": "0.15.0"
 }
